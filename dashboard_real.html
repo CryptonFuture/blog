@@ -1,0 +1,1316 @@
+<!doctype html>
+<html lang="en">
+<!-- <span class="input-group-text border-0"><i class="fas fa-search"></i></span> -->
+
+<head>
+  <title>Sidebar 09 with Navigation</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+
+
+
+
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+
+
+    .navbar {
+      padding: 0.5rem 1rem;
+    }
+
+    .dropdown-menu {
+      min-width: 10rem;
+    }
+
+
+    .custom-border {
+      border: 1px solid black !important;
+      /* 
+
+ye profile ki settig ka code he  */
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+    }
+
+    .profile-container {
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .cover-photo {
+      width: 100%;
+      height: 30vw;
+      /* Viewport width ke hisab se height */
+      max-height: 350px;
+      /* Zyada se zyada itni height */
+      min-height: 200px;
+      /* Kam se kam itni height */
+      object-fit: cover;
+      display: block;
+    }
+
+    .profile-picture {
+      width: 12vw;
+      /* Screen size ke hisab se badhega-ghatega */
+      height: 12vw;
+      min-width: 120px;
+      /* Kam se kam itna size */
+      min-height: 120px;
+      max-width: 168px;
+      /* Zyada se zyada itna size */
+      max-height: 168px;
+      border-radius: 50%;
+      border: 5px solid white;
+      position: absolute;
+      left: 5%;
+      /* Percentage based positioning */
+      bottom: 10%;
+      /* Screen ke hisab se adjust */
+      object-fit: cover;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-space {
+      height: 10vw;
+      min-height: 80px;
+    }
+
+
+
+/* this is the the css of content below profile */
+    #profile {
+      margin-left: 5%;
+      margin-top: -3%;
+    }
+
+
+
+  </style>
+</head>
+
+<body>
+
+  <div class="wrapper d-flex align-items-stretch">
+    <nav id="sidebar">
+      <div class="custom-menu">
+        <button type="button" id="sidebarCollapse" class="btn btn-primary">
+        </button>
+      </div>
+      <div class="img bg-wrap text-center py-4" style="background-image: url(images/bg_1.jpg);">
+        <div class="user-logo">
+          <div class="img" style="background-image: url(images/logo.jpg);"></div>
+          <h3>Catriona Henderson</h3>
+        </div>
+      </div>
+
+
+      <ul class="list-unstyled components mb-5">
+        <li>
+          <a href="#dashboard" class="nav-link">
+            <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="#post" class="nav-link">
+            <i class="fas fa-newspaper mr-3"></i> Post
+          </a>
+        </li>
+        <li>
+          <a href="#tag" class="nav-link">
+            <i class="fas fa-tags mr-3"></i> Tag
+          </a>
+        </li>
+        <li>
+          <a href="#pages" class="nav-link">
+            <i class="fas fa-file-alt mr-3"></i> Pages
+          </a>
+        </li>
+        <li>
+          <a href="#settings" class="nav-link">
+            <i class="fas fa-cog mr-3"></i> Settings
+          </a>
+        </li>
+        <li>
+          <a href="#users" class="nav-link">
+            <i class="fas fa-users mr-3"></i> User Management
+          </a>
+        </li>
+        <li>
+          <a href="#roles" class="nav-link">
+            <i class="fas fa-user-shield mr-3"></i> Profile
+          </a>
+        </li>
+
+      </ul>
+
+
+
+
+
+    </nav>
+
+    <!-- Page Content  -->
+    <div id="content" class="p-4 p-md-5 pt-5">
+      <!-- Navigation Bar -->
+      <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <a class="navbar-brand" href="#">User</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown">
+                <i class="fa fa-user mr-1"></i>Account
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#"><i class="fa fa-user mr-2"></i>Profile</a>
+                <a class="dropdown-item" href="#"><i class="fa fa-sign-out mr-2"></i>log out</a>
+                <div class="dropdown-divider"></div>
+
+             
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav> -->
+
+      <!-- 
+<div id="content" class="p-4 p-md-5 pt-5">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+     Your navbar code yahi rahega -->
+      </nav>
+
+      <!-- Yeh wala section dynamic hoga -->
+      <div id="main-content">
+        <!-- Yahan par content load hoga -->
+        <h2 class="mb-4">Dashboard</h2>
+        <div class="row">
+
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script>
+    // Sabse pehle content templates banayein
+    const pageTemplates = {
+      dashboard: `
+
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <a class="navbar-brand" href="#"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown">
+                <i class="fa fa-user mr-1"></i>Account
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#"><i class="fa fa-user mr-2"></i>Profile</a>
+                <a class="dropdown-item" href="#"><i class="fa fa-sign-out mr-2"></i>log out</a>
+                <div class="dropdown-divider"></div>
+
+             
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+
+
+
+
+
+
+
+
+    <h2 class="mb-4">Dashboard</h2>
+   <div class="row">
+  <!-- Card 1 - Posts -->
+  <div class="col-sm-3 mb-4">
+    <div class="card border-0" style="background: #f5f7fa; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+      <div class="card-body text-center p-4">
+        <div class="icon-container mb-3" style="width: 60px; height: 60px; background: #e1e5eb; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-newspaper fa-lg" style="color: #4a5568;"></i>
+        </div>
+        <h5 class="card-title">No. of Posts</h5>
+        <p class="card-text display-5 mb-3" style="color: #2d3748; font-weight: 700;">0</p>
+        <div class="progress" style="height: 6px; background: #e2e8f0;">
+          <div class="progress-bar" role="progressbar" style="width: 25%; background: #4a5568;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 - Tags -->
+  <div class="col-sm-3 mb-4">
+    <div class="card border-0" style="background: #f5f7fa; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+      <div class="card-body text-center p-4">
+        <div class="icon-container mb-3" style="width: 60px; height: 60px; background: #e1e5eb; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-tags fa-lg" style="color: #4a5568;"></i>
+        </div>
+        <h5 class="card-title">No. of Tags</h5>
+        <p class="card-text display-5 mb-3" style="color: #2d3748; font-weight: 700;">0</p>
+        <div class="progress" style="height: 6px; background: #e2e8f0;">
+          <div class="progress-bar" role="progressbar" style="width: 25%; background: #4a5568;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3 - Pages -->
+  <div class="col-sm-3 mb-4">
+    <div class="card border-0" style="background: #f5f7fa; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+      <div class="card-body text-center p-4">
+        <div class="icon-container mb-3" style="width: 60px; height: 60px; background: #e1e5eb; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-file-alt fa-lg" style="color: #4a5568;"></i>
+        </div>
+        <h5 class="card-title">No. of Pages</h5>
+        <p class="card-text display-5 mb-3" style="color: #2d3748; font-weight: 700;">0</p>
+        <div class="progress" style="height: 6px; background: #e2e8f0;">
+          <div class="progress-bar" role="progressbar" style="width: 25%; background: #4a5568;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4 - Users -->
+  <div class="col-sm-3 mb-4">
+    <div class="card border-0" style="background: #f5f7fa; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+      <div class="card-body text-center p-4">
+        <div class="icon-container mb-3" style="width: 60px; height: 60px; background: #e1e5eb; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-users fa-lg" style="color: #4a5568;"></i>
+        </div>
+        <h5 class="card-title">No. of Users</h5>
+        <p class="card-text display-5 mb-3" style="color: #2d3748; font-weight: 700;">0</p>
+        <div class="progress" style="height: 6px; background: #e2e8f0;">
+          <div class="progress-bar" role="progressbar" style="width: 25%; background: #4a5568;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  `,
+
+      post: `
+
+
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <a class="navbar-brand" href="#">User</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown">
+                <i class="fa fa-user mr-1"></i>Account
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#"><i class="fa fa-user mr-2"></i>Profile</a>
+                <a class="dropdown-item" href="#"><i class="fa fa-sign-out mr-2"></i>log out</a>
+                <div class="dropdown-divider"></div>
+
+             
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <!-- Navbar content -->
+</nav>
+  <div id="main-content">
+    <!-- Yahan par content load hoga -->
+      <h2 class="mb-4">Post</h2>
+<div class="row">
+  
+</div>
+
+
+
+<div class="input-group rounded" style="gap: 8px;">
+  <input type="search" class="form-control rounded" placeholder="Search " style="border: 1px solid #ced4da; box-shadow: none;"/>
+
+  <button id="btnpost"
+    type="button"
+    
+    class="btn btn-link btn-rounded btn-sm fw-bold "
+    style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;"
+    data-bs-toggle="modal" 
+    data-bs-target="#postModal"  <!-- ID change kiya -->
+  
+    Create Post
+  </button>
+</div>
+
+
+
+<!-- Modal with unique ID -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Create New Post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Post Title</label>
+            <input type="text" class="form-control custom-border">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control custom-border"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Table content -->
+
+
+
+
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="table align-middle mb-0 bg-white" style = "margin-top: 10px;">
+  <thead class="bg-light">
+    <tr>
+      <th>S.No</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Created at</th>
+      <th>Update at</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+<td style="text-align: left; padding-left: 10px;">
+   <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    &#8942;
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="#"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+    <li><a class="dropdown-item" href="#PostModal"data-bs-toggle="modal"> <i class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+    <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+  </ul>
+</td>
+
+
+<!-- Modal with unique ID -->
+<div class="modal fade" id="PostModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Edit Post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+
+          <div class="mb-3">
+            <label class="form-label">Post Title</label>
+            <input type="text" class="form-control custom-border">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control custom-border"></textarea>
+   </div>
+            <div class="mb-3">
+<div class="form-check form-check-inline">
+  <input class="form-check-input custom-border" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">Status</label>
+</div>
+
+</div>
+
+                 
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  </tbody>
+</table>
+
+`,
+
+
+
+      tag: `
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <a class="navbar-brand" href="#">User</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown">
+                <i class="fa fa-user mr-1"></i>Account
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#"><i class="fa fa-user mr-2"></i>Profile</a>
+                <a class="dropdown-item" href="#"><i class="fa fa-sign-out mr-2"></i>log out</a>
+                <div class="dropdown-divider"></div>
+
+             
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <!-- Navbar content -->
+
+
+
+
+  
+</nav>
+  <div id="main-content">
+    <!-- Yahan par content load hoga -->
+      <h2 class="mb-4">Tag</h2>
+<div class="row">
+  
+</div>
+
+<div class="input-group rounded" style="gap: 8px;">
+  <input type="search" class="form-control rounded" placeholder="Search" style="border: 1px solid #ced4da; box-shadow: none;"/>
+  
+  <button
+    type="button"
+    class="btn btn-link btn-rounded btn-sm fw-bold"
+    style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;"
+    data-bs-toggle="modal" 
+    data-bs-target="#postModal"  <!-- ID change kiya -->
+  
+    Create Tag
+  </button>
+</div>
+
+<!-- Modal with unique ID -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Create New Tag</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label"> Tag Name</label>
+            <input type="text" class="form-control custom-border">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control custom-border"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Table content -->
+
+
+
+
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="table align-middle mb-0 bg-white" style = "margin-top: 10px;">
+  <thead class="bg-light">
+    <tr>
+      <th>S.No</th>
+      <th>Tag</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Created at</th>
+      <th>Update at</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+<td style="text-align: left; padding-left: 10px;">
+  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    &#8942;
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="#"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+    <li><a class="dropdown-item" href="#tagmodal"data-bs-toggle="modal"> <i class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+    <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+  </ul>
+</td>
+
+
+
+
+<!-- Modal with unique ID -->
+<div class="modal fade" id="tagmodal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Edit Tag</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+       <div class="modal-body">
+
+
+          <div class="mb-3">
+            <label class="form-label"> Tag</label>
+            <input type="text" class="form-control custom-border">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control custom-border"></textarea>
+   </div>
+            <div class="mb-3">
+<div class="form-check form-check-inline">
+  <input class="form-check-input custom-border" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">Status</label>
+</div>
+
+</div>
+
+                 
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  </tbody>
+</table>`
+      ,
+      pages:
+
+
+
+
+        `
+
+
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <a class="navbar-brand" href="#">User</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown">
+                <i class="fa fa-user mr-1"></i>Account
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#"><i class="fa fa-user mr-2"></i>Profile</a>
+                <a class="dropdown-item" href="#"><i class="fa fa-sign-out mr-2"></i>log out</a>
+                <div class="dropdown-divider"></div>
+
+             
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <!-- Navbar content -->
+</nav>
+
+ <div id="main-content">
+    <!-- Yahan par content load hoga -->
+      <h2 class="mb-4">Pages</h2>
+<div class="row">
+  
+</div>
+
+<div class="input-group rounded" style="gap: 8px;">
+  <input type="search" class="form-control rounded" placeholder="Search" style="border: 1px solid #ced4da; box-shadow: none;"/>
+ 
+  <button
+    type="button"
+    class="btn btn-link btn-rounded btn-sm fw-bold"
+    style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;"
+    data-bs-toggle="modal" 
+    data-bs-target="#postModal"  <!-- ID change kiya -->
+  
+    Create Page
+  </button>
+</div>
+
+<!-- Modal with unique ID -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Page Name</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label"> Page</label>
+            <input type="text" class="form-control custom-border">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control custom-border"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Table content -->
+
+
+
+
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="table align-middle mb-0 bg-white" style = "margin-top: 10px;">
+  <thead class="bg-light">
+    <tr>
+      <th>S.No</th>
+      <th>Pages</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Created at</th>
+      <th>Update at</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+<td style="text-align: left; padding-left: 10px;">
+  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    &#8942;
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="#"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+    <li><a class="dropdown-item" href="#editmodal"data-bs-toggle="modal"> <i class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+    <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+  </ul>
+</td>
+
+
+  
+<!-- Modal with unique ID -->
+<div class="modal fade" id="editmodal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Edit Page</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+       <div class="modal-body">
+
+
+          <div class="mb-3">
+            <label class="form-label"> Page</label>
+            <input type="text" class="form-control custom-border">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control custom-border"></textarea>
+   </div>
+            <div class="mb-3">
+<div class="form-check form-check-inline">
+  <input class="form-check-input custom-border" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">Status</label>
+</div>
+
+</div>
+
+                 
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  </tbody>
+</table>`
+
+
+      ,
+      settings: `
+
+ 
+ <div class="container ">
+  <div class="profile-container">
+        <!-- Cover Photo -->
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=350" 
+             class="cover-photo" 
+             alt="Cover Photo">
+        
+        <!-- Profile Picture - Now properly positioned -->
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" 
+             class="profile-picture" 
+             alt="Profile Picture">
+        
+        <!-- Empty space to ensure profile picture isn't cut -->
+        <div class="content-space"></div>
+    </div>
+
+ 
+    <!-- Profile Information - Aapke Diye Requirements Ke Hisab Se -->
+
+        <div class="row justify-content-center">
+            <div class="col-md-25">
+                <div class="" >
+                    <div class="" id="profile">
+                        <h2 class="">John Doe</h2>
+                        <div class="mb-3">
+                            <i class="bi bi-envelope-fill me-2"></i>
+                            <span>johndoe@example.com</span>
+                        </div>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#updateprofile" type="button" role="tab" aria-controls="updateprofile" aria-selected="true">Update Profile</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#setting" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Setting</button>
+  </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+  <!-- Update Profile Tab Content -->
+  <div class="tab-pane fade show active" id="updateprofile" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+    <div class="row mb-3 mt-4">  
+      <div class="col-md-6"> 
+        <label for="exampleFormControlInput1" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter old password">
+      </div>
+      <div class="col-md-6">  
+        <label for="exampleFormControlInput2" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="exampleFormControlInput2" placeholder="Enter new password">
+      </div>
+      <div class="col-md-6">  
+        <label for="exampleFormControlInput3" class="form-label">Emails</label>
+        <input type="email" class="form-control" id="exampleFormControlInput3" placeholder="Confirm new password">
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+  
+  <!-- Other Tabs -->
+  <div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+     <div class="row mb-3 mt-4">  
+      <div class="col-md-6"> 
+        <label for="exampleFormControlInput1" class="form-label">Old Password</label>
+        <input type="password" class="form-control" id="exampleFormControlInput1" placeholder="Enter old password">
+      </div>
+      <div class="col-md-6">  
+        <label for="exampleFormControlInput2" class="form-label">New Password</label>
+        <input type="password" class="form-control" id="exampleFormControlInput2" placeholder="Enter new password">
+      </div>
+      <div class="col-md-6">  
+        <label for="exampleFormControlInput3" class="form-label">Confirm Password</label>
+        <input type="password" class="form-control" id="exampleFormControlInput3" placeholder="Confirm new password">
+      
+      </div>
+    </div>
+   <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+  </div>
+</div>  
+
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</div>
+
+ 
+`
+      ,
+      users: `
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <a class="navbar-brand" href="#">User</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown">
+                <i class="fa fa-user mr-1"></i>Account
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#"><i class="fa fa-user mr-2"></i>Profile</a>
+                <a class="dropdown-item" href="#"><i class="fa fa-sign-out mr-2"></i>log out</a>
+                <div class="dropdown-divider"></div>
+
+             
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <!-- Navbar content -->
+</nav>
+
+  <div id="main-content">
+    <!-- Yahan par content load hoga -->
+      <h2 class="mb-4">User Management</h2>
+<div class="row">
+  
+</div>
+
+
+<div class="input-group rounded" style="gap: 8px;">
+  <input type="search" class="form-control rounded" placeholder="Search" style="border: 1px solid #ced4da; box-shadow: none;"/>
+  <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
+  <button
+    type="button"
+    class="btn btn-link btn-rounded btn-sm fw-bold"
+    style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;"
+    data-bs-toggle="modal" 
+    data-bs-target="#postModal"  <!-- ID change kiya -->
+  
+    Create Page
+  </button>
+</div>
+
+<!-- Modal with unique ID -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Add user</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="row">
+          <div class="col-6">
+            <label class="form-label"> first name</label>
+            <input type="text" class="form-control custom-border ">
+          </div>
+          <div class="col-6">
+            <label class="form-label">last name</label>
+            <input type="text" class="form-control custom-border ">
+          </div>
+          <div>
+              <div class="row">
+          <div class="col-6">
+            <label class="form-label"> email</label>
+            <input type="email" class="form-control custom-border ">
+          </div>
+            <div class="col-6">
+            <label class="form-label">password</label>
+            <input type="password" class="form-control custom-border ">
+          </div>
+              <div class="">
+            <label class="form-label"> confirm password</label>
+            <input type="password" class="form-control custom-border ">
+          </div>
+
+
+
+
+          
+              </div>
+            
+            
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary ">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Table content -->
+
+
+
+
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="table align-middle mb-0 bg-white" style = "margin-top: 10px;">
+  <thead class="bg-light">
+    <tr>
+      <th>S.No</th>
+      <th>First_Name</th>
+      <th>Last_Name</th>
+      <th>Email</th>
+    
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+     <td></td>
+     <td></td>
+     <td></td>
+     <td></td>
+     
+<td style="text-align: left; padding-left: 10px;">
+  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    &#8942;
+  </button>
+  <ul class="dropdown-menu">
+<li><a class="dropdown-item" href="# "> 
+  <i class="fas fa-eye me-2 text-warning"></i> View
+</a></li>
+    <li><a class="dropdown-item" href="#EditModal" data-bs-toggle="modal"> <i class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+    <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+  </ul>
+
+
+
+<!-- Modal with unique ID -->
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Edit User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="row">
+          <div class="col-6">
+            <label class="form-label"> first name</label>
+            <input type="text" class="form-control custom-border ">
+          </div>
+          <div class="col-6">
+            <label class="form-label">last name</label>
+            <input type="text" class="form-control custom-border ">
+          </div>
+          <div>
+              <div class="row">
+          <div class="col-6">
+            <label class="form-label"> email</label>
+            <input type="email" class="form-control custom-border ">
+          </div>
+            <div class="col-6">
+            <label class="form-label">password</label>
+            <input type="password" class="form-control custom-border ">
+          </div>
+              <div class="">
+            <label class="form-label"> confirm password</label>
+            <input type="password" class="form-control custom-border ">
+          </div>
+
+
+
+            <div class="col-6">
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+  <label class="form-check-label" for="inlineCheckbox1">Status</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+  <label class="form-check-label" for="inlineCheckbox2">Admin</label>
+</div>
+
+</div>
+
+          
+              </div>
+            
+            
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</td>
+
+
+  
+  </tbody>
+</table>
+
+
+
+
+`,
+roles:`
+
+
+
+ <div class="container ">
+  <div class="profile-container">
+        <!-- Cover Photo -->
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=350" 
+             class="cover-photo" 
+             alt="Cover Photo">
+        
+        <!-- Profile Picture - Now properly positioned -->
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" 
+             class="profile-picture" 
+             alt="Profile Picture">
+        
+        <!-- Empty space to ensure profile picture isn't cut -->
+        <div class="content-space"></div>
+    </div>
+
+ 
+    <!-- Profile Information - Aapke Diye Requirements Ke Hisab Se -->
+
+        <div class="row justify-content-center">
+            <div class="col-md-25">
+                <div class="" >
+                    <div class="" id="profile">
+                        <h2 class="">John Doe</h2>
+                        <div class="mb-3">
+                            <i class="bi bi-envelope-fill me-2"></i>
+                            <span>johndoe@example.com</span>
+                        </div>
+                        <div class="mb-4">
+                            <i class="bi bi-telephone-fill me-2"></i>
+                            <span>+91 98765 43210</span>
+                        </div>
+                        <button class="btn btn-danger">
+                            <i class="bi bi-trash-fill me-2"></i>
+                            Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  
+
+
+`
+
+
+
+
+
+
+
+
+      // Baki pages ke liye bhi aise hi templates add karein
+    };
+
+    // Page load hone par kaam karega
+    document.addEventListener('DOMContentLoaded', function () {
+      // Sabse pehle dashboard show karein
+      showPage('dashboard');
+
+      // Sab links pe event listener lagayein
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const pageId = this.getAttribute('href').substring(1); // # hatane ke liye
+          showPage(pageId);
+        });
+      });
+    });
+
+    // Content show karne wala function
+    function showPage(pageId) {
+      // Content area mein template daal do
+      document.getElementById('main-content').innerHTML = pageTemplates[pageId] || '<h2>Page Not Found</h2>';
+
+      // Active link highlight karo
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.parentElement.classList.remove('active');
+      });
+      document.querySelector(`a[href="#${pageId}"]`).parentElement.classList.add('active');
+    }
+
+
+
+
+
+
+
+
+
+
+  </script>
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+  <script src="js/main.js"></script>
+
+  <!-- BODY ke END mein yeh scripts add karo -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+  <!-- jQuery pehle (required for Bootstrap) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+  <!-- Popper.js (dropdowns ke liye zaroori) -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
