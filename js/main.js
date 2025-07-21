@@ -101,6 +101,12 @@
 
 })(jQuery);
 
+ const accessToken = localStorage.getItem('token')
+
+	if (accessToken) {
+		window.location.href = '/dashboard_real.html';
+	}
+
 
 const prefix = 'api/v1'
 const baseUrl = `http://localhost:8000/${prefix}`

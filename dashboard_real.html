@@ -118,53 +118,34 @@ ye profile ki settig ka code he  */
       </div>
 
 
-      <ul class="list-unstyled components mb-5">
-        <li>
-          <a href="#dashboard" class="nav-link">
-            <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
-          </a>
-        </li>
-        <li>
-          <a href="#post" class="nav-link">
-            <i class="fas fa-newspaper mr-3"></i> Post
-          </a>
-        </li>
-        <li>
-          <a href="#tag" class="nav-link">
-            <i class="fas fa-tags mr-3"></i> Tag
-          </a>
-        </li>
-        <li>
-          <a href="#pages" class="nav-link">
-            <i class="fas fa-file-alt mr-3"></i> Pages
-          </a>
-        </li>
-        <li>
-          <a href="#settings" class="nav-link">
-            <i class="fas fa-cog mr-3"></i> Settings
-          </a>
-        </li>
-        <li>
-          <a href="#users" class="nav-link">
-            <i class="fas fa-users mr-3"></i> User Management
-          </a>
-        </li>
-        <li>
-          <a href="#roles" class="nav-link">
-            <i class="fas fa-user-shield mr-3"></i> Profile
-          </a>
-        </li>
-
+      <ul class="list-unstyled components mb-5" id="sidebarRoutes">
+        
       </ul>
-
-
-
-
-
     </nav>
 
     <!-- Page Content  -->
     <div id="content" class="p-4 p-md-5 pt-5">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <a class="navbar-brand" href="#"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown">
+                <i class="fa fa-user mr-1"></i>Account
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a onclick="logout()" class="dropdown-item" href="#"><i class="fa fa-sign-out mr-2"></i>log out</a>
+
+             
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
       <!-- Navigation Bar -->
       <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
         <a class="navbar-brand" href="#">User</a>
@@ -195,24 +176,51 @@ ye profile ki settig ka code he  */
      Your navbar code yahi rahega -->
       </nav>
 
-      <!-- Yeh wala section dynamic hoga -->
       <div id="main-content">
-        <!-- Yahan par content load hoga -->
-        <h2 class="mb-4">Dashboard</h2>
+        <!-- <h2 class="mb-4">Dashboard</h2>
         <div class="row">
 
+        </div> -->
+
+
+        <div id="dashboard" class="page">
+          <h2 class="mb-4">Dashboard</h2>
+          <div class="row"  id="cardRow">
+
+          </div>
         </div>
-
-
-
+        <div id="post" class="page">
+          <h2>Post</h2>
+        </div>
+        <div id="tag" class="page">
+          <h2>Tag</h2>
+        </div>
+        <div id="pages" class="page">
+          <h2>Pages</h2>
+        </div>
+        <div id="category" class="page">
+          <h2>Category</h2>
+        </div>
+        <div id="user" class="page">
+          <h2>User</h2>
+        </div>
+        <div id="settings" class="page">
+          <h2>Settings</h2>
+        </div>
+        <div id="profile" class="page">
+          <h2>Profile</h2>
+        </div>
+        <div id="role" class="page">
+          <h2>Role</h2>
+        </div>
+        <div id="logs" class="page">
+          <h2>Logs</h2>
+        </div>
       </div>
     </div>
   </div>
 
-
-
-
-  <script>
+   <script>
     // Sabse pehle content templates banayein
     const pageTemplates = {
       dashboard: `
@@ -1289,11 +1297,28 @@ roles:`
 
   </script>
 
+  <script>
+    function showPage(id) {
+        var pages = document.getElementsByClassName('page')
+
+        for (var i = 0; i < pages.length; i++) {
+          pages[i].style.display = 'none';
+        }
+
+        var selectedPage = document.getElementById(id)
+        if (selectedPage) {
+          selectedPage.style.display = 'block'
+        }
+      }
+
+      window.onload = function () {
+        showPage('dashboard')
+      }
+  </script>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
-  <script src="js/main.js"></script>
     <script src="js/adminPanel.js"></script>
 
   <!-- BODY ke END mein yeh scripts add karo -->
