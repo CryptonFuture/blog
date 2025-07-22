@@ -129,6 +129,30 @@ async function login() {
   const password = document.getElementById('password').value
    const rememberMe = document.getElementById('rememberMe').checked;
 
+  document.getElementById('email-error').textContent = ""
+  document.getElementById('password-error').textContent = ""
+
+   let isValid = true;
+    if (!email) {
+        document.getElementById('email-error').textContent = 'Email is required.';
+        isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email address.';
+        isValid = false;
+    }
+
+    if (!password) {
+        document.getElementById('password-error').textContent = 'Password is required.';
+        isValid = false;
+    } else if (password.length < 10) {
+        document.getElementById('password-error').textContent = 'Password must be at least 10 characters';
+        isValid = false;
+    }
+
+    if (!isValid) {
+        return;
+    }
+
   const res = await fetch(`${baseUrl}/login`, {
     method: 'POST',
     headers: {
@@ -187,9 +211,6 @@ async function login() {
       text: data.error || 'Invalid credentials'
     });
   }
-
-
-
 
 }
 
