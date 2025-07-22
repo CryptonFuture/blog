@@ -33,6 +33,9 @@ async function logout() {
 		localStorage.removeItem('user');
 		localStorage.removeItem('email');
 		localStorage.removeItem('tokenType');
+		localStorage.removeItem('rememberMe')
+		localStorage.removeItem('rememberedEmail');
+		localStorage.removeItem('rememberedPassword');
 
 		Swal.fire({
 			icon: 'success',
