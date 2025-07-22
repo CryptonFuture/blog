@@ -100,15 +100,17 @@
   })
 
 })(jQuery);
-
+  const secretKey = "0192384756";
+  
   window.addEventListener('DOMContentLoaded', () => {
     const rememberedEmail = localStorage.getItem('rememberedEmail');
     const rememberedPassword = localStorage.getItem('rememberedPassword');
     const rememberMe = localStorage.getItem('rememberMe') === 'true';
 
     if (rememberMe && rememberedEmail && rememberedPassword) {
+      const decryptedPassword = CryptoJS.AES.decrypt(rememberedPassword, secretKey).toString(CryptoJS.enc.Utf8)
       document.getElementById('email').value = rememberedEmail;
-      document.getElementById('password').value = rememberedPassword;
+      document.getElementById('password').value = decryptedPassword;
       document.getElementById('rememberMe').checked = true;
     }   
   })
@@ -178,8 +180,9 @@ async function login() {
     localStorage.setItem('tokenType', data.user.tokenType);
 
     if (rememberMe) {
+      const encryptedPassword = CryptoJS.AES.encrypt(password, secretKey).toString();
       localStorage.setItem('rememberedEmail', email);
-      localStorage.setItem('rememberedPassword', password);
+      localStorage.setItem('rememberedPassword', encryptedPassword);
       localStorage.setItem('rememberMe', 'true');
     } else {
       localStorage.removeItem('rememberedEmail');
