@@ -101,6 +101,18 @@
 
 })(jQuery);
 
+  window.addEventListener('DOMContentLoaded', () => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    const rememberedPassword = localStorage.getItem('rememberedPassword');
+    const rememberMe = localStorage.getItem('rememberMe') === 'true';
+
+    if (rememberMe && rememberedEmail && rememberedPassword) {
+      document.getElementById('email').value = rememberedEmail;
+      document.getElementById('password').value = rememberedPassword;
+      document.getElementById('rememberMe').checked = true;
+    }   
+  })
+
  const accessToken = localStorage.getItem('token')
 
 	if (accessToken) {
@@ -115,6 +127,7 @@ const baseUrl = `http://localhost:8000/${prefix}`
 async function login() {
   const email = document.getElementById('email').value
   const password = document.getElementById('password').value
+   const rememberMe = document.getElementById('rememberMe').checked;
 
   const res = await fetch(`${baseUrl}/login`, {
     method: 'POST',
@@ -135,6 +148,16 @@ async function login() {
     localStorage.setItem('user', data.user.id);
     localStorage.setItem('email', data.user.email);
     localStorage.setItem('tokenType', data.user.tokenType);
+
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', email);
+      localStorage.setItem('rememberedPassword', password);
+      localStorage.setItem('rememberMe', 'true');
+    } else {
+      localStorage.removeItem('rememberedEmail');
+      localStorage.removeItem('rememberedPassword');
+      localStorage.setItem('rememberMe', 'false');
+    }
 
     $('#Modal').modal('hide');
 
