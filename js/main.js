@@ -144,6 +144,10 @@ async function login() {
 
   if (res.ok) {
 
+    const oneDay = 24 * 60 * 60 * 1000;
+    const expiryTimestamp = Date.now() + oneDay;
+    localStorage.setItem('tokenExpiry', expiryTimestamp);
+
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', data.user.id);
     localStorage.setItem('email', data.user.email);
