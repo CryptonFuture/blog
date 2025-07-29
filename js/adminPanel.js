@@ -20,6 +20,7 @@ if (!accessToken) {
 
 const prefix = 'api/v1'
 const baseUrl = `http://localhost:8000/${prefix}`
+let selectedPostId = null;
 
 const tokenType = localStorage.getItem('tokenType')
 const access_Token = localStorage.getItem('token')
@@ -27,7 +28,9 @@ const access_Token = localStorage.getItem('token')
 document.addEventListener('DOMContentLoaded', function () {
 	fetchDashboard()
 	getSideBarRoutes()
+	fetchPost()
 })
+
 
 function setupAutoLogout() {
 	const expiryTime = localStorage.getItem('tokenExpiry');
@@ -156,3 +159,241 @@ async function getSideBarRoutes() {
 
 }
 
+async function fetchPost() {
+	const res = await fetch(`${baseUrl}/getPost`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const post = data.data
+
+	const listpost = document.getElementById('postlist')
+
+	listpost.innerHTML = '';
+
+	post.forEach((item, index) => {
+		listpost.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.title}</td>
+                <td>${item.description}</td>
+                <td>${item.status ? 'published' : 'unPublished'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="viewPost('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
+                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+                    <li><a onclick="deletePost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                  </ul>
+                </td>
+				</tr>
+			`
+	})
+}
+
+async function addPost() {
+		const title = document.getElementById('title').value
+	const description = document.getElementById('description').value
+
+	const res = await fetch(`${baseUrl}/addPost`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ title, description })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Create Post Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchPost();
+			$('#postModal').modal('hide');
+			document.getElementById('title').value = ""
+			document.getElementById('description').value = ""
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete post: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function deletePost(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to delete this post?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, delete it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/deletePost/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Delete Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				fetchPost();
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete post: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+async function editPost(id) {
+	selectedPostId = id;
+	const res = await fetch(`${baseUrl}/editPostById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const post = data.data[0]
+		document.getElementById('edit-post-id').value = post._id
+		document.getElementById('edit-post-title').value = post.title
+		document.getElementById('edit-post-description').value = post.description
+		document.getElementById('edit-post-status').checked = post.status
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete post: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function viewPost(id) {
+
+	const res = await fetch(`${baseUrl}/viewPostById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('view-post-id').innerHTML = `<strong>ID: </strong> <span> ${view._id} </span>`
+		document.getElementById('view-post-title').innerHTML = `<strong>Title: </strong> <span> ${view.title} </span>`
+		document.getElementById('view-post-description').innerHTML = `<strong>Description: </strong> <span> ${view.description} </span>`
+		document.getElementById('view-post-status').innerHTML = `<strong>Status: </strong> <span> ${view.status ? 'Published' : 'unPublished'} </span>`
+		document.getElementById('view-post-createdAt').innerHTML = `<strong>CreatedAt: </strong> <span> ${new Date(view.createdAt).toISOString().split('T')[0]} </span>`
+		document.getElementById('view-post-updatedAt').innerHTML = `<strong>UpdatedAt: </strong> <span> ${new Date(view.updatedAt).toISOString().split('T')[0]} </span>`
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete post: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+function update() {
+	if (selectedPostId) {
+      updatePost(selectedPostId);
+    }
+}
+
+async function updatePost(id) {
+	
+	const title = document.getElementById('edit-post-title').value
+	const description = document.getElementById('edit-post-description').value
+	const status = document.getElementById('edit-post-status').checked
+
+	const res = await fetch(`${baseUrl}/updatePost/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ title, description, status })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update Post Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchPost();
+			$('#PostModal').modal('hide');
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete post: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
+}

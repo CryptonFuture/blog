@@ -272,9 +272,9 @@
               <input type="search" class="form-control rounded" placeholder="Search"
                 style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
           
-              <button id="btnpost" type="button" class="btn btn-link btn-rounded btn-sm fw-bold "
+              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold "
                 style="background-color: #bbdefb;  white-space: nowrap;" data-bs-toggle="modal"
-                data-bs-target="#postModal">
+                data-bs-target="#postModal" data-bs-whatever="@mdo">
           
                 Create Post
               </button>
@@ -292,23 +292,23 @@
                     <form>
                       <div class="mb-3">
                         <label class="form-label">Post Title</label>
-                        <input type="text" class="form-control custom-border">
+                        <input id="title" type="text" class="form-control custom-border">
                       </div>
                       <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea class="form-control custom-border"></textarea>
+                        <textarea id="description" class="form-control custom-border"></textarea>
                       </div>
                     </form>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save Post</button>
+                    <button onclick="addPost()" type="button" class="btn btn-primary">Save Post</button>
                   </div>
                 </div>
               </div>
             </div>
           
-            <!-- Table content -->
+           
           
           </div>
           <div class="table-responsive">
@@ -324,29 +324,11 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>this is a title</td>
-                <td>this is a desc</td>
-                <td>published</td>
-                <td>2025-29-07</td>
-                <td>2025-29-07</td>
-                <td>
-                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    &#8942;
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
-                    <li><a class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
-                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
-                  </ul>
-                </td>
+            <tbody id="postlist">
+               
           
-          
-                <!-- Modal with unique ID -->
-                <div class="modal fade" id="PostModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+            </tbody>
+             <div class="modal fade" id="PostModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -354,36 +336,69 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-          
-          
+                        <form id="editPostForm">
+                        <div class="mb-3" style="display: none;">
+                          <input hidden readonly id="edit-post-id" type="text" class="form-control custom-border">
+                        </div>
                         <div class="mb-3">
                           <label class="form-label">Post Title</label>
-                          <input type="text" class="form-control custom-border">
+                          <input id="edit-post-title" type="text" class="form-control custom-border">
                         </div>
                         <div class="mb-3">
                           <label class="form-label">Description</label>
-                          <textarea class="form-control custom-border"></textarea>
+                          <textarea id="edit-post-description" class="form-control custom-border"></textarea>
                         </div>
                         <div class="mb-3">
                           <div class="form-check form-check-inline">
-                            <input class="form-check-input custom-border" type="checkbox" id="inlineCheckbox1" value="option1">
+                            <input class="form-check-input custom-border" type="checkbox" id="edit-post-status" value="option1">
                             <label class="form-check-label" for="inlineCheckbox1">Status</label>
                           </div>
           
                         </div>
           
           
-                        </form>
+                      </form>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button onclick="update()" type="button" class="btn btn-primary" form="editPostForm">Submit</button>
                       </div>
                     </div>
                   </div>
-                </div>
-          
-            </tbody>
+            </div>
+
+             <div class="modal fade" id="viewPostModal" tabindex="-1" aria-labelledby="viewPostModalLabel"
+                      aria-hidden="true">
+
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="viewPostModalLabel">View Post</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body" id="viewPost">
+                            
+                             <ul class="list-group list-group-flush">
+                                      <li id="view-post-id" class="list-group-item"></li>
+                                      <li id="view-post-title" class="list-group-item"></li>
+                                      <li id="view-post-description" class="list-group-item"></li>
+                                      <li id="view-post-status" class="list-group-item"></li>
+                                      <li id="view-post-createdAt" class="list-group-item"></li>
+                                      <li id="view-post-updatedAt" class="list-group-item"></li>
+                              </ul>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+            </div>
+
           </table>
           </div>
               </div>
@@ -838,14 +853,11 @@
       }
   </script>
  
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script src="js/adminPanel.js"></script>
 </body>
 
