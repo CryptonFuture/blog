@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	fetchDashboard()
 	getSideBarRoutes()
 	fetchPost()
+fetchTag()
+fetchPages()
+fetchUser()
 })
 
 
@@ -396,4 +399,207 @@ async function updatePost(id) {
 		})
 	}
 
+}
+
+
+
+
+
+
+
+
+async function fetchTag() {
+	const res = await fetch(`${baseUrl}/getTag`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const tag = data.data
+
+	const listtag = document.getElementById('taglist')
+
+	listtag.innerHTML = '';
+
+	tag.forEach((item, index) => {
+		listtag.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.tagname || item.tagName}</td>
+                <td>${item.description}</td>
+                <td>${item.status ? 'active' : 'inactive'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="viewPost('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
+                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+                    <li><a onclick="deletePost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                  </ul>
+                </td>
+				</tr>
+			`
+	})
+}
+
+async function addTag() {
+		const tag = document.getElementById('tag').value
+	const description = document.getElementById('description').value
+
+	const res = await fetch(`${baseUrl}/addTag`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ tag, description })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Create Post Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchTag();
+			$('#postModal').modal('hide');
+			document.getElementById('tag').value = ""
+			document.getElementById('description').value = ""
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete post: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function fetchPages() {
+	const res = await fetch(`${baseUrl}/getPages`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const pages = data.data
+
+	const listpages = document.getElementById('pagelist')
+
+	listpages.innerHTML = '';
+
+	pages.forEach((item, index) => {
+	
+	listpages.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.pageName || item.pageName}</td>
+                <td>${item.description}</td>
+                <td>${item.status ? 'active' : 'inactive'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="viewPost('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
+                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+                    <li><a onclick="deletePost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                  </ul>
+                </td>
+				</tr>
+			`
+	})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function fetchUser() {
+	const res = await fetch(`${baseUrl}/getUser`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const user = data.data
+
+	const userlist= document.getElementById('userlist')
+
+	userlist.innerHTML = '';
+
+	user.forEach((item, index) => {
+	
+	userlist.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.firstname || item.firstname}</td>
+                <td>${item.lastname}</td>
+				<td>${item.email}</td>
+                <td>${item.active ? 'active' : 'inactive'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="viewPost('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
+                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+                    <li><a onclick="deletePost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                  </ul>
+                </td>
+				</tr>
+			`
+	})
 }
