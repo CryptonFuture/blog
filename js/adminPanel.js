@@ -722,3 +722,156 @@ async function deleteUser(id) {
 		}
 	}
 }
+
+
+
+
+
+
+
+
+async function addTag() {
+	const tagName = document.getElementById('tag-name').value
+	const description = document.getElementById('tag-description').value
+
+	const res = await fetch(`${baseUrl}/addTag`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ tagName, description })
+		
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Create Tag Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchTag();
+			$('#tagModal').modal('hide');
+			document.getElementById('tag-name').value = ""
+			document.getElementById('tag-description').value = ""
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete tag: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+
+
+
+
+
+
+async function addPage() {
+	const pageName = document.getElementById('page-name').value
+	const description = document.getElementById('page-description').value
+
+	const res = await fetch(`${baseUrl}/addPages`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ pageName, description })
+		
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Create Page Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchTag();
+			$('#pageModal').modal('hide');
+			document.getElementById('page-name').value = ""
+			document.getElementById('page-description').value = ""
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete Page: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+
+
+
+async function addUser() {
+    // Get form values
+    const firstname = document.getElementById('firstName').value;
+    const lastname = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPass = document.getElementById('confirmPass').value;
+
+    try {
+        const res = await fetch(`${baseUrl}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${tokenType} ${access_Token}`
+            },
+            body: JSON.stringify({firstname, lastname, email, password, confirmPass})
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: 'User Created Successfully',
+                text: data.message,
+                timer: 2000,
+                showConfirmButton: false,
+                timerProgressBar: true
+            }).then(() => {
+                fetchUser(); // You'll need to implement this function
+                $('#userModal').modal('hide');
+                document.getElementById('firstName').value = "";
+                document.getElementById('lastName').value = "";
+                document.getElementById('email').value = "";
+                document.getElementById('password').value = "";
+                document.getElementById('confirmPass').value = "";
+            });
+        } else {
+            throw new Error(data.error || 'Failed to create user');
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Failed to create user',
+            text: error.message,
+            timer: 2000,
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+        console.error('Error:', error);
+    }
+}

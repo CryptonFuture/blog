@@ -439,11 +439,11 @@
                     <form>
                       <div class="mb-3">
                         <label class="form-label"> Tag Name</label>
-                        <input id="tag" type="text" class="form-control custom-border">
+                        <input id="tag-name" type="text" class="form-control custom-border">
                       </div>
                       <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea id="description" class="form-control custom-border"></textarea>
+                        <textarea id="tag-description" class="form-control custom-border"></textarea>
                       </div>
                     </form>
                   </div>
@@ -474,42 +474,6 @@
                 <tr>
                
                
-
-                  <!-- Modal with unique ID -->
-                  <div class="modal fade" id="tagmodal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="postModalLabel">Edit Tag</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-
-
-                          <div class="mb-3">
-                            <label class="form-label"> Tag</label>
-                            <input type="text" class="form-control custom-border">
-                          </div>
-                          <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea class="form-control custom-border"></textarea>
-                          </div>
-                          <div class="mb-3">
-                            <div class="form-check form-check-inline">
-                              <input class="form-check-input custom-border" type="checkbox" id="inlineCheckbox1" value="option1">
-                              <label class="form-check-label" for="inlineCheckbox1">Status</label>
-                            </div>
-                          </div>
-                          </form>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="button" class="btn btn-primary">Submit</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
            
             </table>
 
@@ -553,17 +517,17 @@
                 <form>
                   <div class="mb-3">
                     <label class="form-label"> Page</label>
-                    <input type="text" class="form-control custom-border">
+                    <input  id="page-name" class="form-control custom-border">
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control custom-border"></textarea>
+                    <textarea id="page-description" class="form-control custom-border"></textarea>
                   </div>
                 </form>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save Post</button>
+                <button onclick="addPage() "  type="button" class="btn btn-primary">Save Post</button>
               </div>
             </div>
           </div>
@@ -670,25 +634,25 @@
           <div class="row">
             <div class="col-6">
               <label class="form-label"> first name</label>
-              <input type="text" class="form-control custom-border ">
+              <input id="firstName" type="text" class="form-control custom-border ">
             </div>
             <div class="col-6">
               <label class="form-label">last name</label>
-              <input type="text" class="form-control custom-border ">
+              <input  id="lastName" class="form-control custom-border ">
             </div>
             <div>
               <div class="row">
                 <div class="col-6">
                   <label class="form-label"> email</label>
-                  <input type="email" class="form-control custom-border ">
+                  <input id="email" type="email" class="form-control custom-border ">
                 </div>
                 <div class="col-6">
                   <label class="form-label">password</label>
-                  <input type="password" class="form-control custom-border ">
+                  <input id="password" type="password" class="form-control custom-border ">
                 </div>
                 <div class="">
                   <label class="form-label"> confirm password</label>
-                  <input type="password" class="form-control custom-border ">
+                  <input   id="confirmPass" type="password" class="form-control custom-border ">
                 </div>
               </div>
             </div>
@@ -696,7 +660,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary ">Submit</button>
+        <button onclick="addUser()" type="button" class="btn btn-primary ">Submit</button>
       </div>
     </div>
   </div>
