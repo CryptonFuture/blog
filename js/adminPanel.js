@@ -21,6 +21,9 @@ if (!accessToken) {
 const prefix = 'api/v1'
 const baseUrl = `http://localhost:8000/${prefix}`
 let selectedPostId = null;
+let selectedTagId = null
+let selectedPageId = null
+let selectedUserId = null
 
 const tokenType = localStorage.getItem('tokenType')
 const access_Token = localStorage.getItem('token')
@@ -321,6 +324,99 @@ async function editPost(id) {
 	}
 }
 
+async function editTag(id) {
+	selectedTagId = id;
+	const res = await fetch(`${baseUrl}/editTagById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const tag = data.data[0]
+		document.getElementById('edit-tag-id').value = tag._id
+		document.getElementById('edit-tag-tagName').value = tag.tagName
+		document.getElementById('edit-tag-description').value = tag.description
+		document.getElementById('edit-tag-status').checked = tag.status
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete tag: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function editPage(id) {
+	selectedPageId = id;
+	const res = await fetch(`${baseUrl}/editPagesById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const page = data.data[0]
+		document.getElementById('edit-page-id').value = page._id
+		document.getElementById('edit-page-pageName').value = page.pageName
+		document.getElementById('edit-page-description').value = page.description
+		document.getElementById('edit-page-status').checked = page.status
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete page: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function editUser(id) {
+	selectedUserId = id;
+	const res = await fetch(`${baseUrl}/editUserById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const user = data.data[0]
+		document.getElementById('edit-user-id').value = user._id
+		document.getElementById('edit-user-firstname').value = user.firstname
+		document.getElementById('edit-user-lastname').value = user.lastname
+		document.getElementById('edit-user-email').value = user.email
+		document.getElementById('edit-user-active').checked = user.active
+		document.getElementById('edit-user-admin').checked = user.is_admin
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete user: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+
 async function viewPost(id) {
 
 	const res = await fetch(`${baseUrl}/viewPostById/${id}`, {
@@ -438,8 +534,8 @@ async function fetchTag() {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a onclick="viewPost('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
-                    <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
+                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editTag('${item._id}')" class="dropdown-item" href="#TagModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deleteTag('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
                   </ul>
@@ -495,8 +591,8 @@ async function fetchPages() {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a onclick="viewPost('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
-                    <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
+                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editPage('${item._id}')" class="dropdown-item" href="#PageModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deletePage('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
                   </ul>
@@ -554,8 +650,8 @@ async function fetchUser() {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a onclick="viewPost('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
-                    <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
+                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editUser('${item._id}')" class="dropdown-item" href="#UserModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deleteUser('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
                   </ul>

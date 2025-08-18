@@ -470,8 +470,47 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody id="taglist" >   </tbody>
-                <tr>
+              <tbody id="taglist" >   
+
+              </tbody>
+                   <div class="modal fade" id="TagModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="postModalLabel">Edit Tag</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="editTagForm">
+                        <div class="mb-3" style="display: none;">
+                          <input hidden readonly id="edit-tag-id" type="text" class="form-control custom-border">
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Tag Name</label>
+                          <input id="edit-tag-tagName" type="text" class="form-control custom-border">
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Description</label>
+                          <textarea id="edit-tag-description" class="form-control custom-border"></textarea>
+                        </div>
+                        <div class="mb-3">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input custom-border" type="checkbox" id="edit-tag-status" value="option1">
+                            <label class="form-check-label" for="inlineCheckbox1">Status</label>
+                          </div>
+          
+                        </div>
+          
+          
+                      </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" form="editPostForm">Submit</button>
+                      </div>
+                    </div>
+                  </div>
+            </div>
                
                
            
@@ -549,7 +588,44 @@
             </tr>
           </thead>
           <tbody id="pagelist">   </tbody>
-            <tr>
+                  <div class="modal fade" id="PageModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="postModalLabel">Edit Page</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="editPageForm">
+                        <div class="mb-3" style="display: none;">
+                          <input hidden readonly id="edit-page-id" type="text" class="form-control custom-border">
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Page Name</label>
+                          <input id="edit-page-pageName" type="text" class="form-control custom-border">
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Description</label>
+                          <textarea id="edit-page-description" class="form-control custom-border"></textarea>
+                        </div>
+                        <div class="mb-3">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input custom-border" type="checkbox" id="edit-page-status" value="option1">
+                            <label class="form-check-label" for="inlineCheckbox1">Status</label>
+                          </div>
+          
+                        </div>
+          
+          
+                      </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" form="editPostForm">Submit</button>
+                      </div>
+                    </div>
+                  </div>
+            </div>
              
          
 
@@ -682,10 +758,9 @@
     </tr>
   </thead>
   <tbody id="userlist">  </tbody>
-    <tr>
      
         <!-- Modal with unique ID -->
-        <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+        <div class="modal fade" id="UserModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
@@ -693,40 +768,33 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form>
+                <form id="editUserForm">
                   <div class="row">
+                    <div class="mb-3" style="display: none;">
+                          <input hidden readonly id="edit-user-id" type="text" class="form-control custom-border">
+                        </div>
                     <div class="col-6">
                       <label class="form-label"> first name</label>
-                      <input type="text" class="form-control custom-border ">
+                      <input id="edit-user-firstname" type="text" class="form-control custom-border ">
                     </div>
                     <div class="col-6">
                       <label class="form-label">last name</label>
-                      <input type="text" class="form-control custom-border ">
+                      <input id="edit-user-lastname" type="text" class="form-control custom-border ">
                     </div>
                     <div>
                       <div class="row">
                         <div class="col-6">
                           <label class="form-label"> email</label>
-                          <input type="email" class="form-control custom-border ">
+                          <input id="edit-user-email" type="email" class="form-control custom-border ">
                         </div>
-                        <div class="col-6">
-                          <label class="form-label">password</label>
-                          <input type="password" class="form-control custom-border ">
-                        </div>
-                        <div class="">
-                          <label class="form-label"> confirm password</label>
-                          <input type="password" class="form-control custom-border ">
-                        </div>
-
-
-
+                       
                         <div class="col-6">
                           <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                            <input class="form-check-input" type="checkbox" id="edit-user-active" value="option1">
                             <label class="form-check-label" for="inlineCheckbox1">Status</label>
                           </div>
                           <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                            <input class="form-check-input" type="checkbox" id="edit-user-admin" value="option2">
                             <label class="form-check-label" for="inlineCheckbox2">Admin</label>
                           </div>
 
