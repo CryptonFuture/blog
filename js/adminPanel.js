@@ -452,8 +452,15 @@ async function viewPost(id) {
 function update() {
 	if (selectedPostId) {
       updatePost(selectedPostId);
-    }
+    } else if(selectedTagId) {
+	  updateTag(selectedTagId)
+	} else if(selectedPageId) {
+	  updatePage(selectedPageId)
+	} else if(selectedUserId) {
+	  updateUser(selectedUserId)
+	}
 }
+
 
 async function updatePost(id) {
 	
@@ -496,6 +503,135 @@ async function updatePost(id) {
 	}
 
 }
+
+async function updateTag(id) {
+	
+	const tagName = document.getElementById('edit-tag-tagName').value
+	const description = document.getElementById('edit-tag-description').value
+	const status = document.getElementById('edit-tag-status').checked
+
+	const res = await fetch(`${baseUrl}/updateTag/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ tagName, description, status })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update Tag Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchTag();
+			$('#TagModal').modal('hide');
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete tag: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
+}
+
+async function updatePage(id) {
+	
+	const pageName = document.getElementById('edit-page-pageName').value
+	const description = document.getElementById('edit-page-description').value
+	const status = document.getElementById('edit-page-status').checked
+
+	const res = await fetch(`${baseUrl}/updatePages/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ pageName, description, status })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update Page Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchPages();
+			$('#PageModal').modal('hide');
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete page: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
+}
+
+async function updateUser(id) {
+	
+	const firstname = document.getElementById('edit-user-firstname').value
+	const lastname = document.getElementById('edit-user-lastname').value
+	const email = document.getElementById('edit-user-email').value
+	const active = document.getElementById('edit-user-active').checked
+	const is_admin = document.getElementById('edit-user-admin').checked
+
+	const res = await fetch(`${baseUrl}/updateUser/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ firstname, lastname, email, active, is_admin })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update User Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchUser();
+			$('#UserModal').modal('hide');
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete user: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
+}
+
 
 
 
