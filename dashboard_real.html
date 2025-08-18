@@ -511,6 +511,38 @@
                     </div>
                   </div>
             </div>
+
+              <div class="modal fade" id="viewTagModal" tabindex="-1" aria-labelledby="viewTagModalLabel"
+                      aria-hidden="true">
+
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="viewTagModalLabel">View Tag</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body" id="viewTag">
+                            
+                             <ul class="list-group list-group-flush">
+                                      <li id="view-tag-id" class="list-group-item"></li>
+                                      <li id="view-tag-tagName" class="list-group-item"></li>
+                                      <li id="view-tag-description" class="list-group-item"></li>
+                                      <li id="view-tag-status" class="list-group-item"></li>
+                                      <li id="view-tag-createdAt" class="list-group-item"></li>
+                                      <li id="view-tag-updatedAt" class="list-group-item"></li>
+                              </ul>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+            </div>
                
                
            
@@ -630,43 +662,37 @@
          
 
 
-              <!-- Modal with unique ID -->
-              <div class="modal fade" id="editmodal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="postModalLabel">Edit Page</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
+              <div class="modal fade" id="viewPageModal" tabindex="-1" aria-labelledby="viewTagModalLabel"
+                      aria-hidden="true">
 
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="viewTagModalLabel">View Page</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
 
-                      <div class="mb-3">
-                        <label class="form-label"> Page</label>
-                        <input type="text" class="form-control custom-border">
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control custom-border"></textarea>
-                      </div>
-                      <div class="mb-3">
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input custom-border" type="checkbox" id="inlineCheckbox1" value="option1">
-                          <label class="form-check-label" for="inlineCheckbox1">Status</label>
+                          <!-- Modal Body -->
+                          <div class="modal-body" id="viewPage">
+                            
+                             <ul class="list-group list-group-flush">
+                                      <li id="view-page-id" class="list-group-item"></li>
+                                      <li id="view-page-pageName" class="list-group-item"></li>
+                                      <li id="view-page-description" class="list-group-item"></li>
+                                      <li id="view-page-status" class="list-group-item"></li>
+                                      <li id="view-page-createdAt" class="list-group-item"></li>
+                                      <li id="view-page-updatedAt" class="list-group-item"></li>
+                              </ul>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
                         </div>
-
                       </div>
-
-
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Submit</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            </div>
 
        
         </table>
@@ -757,7 +783,9 @@
       <th>Action</th>
     </tr>
   </thead>
-  <tbody id="userlist">  </tbody>
+  <tbody id="userlist">  
+
+  </tbody>
      
         <!-- Modal with unique ID -->
         <div class="modal fade" id="UserModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
@@ -815,9 +843,42 @@
           </div>
         </div>
 
-      </td>
+       
 
 </table>
+<div class="modal fade" id="viewModalUser" tabindex="-1" aria-labelledby="viewUserModalLabel"
+                      aria-hidden="true">
+
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="viewUserModalLabel">View User</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body" id="viewUser">
+                            
+                             <ul class="list-group list-group-flush">
+                                      <li id="view-user-id" class="list-group-item"></li>
+                                      <li id="view-user-firstname" class="list-group-item"></li>
+                                      <li id="view-user-lastname" class="list-group-item"></li>
+                                      <li id="view-user-email" class="list-group-item"></li>
+                                      <li id="view-user-active" class="list-group-item"></li>
+                                      <li id="view-user-admin" class="list-group-item"></li>
+                                      <li id="view-user-createdAt" class="list-group-item"></li>
+                                      <li id="view-user-updatedAt" class="list-group-item"></li>
+                              </ul>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+            </div>
 </div>
    </div>
           </div>
