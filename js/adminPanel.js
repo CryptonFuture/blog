@@ -449,6 +449,104 @@ async function viewPost(id) {
 	}
 }
 
+async function viewTag(id) {
+
+	const res = await fetch(`${baseUrl}/viewTagById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('view-tag-id').innerHTML = `<strong>ID: </strong> <span> ${view._id} </span>`
+		document.getElementById('view-tag-tagName').innerHTML = `<strong>Tag Name: </strong> <span> ${view.tagName} </span>`
+		document.getElementById('view-tag-description').innerHTML = `<strong>Description: </strong> <span> ${view.description} </span>`
+		document.getElementById('view-tag-status').innerHTML = `<strong>Status: </strong> <span> ${view.status ? 'active' : 'InActive'} </span>`
+		document.getElementById('view-tag-createdAt').innerHTML = `<strong>CreatedAt: </strong> <span> ${new Date(view.createdAt).toISOString().split('T')[0]} </span>`
+		document.getElementById('view-tag-updatedAt').innerHTML = `<strong>UpdatedAt: </strong> <span> ${new Date(view.updatedAt).toISOString().split('T')[0]} </span>`
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete tag: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function viewPage(id) {
+
+	const res = await fetch(`${baseUrl}/viewPagesById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('view-page-id').innerHTML = `<strong>ID: </strong> <span> ${view._id} </span>`
+		document.getElementById('view-page-pageName').innerHTML = `<strong>Page Name: </strong> <span> ${view.pageName} </span>`
+		document.getElementById('view-page-description').innerHTML = `<strong>Description: </strong> <span> ${view.description} </span>`
+		document.getElementById('view-page-status').innerHTML = `<strong>Status: </strong> <span> ${view.status ? 'active' : 'InActive'} </span>`
+		document.getElementById('view-page-createdAt').innerHTML = `<strong>CreatedAt: </strong> <span> ${new Date(view.createdAt).toISOString().split('T')[0]} </span>`
+		document.getElementById('view-page-updatedAt').innerHTML = `<strong>UpdatedAt: </strong> <span> ${new Date(view.updatedAt).toISOString().split('T')[0]} </span>`
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete page: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function viewUser(id) {
+
+	const res = await fetch(`${baseUrl}/viewUserById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('view-user-id').innerHTML = `<strong>ID: </strong> <span> ${view._id} </span>`
+		document.getElementById('view-user-firstname').innerHTML = `<strong>FirstName: </strong> <span> ${view.firstname} </span>`
+		document.getElementById('view-user-lastname').innerHTML = `<strong>LastName: </strong> <span> ${view.lastname} </span>`
+		document.getElementById('view-user-email').innerHTML = `<strong>Email: </strong> <span> ${view.email} </span>`
+		document.getElementById('view-user-active').innerHTML = `<strong>Status: </strong> <span> ${view.active ? 'active' : 'InActive'} </span>`
+		document.getElementById('view-user-admin').innerHTML = `<strong>Admin: </strong> <span> ${view.is_admin ? 'isAdmin' : 'isNotAdmin'} </span>`
+		document.getElementById('view-user-createdAt').innerHTML = `<strong>CreatedAt: </strong> <span> ${new Date(view.createdAt).toISOString().split('T')[0]} </span>`
+		document.getElementById('view-user-updatedAt').innerHTML = `<strong>UpdatedAt: </strong> <span> ${new Date(view.updatedAt).toISOString().split('T')[0]} </span>`
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete user: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
 function update() {
 	if (selectedPostId) {
       updatePost(selectedPostId);
@@ -670,7 +768,7 @@ async function fetchTag() {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="viewTag('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewTagModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
                     <li><a onclick="editTag('${item._id}')" class="dropdown-item" href="#TagModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deleteTag('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
@@ -727,7 +825,7 @@ async function fetchPages() {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="viewPage('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPageModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
                     <li><a onclick="editPage('${item._id}')" class="dropdown-item" href="#PageModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deletePage('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
@@ -786,7 +884,7 @@ async function fetchUser() {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="viewUser('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewModalUser"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
                     <li><a onclick="editUser('${item._id}')" class="dropdown-item" href="#UserModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deleteUser('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
