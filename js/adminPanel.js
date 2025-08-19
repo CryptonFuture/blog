@@ -32,9 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
 	fetchDashboard()
 	getSideBarRoutes()
 	fetchPost()
-fetchTag()
-fetchPages()
-fetchUser()
+	fetchTag()
+	fetchPages()
+	fetchUser()
+	countPost()
+	countTag()
+	countPage()
+	countUser()
 })
 
 
@@ -165,8 +169,34 @@ async function getSideBarRoutes() {
 
 }
 
+function applyFilters() {
+
+	fetchPost();
+}
+
+function TagApplyFilters() {
+
+	fetchTag();
+}
+
+function PageApplyFilters() {
+
+	fetchPages();
+}
+
+function UserApplyFilters() {
+
+	fetchUser();
+}
+
 async function fetchPost() {
-	const res = await fetch(`${baseUrl}/getPost`, {
+	const searchInput = document.getElementById('searchInput')?.value || "";
+
+	const queryParams = new URLSearchParams({
+		search: searchInput,
+	});
+
+	const res = await fetch(`${baseUrl}/getPost?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -180,6 +210,17 @@ async function fetchPost() {
 	const listpost = document.getElementById('postlist')
 
 	listpost.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listpost.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
 
 	post.forEach((item, index) => {
 		listpost.innerHTML += `
@@ -730,16 +771,14 @@ async function updateUser(id) {
 
 }
 
-
-
-
-
-
-
-
-
 async function fetchTag() {
-	const res = await fetch(`${baseUrl}/getTag`, {
+	const searchTagInput = document.getElementById('searchTagInput')?.value || "";
+
+	const queryParams = new URLSearchParams({
+		search: searchTagInput,
+	});
+
+	const res = await fetch(`${baseUrl}/getTag?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -753,6 +792,17 @@ async function fetchTag() {
 	const listtag = document.getElementById('taglist')
 
 	listtag.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listtag.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
 
 	tag.forEach((item, index) => {
 		listtag.innerHTML += `
@@ -795,7 +845,13 @@ async function fetchTag() {
 
 
 async function fetchPages() {
-	const res = await fetch(`${baseUrl}/getPages`, {
+	const searchPageInput = document.getElementById('searchPageInput')?.value || "";
+
+	const queryParams = new URLSearchParams({
+		search: searchPageInput,
+	});
+
+	const res = await fetch(`${baseUrl}/getPages?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -809,6 +865,17 @@ async function fetchPages() {
 	const listpages = document.getElementById('pagelist')
 
 	listpages.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listpages.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
 
 	pages.forEach((item, index) => {
 	
@@ -853,7 +920,13 @@ async function fetchPages() {
 
 
 async function fetchUser() {
-	const res = await fetch(`${baseUrl}/getUser`, {
+	const searchUserInput = document.getElementById('searchUserInput')?.value || "";
+
+	const queryParams = new URLSearchParams({
+		search: searchUserInput,
+	});
+
+	const res = await fetch(`${baseUrl}/getUser?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -867,6 +940,17 @@ async function fetchUser() {
 	const userlist= document.getElementById('userlist')
 
 	userlist.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			userlist.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
 
 	user.forEach((item, index) => {
 	
@@ -1205,3 +1289,115 @@ async function addUser() {
         console.error('Error:', error);
     }
 }
+
+async function countPost(search = "") {
+	
+	const queryParams = new URLSearchParams();
+
+	if (search) queryParams.append("search", search);
+	
+	const res = await fetch(`${baseUrl}/countPost?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('postCount').textContent = `No Of Count: ${count}`
+
+}
+
+async function countTag(search = "") {
+	const queryParams = new URLSearchParams();
+
+	if (search) queryParams.append("search", search );
+
+	const res = await fetch(`${baseUrl}/countTag?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('tagCount').textContent = `No Of Count: ${count}`
+
+}
+
+async function countPage(search = "") {
+
+	const queryParams = new URLSearchParams();
+	if (search) queryParams.append("search", search);
+
+	const res = await fetch(`${baseUrl}/countPages?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('pageCount').textContent = `No Of Count: ${count}`
+
+}
+
+async function countUser(search = "") {
+	const queryParams = new URLSearchParams();
+	if (search) queryParams.append("search", search);
+
+	const res = await fetch(`${baseUrl}/countUser?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('userCount').textContent = `No Of Count: ${count}`
+
+}
+
+function getSearchParamsAndCount() {
+  const search = document.getElementById('searchInput').value.trim();
+
+  countPost(search);
+}
+
+document.getElementById('searchInput').addEventListener('input', getSearchParamsAndCount);
+
+function getSearchTagParamsAndCount() {
+  const search = document.getElementById('searchTagInput').value.trim();
+
+  countTag(search);
+}
+
+document.getElementById('searchTagInput').addEventListener('input', getSearchTagParamsAndCount);
+
+function getSearchPageParamsAndCount() {
+  const search = document.getElementById('searchPageInput').value.trim();
+
+  countPage(search);
+}
+
+document.getElementById('searchPageInput').addEventListener('input', getSearchPageParamsAndCount);
+
+function getSearchUserParamsAndCount() {
+  const search = document.getElementById('searchUserInput').value.trim();
+
+  countUser(search);
+}
+
+document.getElementById('searchUserInput').addEventListener('input', getSearchUserParamsAndCount);

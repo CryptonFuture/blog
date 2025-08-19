@@ -269,15 +269,20 @@
             <h2 class="mb-4">Post</h2>
             
             <div class="input-group" style=" display: flex; flex-direction: row; justify-content: space-between;">
-              <input type="search" class="form-control rounded" placeholder="Search"
+             
+
+              <input id="searchInput"  oninput="applyFilters()" type="search" class="form-control rounded" placeholder="Search"
                 style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
-          
+           <div>
+            <span id="postCount"></span>
               <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold "
                 style="background-color: #bbdefb;  white-space: nowrap;" data-bs-toggle="modal"
                 data-bs-target="#postModal" data-bs-whatever="@mdo">
           
                 Create Post
               </button>
+           </div>
+            
             </div>
           
             <!-- Modal with unique ID -->
@@ -416,15 +421,20 @@
       
 
             <div class="input-group" style=" display: flex; flex-direction: row; justify-content: space-between;">
-              <input type="search" class="form-control rounded" placeholder="Search"
+              <input id="searchTagInput" oninput="TagApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
                 style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
 
-              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
-                style="background-color: #bbdefb; white-space: nowrap;" data-bs-toggle="modal"
-                data-bs-target="#tagModal">
+              <div>
+                <span id="tagCount"></span>
+                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
+                  style="background-color: #bbdefb; white-space: nowrap;" data-bs-toggle="modal"
+                  data-bs-target="#tagModal">
 
-                Create Tag
-              </button>
+                  Create Tag
+                </button>
+
+              </div>
+             
             </div>
 
             <!-- Modal with unique ID -->
@@ -565,15 +575,20 @@
     <!-- Yahan par content load hoga -->
       <h2 class="mb-4">Pages</h2>
         <div class="input-group rounded" style="display: flex; flex-direction: row; justify-content: space-between;">
-          <input type="search" class="form-control rounded" placeholder="Search"
+          <input id="searchPageInput" oninput="PageApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
             style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
 
-          <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
-            style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;" data-bs-toggle="modal"
-            data-bs-target="#pageModal">
+            <div>
+            <span id="pageCount"></span>
+              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
+                style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;" data-bs-toggle="modal"
+                data-bs-target="#pageModal">
 
-            Create Page
-          </button>
+                Create Page
+              </button>
+
+            </div>
+         
         </div>
 
         <!-- Modal with unique ID -->
@@ -713,14 +728,19 @@
       <h2 class="mb-4">User Management</h2>
 
 <div class="input-group rounded" style="display: flex; flex-direction: row; justify-content: space-between;">
-  <input  type="search" class="form-control rounded" placeholder="Search"
+  <input id="searchUserInput" oninput="UserApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
     style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
-  <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
-    style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;" data-bs-toggle="modal"
-    data-bs-target="#userModal">
+ <div>
+    <span id="userCount"></span>
+    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
+      style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;" data-bs-toggle="modal"
+      data-bs-target="#userModal">
 
-    Create User
-  </button>
+      Create User
+    </button>
+
+ </div>
+   
 </div>
 
 <!-- Modal with unique ID -->
