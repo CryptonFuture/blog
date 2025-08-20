@@ -270,11 +270,26 @@
             
             <div class="input-group" style=" display: flex; flex-direction: row; justify-content: space-between;">
              
-
-              <input id="searchInput"  oninput="applyFilters()" type="search" class="form-control rounded" placeholder="Search"
+              <div style="display: flex;">
+                  <input id="searchInput"  oninput="applyFilters()" type="search" class="form-control rounded" placeholder="Search"
                 style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
+                   <select style="margin-left: 10px;" class="form-select" id="sortSelect" onchange="fetchPost()">
+                      <option value="">Sort By</option>
+                      <option value="title:asc">Title (A-Z)</option>
+                      <option value="title:desc">Title (Z-A)</option>
+                      <option value="createdAt:asc">Oldest First</option>
+                      <option value="createdAt:desc" selected>Newest First</option>
+                    </select>
+              </div>
+              
+                
+             
+              
+                
            <div>
+           
             <span id="postCount"></span>
+            
               <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold "
                 style="background-color: #bbdefb;  white-space: nowrap;" data-bs-toggle="modal"
                 data-bs-target="#postModal" data-bs-whatever="@mdo">
@@ -284,7 +299,7 @@
            </div>
             
             </div>
-          
+         
             <!-- Modal with unique ID -->
             <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
               <div class="modal-dialog">
@@ -424,8 +439,18 @@
       
 
             <div class="input-group" style=" display: flex; flex-direction: row; justify-content: space-between;">
-              <input id="searchTagInput" oninput="TagApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
+              <div style="display: flex;">
+                <input id="searchTagInput" oninput="TagApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
                 style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
+                 <select style="margin-left: 10px;" class="form-select" id="sortTagSelect" onchange="fetchTag()">
+                      <option value="">Sort By</option>
+                      <option value="title:asc">Title (A-Z)</option>
+                      <option value="title:desc">Title (Z-A)</option>
+                      <option value="createdAt:asc">Oldest First</option>
+                      <option value="createdAt:desc" selected>Newest First</option>
+                    </select>
+              </div>
+              
 
               <div>
                 <span id="tagCount"></span>
@@ -581,8 +606,18 @@
     <!-- Yahan par content load hoga -->
       <h2 class="mb-4">Pages</h2>
         <div class="input-group rounded" style="display: flex; flex-direction: row; justify-content: space-between;">
-          <input id="searchPageInput" oninput="PageApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
+          <div style="display: flex;">
+             <input id="searchPageInput" oninput="PageApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
             style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
+             <select style="margin-left: 10px;" class="form-select" id="sortPageSelect" onchange="fetchPages()">
+                      <option value="">Sort By</option>
+                      <option value="title:asc">Title (A-Z)</option>
+                      <option value="title:desc">Title (Z-A)</option>
+                      <option value="createdAt:asc">Oldest First</option>
+                      <option value="createdAt:desc" selected>Newest First</option>
+                    </select>
+          </div>
+         
 
             <div>
             <span id="pageCount"></span>
@@ -737,8 +772,18 @@
       <h2 class="mb-4">User Management</h2>
 
 <div class="input-group rounded" style="display: flex; flex-direction: row; justify-content: space-between;">
-  <input id="searchUserInput" oninput="UserApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
+  <div style="display: flex;">
+     <input id="searchUserInput" oninput="UserApplyFilters()" type="search" class="form-control rounded" placeholder="Search"
     style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
+     <select style="margin-left: 10px;" class="form-select" id="sortUserSelect" onchange="fetchUser()">
+                      <option value="">Sort By</option>
+                      <option value="title:asc">Title (A-Z)</option>
+                      <option value="title:desc">Title (Z-A)</option>
+                      <option value="createdAt:asc">Oldest First</option>
+                      <option value="createdAt:desc" selected>Newest First</option>
+                    </select>
+  </div>
+ 
  <div>
     <span id="userCount"></span>
     <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
