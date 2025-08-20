@@ -36,7 +36,14 @@ let currentPagePage = 1;
 let totalPagePages = 1;
 
 let currentUserPage = 1;
-let totalUserPages = 1;
+let totalUserPages = 1
+
+const firstname = localStorage.getItem('firstname') || ""
+const lastname = localStorage.getItem('lastname') || ""
+
+const fullname = `${firstname} ${lastname}`.trim()
+
+document.getElementById('username').textContent = fullname || "No User Found"
 
 const tokenType = localStorage.getItem('tokenType')
 const access_Token = localStorage.getItem('token')
@@ -93,6 +100,8 @@ async function logout() {
 		localStorage.removeItem('user');
 		localStorage.removeItem('email');
 		localStorage.removeItem('tokenType');
+		localStorage.removeItem('firstname');
+    	localStorage.removeItem('lastname');
 		localStorage.removeItem('rememberMe')
 		localStorage.removeItem('rememberedEmail');
 		localStorage.removeItem('rememberedPassword');
