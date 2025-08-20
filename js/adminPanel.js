@@ -209,11 +209,12 @@ function UserApplyFilters() {
 async function fetchPost(page = 1) {
 
 	currentPage = page
-
+	const sortValue = document.getElementById('sortSelect')?.value || "";
 	const searchInput = document.getElementById('searchInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
 		search: searchInput,
+		sort: sortValue,
 		page: currentPage,
 		limit,
 	});
@@ -311,6 +312,11 @@ document.getElementById('searchInput')?.addEventListener('keydown', (e) => {
 		currentPage = 1;
 		fetchPost();
 	}
+});
+
+document.getElementById('sortSelect')?.addEventListener('change', () => {
+	currentPage = 1;
+	fetchPost();
 });
 
 async function addPost() {
@@ -843,10 +849,13 @@ async function fetchTag(page = 1) {
 
 	currentTagPage = page
 
+	const sortValue = document.getElementById('sortTagSelect')?.value || "";
+
 	const searchTagInput = document.getElementById('searchTagInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
 		search: searchTagInput,
+		sort: sortValue,
 		page: currentTagPage,
 		limit
 	});
@@ -946,6 +955,11 @@ document.getElementById('searchTagInput')?.addEventListener('keydown', (e) => {
 	}
 });
 
+document.getElementById('sortTagSelect')?.addEventListener('change', () => {
+	currentTagPage = 1;
+	fetchTag();
+});
+
 
 
 
@@ -965,10 +979,13 @@ async function fetchPages(page = 1) {
 
 	currentPagePage = page
 
+	const sortValue = document.getElementById('sortPageSelect')?.value || "";
+
 	const searchPageInput = document.getElementById('searchPageInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
 		search: searchPageInput,
+		sort: sortValue,
 		page: currentPagePage,
 		limit
 	});
@@ -1070,6 +1087,11 @@ document.getElementById('searchPageInput')?.addEventListener('keydown', (e) => {
 	}
 });
 
+document.getElementById('sortPageSelect')?.addEventListener('change', () => {
+	currentPagePage = 1;
+	fetchPages();
+});
+
 
 
 
@@ -1090,10 +1112,13 @@ async function fetchUser(page = 1) {
 
 	currentUserPage = page
 
+	const sortValue = document.getElementById('sortUserSelect')?.value || "";
+
 	const searchUserInput = document.getElementById('searchUserInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
 		search: searchUserInput,
+		sort: sortValue,
 		page: currentUserPage,
 		limit
 	});
@@ -1194,6 +1219,12 @@ document.getElementById('searchUserInput')?.addEventListener('keydown', (e) => {
 		fetchUser();
 	}
 });
+
+document.getElementById('sortUserSelect')?.addEventListener('change', () => {
+	currentUserPage = 1;
+	fetchUser();
+});
+
 
 
 
