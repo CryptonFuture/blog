@@ -25,6 +25,19 @@ let selectedTagId = null
 let selectedPageId = null
 let selectedUserId = null
 
+let currentPage = 1;
+const limit = 5;
+let totalPages = 1;
+
+let currentTagPage = 1;
+let totalTagPages = 1;
+
+let currentPagePage = 1;
+let totalPagePages = 1;
+
+let currentUserPage = 1;
+let totalUserPages = 1;
+
 const tokenType = localStorage.getItem('tokenType')
 const access_Token = localStorage.getItem('token')
 
@@ -170,30 +183,39 @@ async function getSideBarRoutes() {
 }
 
 function applyFilters() {
+	currentPage = 1;
 
 	fetchPost();
 }
 
 function TagApplyFilters() {
+	currentTagPage = 1;
 
 	fetchTag();
 }
 
 function PageApplyFilters() {
+	currentPagePage = 1;
 
 	fetchPages();
 }
 
 function UserApplyFilters() {
+	currentUserPage = 1;
 
 	fetchUser();
 }
 
-async function fetchPost() {
+async function fetchPost(page = 1) {
+
+	currentPage = page
+
 	const searchInput = document.getElementById('searchInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
 		search: searchInput,
+		page: currentPage,
+		limit,
 	});
 
 	const res = await fetch(`${baseUrl}/getPost?${queryParams.toString()}`, {
@@ -219,13 +241,14 @@ async function fetchPost() {
 					</td>
 				</tr>
 			`;
+			document.getElementById('pagination').innerHTML = '';
 			return;
 	}
 
 	post.forEach((item, index) => {
 		listpost.innerHTML += `
 				 <tr>
-                <td>${index + 1}</td>
+                <td>${(currentPage - 1) * limit + index + 1}</td>
                 <td>${item.title}</td>
                 <td>${item.description}</td>
                 <td>${item.status ? 'published' : 'unPublished'}</td>
@@ -245,7 +268,50 @@ async function fetchPost() {
 				</tr>
 			`
 	})
+	totalPages = data.pagination.totalPages;
+	renderPaginationButtons(totalPages);
 }
+
+function renderPaginationButtons(total) {
+	const pagination = document.getElementById('pagination');
+	pagination.innerHTML = '';
+
+	const prev = document.createElement('li');
+	prev.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+	prev.onclick = (e) => {
+		e.preventDefault();
+		if (currentPage > 1) fetchPost(currentPage - 1);
+	};
+	pagination.appendChild(prev);
+
+	for (let i = 1; i <= total; i++) {
+		const pageBtn = document.createElement('li');
+		pageBtn.className = `page-item ${i === currentPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.onclick = (e) => {
+			e.preventDefault();
+			fetchPost(i);
+		};
+		pagination.appendChild(pageBtn);
+	}
+
+	const next = document.createElement('li');
+	next.className = `page-item ${currentPage === total ? 'disabled' : ''}`;
+	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+	next.onclick = (e) => {
+		e.preventDefault();
+		if (currentPage < total) fetchPost(currentPage + 1);
+	};
+	pagination.appendChild(next);
+}
+
+document.getElementById('searchInput')?.addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') {
+		currentPage = 1;
+		fetchPost();
+	}
+});
 
 async function addPost() {
 		const title = document.getElementById('title').value
@@ -272,6 +338,7 @@ async function addPost() {
 			timerProgressBar: true
 		}).then(() => {
 			fetchPost();
+			countPost()
 			$('#postModal').modal('hide');
 			document.getElementById('title').value = ""
 			document.getElementById('description').value = ""
@@ -320,6 +387,7 @@ async function deletePost(id) {
 				timerProgressBar: true
 			}).then(() => {
 				fetchPost();
+				countPost()
 			});
 
 		} else {
@@ -771,11 +839,16 @@ async function updateUser(id) {
 
 }
 
-async function fetchTag() {
+async function fetchTag(page = 1) {
+
+	currentTagPage = page
+
 	const searchTagInput = document.getElementById('searchTagInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
 		search: searchTagInput,
+		page: currentTagPage,
+		limit
 	});
 
 	const res = await fetch(`${baseUrl}/getTag?${queryParams.toString()}`, {
@@ -801,13 +874,14 @@ async function fetchTag() {
 					</td>
 				</tr>
 			`;
+			document.getElementById('tagPagination').innerHTML = '';
 			return;
 	}
 
 	tag.forEach((item, index) => {
 		listtag.innerHTML += `
 				 <tr>
-                <td>${index + 1}</td>
+                <td>${(currentTagPage - 1) * limit + index + 1}</td>
                 <td>${item.tagname || item.tagName}</td>
                 <td>${item.description}</td>
                 <td>${item.status ? 'active' : 'inactive'}</td>
@@ -827,8 +901,50 @@ async function fetchTag() {
 				</tr>
 			`
 	})
+	totalTagPages = data.pagination.totalPages;
+	renderTagPaginationButtons(totalTagPages);
 }
 
+function renderTagPaginationButtons(total) {
+	const pagination = document.getElementById('tagPagination');
+	pagination.innerHTML = '';
+
+	const prev = document.createElement('li');
+	prev.className = `page-item ${currentTagPage === 1 ? 'disabled' : ''}`;
+	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+	prev.onclick = (e) => {
+		e.preventDefault();
+		if (currentTagPage > 1) fetchTag(currentTagPage - 1);
+	};
+	pagination.appendChild(prev);
+
+	for (let i = 1; i <= total; i++) {
+		const pageBtn = document.createElement('li');
+		pageBtn.className = `page-item ${i === currentTagPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.onclick = (e) => {
+			e.preventDefault();
+			fetchTag(i);
+		};
+		pagination.appendChild(pageBtn);
+	}
+
+	const next = document.createElement('li');
+	next.className = `page-item ${currentTagPage === total ? 'disabled' : ''}`;
+	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+	next.onclick = (e) => {
+		e.preventDefault();
+		if (currentTagPage < total) fetchTag(currentTagPage + 1);
+	};
+	pagination.appendChild(next);
+}
+
+document.getElementById('searchTagInput')?.addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') {
+		currentTagPage = 1;
+		fetchTag();
+	}
+});
 
 
 
@@ -844,11 +960,17 @@ async function fetchTag() {
 
 
 
-async function fetchPages() {
+
+async function fetchPages(page = 1) {
+
+	currentPagePage = page
+
 	const searchPageInput = document.getElementById('searchPageInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
 		search: searchPageInput,
+		page: currentPagePage,
+		limit
 	});
 
 	const res = await fetch(`${baseUrl}/getPages?${queryParams.toString()}`, {
@@ -874,6 +996,8 @@ async function fetchPages() {
 					</td>
 				</tr>
 			`;
+			document.getElementById('pagePagination').innerHTML = '';
+
 			return;
 	}
 
@@ -881,7 +1005,7 @@ async function fetchPages() {
 	
 	listpages.innerHTML += `
 				 <tr>
-                <td>${index + 1}</td>
+                <td>${(currentPagePage - 1) * limit + index + 1}</td>
                 <td>${item.pageName || item.pageName}</td>
                 <td>${item.description}</td>
                 <td>${item.status ? 'active' : 'inactive'}</td>
@@ -901,8 +1025,50 @@ async function fetchPages() {
 				</tr>
 			`
 	})
+	totalPagePages = data.pagination.totalPages;
+	renderPagePaginationButtons(totalPagePages);
 }
 
+function renderPagePaginationButtons(total) {
+	const pagination = document.getElementById('pagePagination');
+	pagination.innerHTML = '';
+
+	const prev = document.createElement('li');
+	prev.className = `page-item ${currentPagePage === 1 ? 'disabled' : ''}`;
+	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+	prev.onclick = (e) => {
+		e.preventDefault();
+		if (currentPagePage > 1) fetchPages(currentPagePage - 1);
+	};
+	pagination.appendChild(prev);
+
+	for (let i = 1; i <= total; i++) {
+		const pageBtn = document.createElement('li');
+		pageBtn.className = `page-item ${i === currentPagePage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.onclick = (e) => {
+			e.preventDefault();
+			fetchPages(i);
+		};
+		pagination.appendChild(pageBtn);
+	}
+
+	const next = document.createElement('li');
+	next.className = `page-item ${currentPagePage === total ? 'disabled' : ''}`;
+	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+	next.onclick = (e) => {
+		e.preventDefault();
+		if (currentPagePage < total) fetchPages(currentPagePage + 1);
+	};
+	pagination.appendChild(next);
+}
+
+document.getElementById('searchPageInput')?.addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') {
+		currentPagePage = 1;
+		fetchPages();
+	}
+});
 
 
 
@@ -919,11 +1085,17 @@ async function fetchPages() {
 
 
 
-async function fetchUser() {
+
+async function fetchUser(page = 1) {
+
+	currentUserPage = page
+
 	const searchUserInput = document.getElementById('searchUserInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
 		search: searchUserInput,
+		page: currentUserPage,
+		limit
 	});
 
 	const res = await fetch(`${baseUrl}/getUser?${queryParams.toString()}`, {
@@ -949,6 +1121,7 @@ async function fetchUser() {
 					</td>
 				</tr>
 			`;
+			document.getElementById('userPagination').innerHTML = '';
 			return;
 	}
 
@@ -956,7 +1129,7 @@ async function fetchUser() {
 	
 	userlist.innerHTML += `
 				 <tr>
-                <td>${index + 1}</td>
+                <td>${(currentUserPage - 1) * limit + index + 1}</td>
                 <td>${item.firstname || item.firstname}</td>
                 <td>${item.lastname}</td>
 				<td>${item.email}</td>
@@ -977,7 +1150,50 @@ async function fetchUser() {
 				</tr>
 			`
 	})
+	totalUserPages = data.pagination.totalPages;
+	renderUserPaginationButtons(totalUserPages);
 }
+
+function renderUserPaginationButtons(total) {
+	const pagination = document.getElementById('userPagination');
+	pagination.innerHTML = '';
+
+	const prev = document.createElement('li');
+	prev.className = `page-item ${currentUserPage === 1 ? 'disabled' : ''}`;
+	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+	prev.onclick = (e) => {
+		e.preventDefault();
+		if (currentUserPage > 1) fetchUser(currentUserPage - 1);
+	};
+	pagination.appendChild(prev);
+
+	for (let i = 1; i <= total; i++) {
+		const pageBtn = document.createElement('li');
+		pageBtn.className = `page-item ${i === currentUserPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.onclick = (e) => {
+			e.preventDefault();
+			fetchUser(i);
+		};
+		pagination.appendChild(pageBtn);
+	}
+
+	const next = document.createElement('li');
+	next.className = `page-item ${currentUserPage === total ? 'disabled' : ''}`;
+	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+	next.onclick = (e) => {
+		e.preventDefault();
+		if (currentUserPage < total) fetchUser(currentUserPage + 1);
+	};
+	pagination.appendChild(next);
+}
+
+document.getElementById('searchUserInput')?.addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') {
+		currentUserPage = 1;
+		fetchUser();
+	}
+});
 
 
 
