@@ -177,6 +177,9 @@ async function login() {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', data.user.id);
     localStorage.setItem('email', data.user.email);
+    localStorage.setItem('firstname', data.user.firstname);
+    localStorage.setItem('lastname', data.user.lastname);
+
     localStorage.setItem('tokenType', data.user.tokenType);
 
     if (rememberMe) {
