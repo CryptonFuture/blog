@@ -1265,6 +1265,7 @@ async function deleteTag(id) {
 				timerProgressBar: true
 			}).then(() => {
 				fetchTag();
+				countTag()
 			});
 
 		} else {
@@ -1316,6 +1317,7 @@ async function deletePage(id) {
 				timerProgressBar: true
 			}).then(() => {
 				fetchPages();
+				countPage()
 			});
 
 		} else {
@@ -1369,6 +1371,7 @@ async function deleteUser(id) {
 				timerProgressBar: true
 			}).then(() => {
 				fetchUser();
+				countUser()
 			});
 
 		} else {
@@ -1417,6 +1420,7 @@ async function addTag() {
 			timerProgressBar: true
 		}).then(() => {
 			fetchTag();
+			countTag()
 			$('#tagModal').modal('hide');
 			document.getElementById('tag-name').value = ""
 			document.getElementById('tag-description').value = ""
@@ -1465,6 +1469,7 @@ async function addPage() {
 			timerProgressBar: true
 		}).then(() => {
 			fetchTag();
+			countPage()
 			$('#pageModal').modal('hide');
 			document.getElementById('page-name').value = ""
 			document.getElementById('page-description').value = ""
@@ -1514,6 +1519,7 @@ async function addUser() {
                 timerProgressBar: true
             }).then(() => {
                 fetchUser(); // You'll need to implement this function
+				countUser()
                 $('#userModal').modal('hide');
                 document.getElementById('firstName').value = "";
                 document.getElementById('lastName').value = "";
