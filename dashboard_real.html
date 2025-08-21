@@ -289,6 +289,11 @@
            <div>
            
             <span id="postCount"></span>
+             <button type="button" class="btn btn-outline-orange" onclick="resetFilters()">Reset filters</button>
+
+                    <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#filterModal">
+                      Advanced Filter
+                    </button>
             
               <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold "
                 style="background-color: #bbdefb;  white-space: nowrap;" data-bs-toggle="modal"
@@ -299,6 +304,40 @@
            </div>
             
             </div>
+
+              <!-- Advanced Filter Modal -->
+                  <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form id="filterForm">
+                            <div class="mb-3">
+                              <label for="statusFilter" class="form-label">Status</label>
+                              <select id="statusFilter" class="form-select">
+                                <option value="">All</option>
+                                <option value="true">Published</option>
+                                <option value="false">Unpublished</option>
+                              </select>
+                            </div>
+                            <div class="mb-3">
+                              <label for="startDate" class="form-label">Date</label>
+                              <input type="date" id="date" class="form-control" />
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-outline-orange" onclick="clearFilters()">clear filter</button>
+                          <button type="button" class="btn btn-dark" onclick="applyFilters()" data-bs-dismiss="modal">Apply
+                            Filters</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
          
             <!-- Modal with unique ID -->
             <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
@@ -454,6 +493,11 @@
 
               <div>
                 <span id="tagCount"></span>
+                <button type="button" class="btn btn-outline-orange" onclick="tagResetFilters()">Reset filters</button>
+
+                    <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#tagFilterModal">
+                      Advanced Filter
+                    </button>
                 <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
                   style="background-color: #bbdefb; white-space: nowrap;" data-bs-toggle="modal"
                   data-bs-target="#tagModal">
@@ -582,7 +626,39 @@
                       </div>
             </div>
                
-               
+                  <!-- Advanced Filter Modal -->
+                  <div class="modal fade" id="tagFilterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form id="filterForm">
+                            <div class="mb-3">
+                              <label for="tagStatusFilter" class="form-label">Status</label>
+                              <select id="tagStatusFilter" class="form-select">
+                                <option value="">All</option>
+                                <option value="true">Active</option>
+                                <option value="false">InActive</option>
+                              </select>
+                            </div>
+                            <div class="mb-3">
+                              <label for="startDate" class="form-label">Date</label>
+                              <input type="date" id="tagDate" class="form-control" />
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-outline-orange" onclick="tagClearFilters()">clear filter</button>
+                          <button type="button" class="btn btn-dark" onclick="TagApplyFilters()" data-bs-dismiss="modal">Apply
+                            Filters</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
            
             </table>
 
@@ -621,6 +697,11 @@
 
             <div>
             <span id="pageCount"></span>
+              <button type="button" class="btn btn-outline-orange" onclick="pageResetFilters()">Reset filters</button>
+
+                    <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#pageFilterModal">
+                      Advanced Filter
+                    </button>
               <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
                 style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;" data-bs-toggle="modal"
                 data-bs-target="#pageModal">
@@ -750,6 +831,39 @@
                       </div>
             </div>
 
+              <!-- Advanced Filter Modal -->
+                  <div class="modal fade" id="pageFilterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form id="filterForm">
+                            <div class="mb-3">
+                              <label for="pageStatusFilter" class="form-label">Status</label>
+                              <select id="pageStatusFilter" class="form-select">
+                                <option value="">All</option>
+                                <option value="true">Active</option>
+                                <option value="false">InActive</option>
+                              </select>
+                            </div>
+                            <div class="mb-3">
+                              <label for="startDate" class="form-label">Date</label>
+                              <input type="date" id="pageDate" class="form-control" />
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-outline-orange" onclick="pageClearFilters()">clear filter</button>
+                          <button type="button" class="btn btn-dark" onclick="PageApplyFilters()" data-bs-dismiss="modal">Apply
+                            Filters</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
        
         </table>
         </div>
@@ -786,6 +900,11 @@
  
  <div>
     <span id="userCount"></span>
+     <button type="button" class="btn btn-outline-orange" onclick="userResetFilters()">Reset filters</button>
+
+                    <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#userFilterModal">
+                      Advanced Filter
+                    </button>
     <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
       style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;" data-bs-toggle="modal"
       data-bs-target="#userModal">
@@ -954,6 +1073,40 @@
                         </div>
                       </div>
             </div>
+
+             <!-- Advanced Filter Modal -->
+                  <div class="modal fade" id="userFilterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form id="filterForm">
+                            <div class="mb-3">
+                              <label for="userStatusFilter" class="form-label">Status</label>
+                              <select id="userStatusFilter" class="form-select">
+                                <option value="">All</option>
+                                <option value="true">Active</option>
+                                <option value="false">InActive</option>
+                              </select>
+                            </div>
+                            <div class="mb-3">
+                              <label for="startDate" class="form-label">Date</label>
+                              <input type="date" id="userDate" class="form-control" />
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-outline-orange" onclick="userClearFilters()">clear filter</button>
+                          <button type="button" class="btn btn-dark" onclick="UserApplyFilters()" data-bs-dismiss="modal">Apply
+                            Filters</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 </div>
 <nav>
                   <ul  id="userPagination" class="pagination justify-content-center mt-3"></ul>
