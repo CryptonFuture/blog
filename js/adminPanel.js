@@ -60,10 +60,13 @@ let userFilters = {
 
 const firstname = localStorage.getItem('firstname') || ""
 const lastname = localStorage.getItem('lastname') || ""
+const emailAddress = localStorage.getItem('email') || ""
 
 const fullname = `${firstname} ${lastname}`.trim()
 
 document.getElementById('username').textContent = fullname || "No User Found"
+document.getElementById('email').textContent = emailAddress || "No User Found"
+
 
 const tokenType = localStorage.getItem('tokenType')
 const access_Token = localStorage.getItem('token')
@@ -79,7 +82,42 @@ document.addEventListener('DOMContentLoaded', function () {
 	countTag()
 	countPage()
 	countUser()
+	viewProfile()
+	editProfile()
+
+	const selectAll = document.getElementById('select-all');
+	const deleteBtn = document.getElementById('delete-all-btn');
+
+	function updateDeleteButtonVisibility() {
+      const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
+      if (selectedCheckboxes.length > 0) {
+        deleteBtn.classList.remove('d-none');
+      } else {
+        deleteBtn.classList.add('d-none');
+      }
+    }
+
+    selectAll.addEventListener('change', function () {
+      const checkboxes = document.querySelectorAll('.row-checkbox');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+      });
+	  updateDeleteButtonVisibility()
+    });
+
+	 document.addEventListener('change', function (e) {
+      if (e.target.classList.contains('row-checkbox')) {
+        const all = document.querySelectorAll('.row-checkbox');
+        const checked = document.querySelectorAll('.row-checkbox:checked');
+        selectAll.checked = all.length === checked.length;
+
+		  updateDeleteButtonVisibility()
+      }
+    });
 })
+
+
+
 
 
 function setupAutoLogout() {
@@ -148,6 +186,91 @@ async function logout() {
 		});
 	}
 }
+
+async function viewProfile() {
+	const userId = localStorage.getItem('user')
+
+	const res = await fetch(`${baseUrl}/viewProfileById/${userId}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (!data.success || !data.data || data.data.length === 0) {
+	 document.getElementById('notFound').innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('view-profile-name').innerHTML = ` <span> ${view.firstname ? view.firstname : '----------'} ${view.lastname ? view.lastname : '----------'} </span>`
+		document.getElementById('view-profile-email').innerHTML = ` <span> ${view.email ? view.email : '----------'} </span>`
+		document.getElementById('view-profile-phone').innerHTML = ` <span> ${view.phone ? view.phone : '----------'} </span>`
+		document.getElementById('view-profile-address').innerHTML = ` <span> ${view.address ? view.address : '----------'} </span>`
+		document.getElementById('delete-button').innerHTML = ` <button onclick="deleteUserProfile()" class="btn btn-danger mt-3">
+                            <i class="bi bi-trash-fill me-2"></i>
+                            Delete Account
+                        </button>`
+	} 
+	else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete post: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function editProfile() {
+	const userId = localStorage.getItem('user')
+
+	const res = await fetch(`${baseUrl}/editProfileById/${userId}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('edit-profile-firstname').value = view.firstname
+		document.getElementById('edit-profile-lastname').value = view.lastname
+		document.getElementById('edit-profile-email').value = view.email
+		document.getElementById('edit-profile-phone').value = view.phone
+		document.getElementById('edit-profile-address').value = view.address
+
+	
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete post: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+
+
+
 
 async function fetchDashboard() {
 	const res = await fetch(`${baseUrl}/countAll`, {
@@ -384,6 +507,11 @@ async function fetchPost(page = 1) {
 	post.forEach((item, index) => {
 		listpost.innerHTML += `
 				 <tr>
+				<td>
+					<div class="form-check">
+						<input class="form-check-input row-checkbox" type="checkbox" />
+					</div>
+				</td>
                 <td>${(currentPage - 1) * limit + index + 1}</td>
                 <td>${item.title}</td>
                 <td>${item.description}</td>
@@ -1528,6 +1656,97 @@ async function deleteUser(id) {
 	}
 }
 
+async function updateUserProfile() {
+
+	const userId = localStorage.getItem('user')
+
+	const phone = document.getElementById('edit-profile-phone').value
+	const address = document.getElementById('edit-profile-address').value
+
+	const res = await fetch(`${baseUrl}/updateUserProfile/${userId}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ phone, address })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update User Profile Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			window.location.href = '/dashboard_real.html'
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete profile: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
+}
+
+async function deleteUserProfile() {
+	const userId = localStorage.getItem('user')
+
+	const result = await Swal.fire({
+		title: 'Are you sure you want to delete this profile?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, delete it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/deleteUserProfile/${userId}`, {
+			method: 'DELETE',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Delete User Profile Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				window.location.href = '/dashboard_real.html'
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete profile: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
 
 
 
@@ -1829,3 +2048,92 @@ document.getElementById('searchUserInput').addEventListener('input', getSearchUs
 document.getElementById('userStatusFilter').addEventListener('change', getSearchUserParamsAndCount);
 
 document.getElementById('userDate').addEventListener('change', getSearchUserParamsAndCount);
+
+async function deleteSelectedPosts() {
+  const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+  const ids = [];
+
+  checkboxes.forEach((checkbox, index) => {
+    const row = checkbox.closest('tr');
+    const titleCell = row.querySelector('td:nth-child(3)');
+    const title = titleCell?.innerText;
+
+    const editBtn = row.querySelector('.dropdown-menu a[onclick^="editPost"]');
+    const idMatch = editBtn?.getAttribute('onclick')?.match(/'([^']+)'/);
+    if (idMatch) {
+      ids.push(idMatch[1]);
+    }
+  });
+
+  if (ids.length === 0) {
+		Swal.fire({
+			icon: 'info',
+			title: 'Please select at least one post to delete.',
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+    	return;
+  }
+
+  const result = await Swal.fire({
+		title: `Are you sure you want to delete ${ids.length} selected post(s)?`,
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, delete it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		try {
+		const res = await fetch(`${baseUrl}/deleteMultiplePost?ids=${ids.join(',')}`, {
+			method: "DELETE",
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		});
+
+    	const data = await res.json();
+
+		if (data.success) {
+			Swal.fire({
+				icon: 'success',
+				title: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		fetchPost(currentPage)
+		countPost()
+		document.getElementById('delete-all-btn').classList.add('d-none');
+		document.querySelectorAll('.row-checkbox:checked').forEach(cb => cb.checked = false);
+		const headerCheckbox = document.querySelector('#select-all'); // **Assumes your header checkbox has an ID of 'selectAllCheckbox'**
+        if (headerCheckbox) {
+          headerCheckbox.checked = false;
+        }
+
+		} else {
+			Swal.fire({
+				icon: 'success',
+				title: data.error || 'Failed to delete posts.',
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+  } catch (err) {
+	 Swal.fire({
+			icon: 'success',
+			title: err || 'An error occurred while deleting posts.',
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+  }
+	}
+
+ 
+}
