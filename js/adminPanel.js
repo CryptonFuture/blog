@@ -2135,5 +2135,47 @@ async function deleteSelectedPosts() {
   }
 	}
 
- 
+}
+
+async function changePassword() {
+
+	const userId = localStorage.getItem('user')
+
+	const oldPassword = document.getElementById('old-pass').value
+	const newPassword = document.getElementById('new-pass').value
+	const confirmPass = document.getElementById('confirm-pass').value
+
+	const res = await fetch(`${baseUrl}/changePassword/${userId}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ oldPassword, newPassword, confirmPass })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Password change Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			window.location.href = '/dashboard_real.html'
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete password: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
 }
