@@ -392,9 +392,9 @@
             <thead class="bg-light">
               <tr>
                 <th>
-                  <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="select-all" />
-                          </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="select-all" />
+                </div>
                 </th>
                 <th>S.No</th>
                 <th>Title</th>
@@ -484,7 +484,7 @@
           </div>
            <button onclick="deleteSelectedPosts()" id="delete-all-btn" class="btn btn-danger mb-5 mt-3 d-none">
                   Delete Selected
-                </button>
+           </button>
           <nav>
                   <ul  id="pagination" class="pagination justify-content-center mt-3"></ul>
                 </nav>
@@ -568,6 +568,11 @@
             <table class="table align-middle mb-0 bg-white" style="margin-top: 10px;">
               <thead class="bg-light">
                 <tr>
+                  <th>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="select-all-tag" />
+                  </div>
+                  </th>
                   <th>S.No</th>
                   <th>Tag</th>
                   <th>Description</th>
@@ -689,6 +694,9 @@
 
 
             </div>
+            <button onclick="deleteSelectedTag()" id="delete-all-btn-tag" class="btn btn-danger mb-5 mt-3 d-none">
+                  Delete Selected
+            </button>
             <nav>
                   <ul  id="tagPagination" class="pagination justify-content-center mt-3"></ul>
                 </nav>
@@ -772,6 +780,11 @@
         <table class="table align-middle mb-0 bg-white" style="margin-top: 10px;">
           <thead class="bg-light">
             <tr>
+              <th>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="select-all-page" />
+                </div>
+              </th>
               <th>S.No</th>
               <th>Pages</th>
               <th>Description</th>
@@ -892,9 +905,12 @@
        
         </table>
         </div>
-         <nav>
-                  <ul  id="pagePagination" class="pagination justify-content-center mt-3"></ul>
-                </nav>
+         <button onclick="deleteSelectedPage()" id="delete-all-btn-page" class="btn btn-danger mb-5 mt-3 d-none">
+                  Delete Selected
+            </button>
+        <nav>
+          <ul  id="pagePagination" class="pagination justify-content-center mt-3"></ul>
+        </nav>
         </div>
         </div>
         </div>
@@ -991,6 +1007,11 @@
 <table class="table align-middle mb-0 bg-white" style="margin-top: 10px;">
   <thead class="bg-light">
     <tr>
+      <th>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="select-all-user" />
+        </div>
+      </th>
       <th>S.No</th>
       <th>First_Name</th>
       <th>Last_Name</th>
@@ -1133,6 +1154,9 @@
                     </div>
                   </div>
 </div>
+ <button onclick="deleteSelectedUser()" id="delete-all-btn-user" class="btn btn-danger mb-5 mt-3 d-none">
+                  Delete Selected
+            </button>
                 <nav>
                   <ul  id="userPagination" class="pagination justify-content-center mt-3"></ul>
                 </nav>
