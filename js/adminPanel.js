@@ -38,6 +38,9 @@ let totalPagePages = 1;
 let currentUserPage = 1;
 let totalUserPages = 1
 
+let currentLogsPage = 1;
+let totalLogsPages = 1
+
 let filters = {
 	status: "",
 	date: "",
@@ -56,6 +59,12 @@ let pageFilters = {
 let userFilters = {
 	userStatus: "",
 	userDate: "",
+};
+
+let Logsfilters = {
+	loginTime: "",
+	logoutTime: "",
+	date: "",
 };
 
 const firstname = localStorage.getItem('firstname') || ""
@@ -431,6 +440,16 @@ function applyFilters() {
 	fetchPost();
 }
 
+function LogsApplyFilters() {
+	Logsfilters.date = document.getElementById('date').value;
+	Logsfilters.loginTime = document.getElementById('login-time').value;
+	Logsfilters.logoutTime = document.getElementById('logout-time').value;
+
+	currentLogsPage = 1;
+
+	fetchLogs();
+}
+
 function TagApplyFilters() {
 	tagFilters.tagStatus = document.getElementById('tagStatusFilter').value;
 	tagFilters.tagDate = document.getElementById('tagDate').value;
@@ -479,6 +498,31 @@ function resetFilters() {
 	currentPage = 1;
 	fetchPost();
 	countPost()	
+}
+
+function LogsResetFilters() {
+	document.getElementById('date').value = "";
+	document.getElementById('login-time').value = "";
+	document.getElementById('logout-time').value = "";
+
+	Logsfilters.date = "";
+	Logsfilters.loginTime = "";
+	Logsfilters.logoutTime = ""
+
+	currentLogsPage = 1;
+	fetchLogs();
+	countLogs()	
+}
+
+function logsClearFilters() {
+	document.getElementById('login-time').value = "";
+	document.getElementById('logout-time').value = "";
+
+	Logsfilters.loginTime = "";
+	Logsfilters.logoutTime = "";
+
+	currentLogsPage = 1;
+
 }
 
 function tagClearFilters() {
@@ -2094,6 +2138,21 @@ async function countUser(search = "", active = "", date = "") {
 
 }
 
+function getLogsSearchParamsAndCount() {
+  	const date = document.getElementById('date')?.value || "";
+	const loginTime = document.getElementById('login-time')?.value || "";
+	const logoutTime = document.getElementById('logout-time')?.value || "";
+
+  countLogs(date, loginTime, logoutTime);
+}
+
+document.getElementById('date').addEventListener('change', getLogsSearchParamsAndCount);
+
+document.getElementById('login-time').addEventListener('change', getLogsSearchParamsAndCount);
+
+document.getElementById('logout-time').addEventListener('change', getLogsSearchParamsAndCount);
+
+
 function getSearchParamsAndCount() {
   const search = document.getElementById('searchInput').value.trim();
    const status = document.getElementById('statusFilter')?.value || "";
@@ -2549,9 +2608,19 @@ async function changePassword() {
 
 }
 
-async function fetchLogs() {
+async function fetchLogs(page = 1) {
 
-	const res = await fetch(`${baseUrl}/getLogs`, {
+	currentLogsPage = page
+
+	const queryParams = new URLSearchParams({
+		page: currentLogsPage,
+		limit,
+		date: Logsfilters.date,
+		loginTime: Logsfilters.loginTime,
+		logoutTime: Logsfilters.logoutTime
+	});
+
+	const res = await fetch(`${baseUrl}/getLogs?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -2571,9 +2640,11 @@ async function fetchLogs() {
 				<tr>
 					<td colspan="7" class="text-center text-danger fw-bold">
 						${data.error }
+
 					</td>
 				</tr>
 			`;
+			document.getElementById('logsPagination').innerHTML = '';
 			return;
 	}
 
@@ -2582,20 +2653,64 @@ async function fetchLogs() {
 	logs.forEach((item, index) => {
 		listlogs.innerHTML += `
 				 <tr>
-				
-                <td>${index + 1}</td>
-                <td>${item.user_id.firstname} ${item.user_id.lastname}</td>
-                <td>${item.login_time ? new Date(item.login_time).toLocaleTimeString() : '----------'}</td>
-				<td>${item.logout_time ? new Date(item.logout_time).toLocaleTimeString() : '----------'}</td>
+					<td>${(currentLogsPage - 1) * limit + index + 1}</td>
+					<td>${item.user_id.firstname} ${item.user_id.lastname}</td>
+					<td>${item.login_time ? new Date(item.login_time).toLocaleTimeString() : '----------'}</td>
+					<td>${item.logout_time ? new Date(item.logout_time).toLocaleTimeString() : '----------'}</td>
+					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+					<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
 				</tr>
 			`
 	})
-	
+
+	totalLogsPages = data.pagination.totalPages;
+	renderLogsPaginationButtons(totalLogsPages);
+		
 }
 
-async function countLogs() {
+function renderLogsPaginationButtons(total) {
+	const pagination = document.getElementById('logsPagination');
+	pagination.innerHTML = '';
+
+	const prev = document.createElement('li');
+	prev.className = `page-item ${currentLogsPage === 1 ? 'disabled' : ''}`;
+	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+	prev.onclick = (e) => {
+		e.preventDefault();
+		if (currentLogsPage > 1) fetchLogs(currentLogsPage - 1);
+	};
+	pagination.appendChild(prev);
+
+	for (let i = 1; i <= total; i++) {
+		const pageBtn = document.createElement('li');
+		pageBtn.className = `page-item ${i === currentLogsPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.onclick = (e) => {
+			e.preventDefault();
+			fetchLogs(i);
+		};
+		pagination.appendChild(pageBtn);
+	}
+
+	const next = document.createElement('li');
+	next.className = `page-item ${currentLogsPage === total ? 'disabled' : ''}`;
+	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+	next.onclick = (e) => {
+		e.preventDefault();
+		if (currentLogsPage < total) fetchLogs(currentLogsPage + 1);
+	};
+	pagination.appendChild(next);
+}
+
+async function countLogs(date = "", loginTime = "", logoutTime = "") {
+
+	const queryParams = new URLSearchParams();
+
+	if (date) queryParams.append("date", date);
+	if (loginTime) queryParams.append("loginTime", loginTime);
+	if (logoutTime) queryParams.append("logoutTime", logoutTime);
 	
-	const res = await fetch(`${baseUrl}/countLogs`, {
+	const res = await fetch(`${baseUrl}/countLogs?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
