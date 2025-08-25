@@ -84,6 +84,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	countUser()
 	viewProfile()
 	editProfile()
+	fetchLogs()
+	countLogs()
 
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
@@ -2546,3 +2548,65 @@ async function changePassword() {
 	}
 
 }
+
+async function fetchLogs() {
+
+	const res = await fetch(`${baseUrl}/getLogs`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const logs = data.data
+
+	const listlogs = document.getElementById('logs-list')
+
+	listlogs.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listlogs.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	
+
+	logs.forEach((item, index) => {
+		listlogs.innerHTML += `
+				 <tr>
+				
+                <td>${index + 1}</td>
+                <td>${item.user_id.firstname} ${item.user_id.lastname}</td>
+                <td>${item.login_time ? new Date(item.login_time).toLocaleTimeString() : '----------'}</td>
+				<td>${item.logout_time ? new Date(item.logout_time).toLocaleTimeString() : '----------'}</td>
+				</tr>
+			`
+	})
+	
+}
+
+async function countLogs() {
+	
+	const res = await fetch(`${baseUrl}/countLogs`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('logsCount').textContent = `No Of Count: ${count}`
+
+}
+

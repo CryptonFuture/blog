@@ -116,8 +116,29 @@
           <h2>Role</h2>
         </div>
         <div id="logs" class="page">
-          <h2>Logs</h2>
+          <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+            <h2 >Logs</h2>
+            <span id="logsCount"></span>
+          </div>
+         
+          <div class="table-responsive">
+            <table class="table align-middle mb-0 bg-white" style="margin-top: 10px;">
+              <thead class="bg-light">
+                  <tr>
+                    <th>#ID</th>
+                    <th>Username</th>
+                    <th>login time</th>
+                    <th>logout time</th>
+                  </tr>
+              </thead>
+              <tbody id="logs-list">
+                
+              </tbody>
+            </table>
+          </div>
+                
         </div>
+        
         <div id="profile" class="page">
           <h2>Profile</h2>
           <div class="container ">
