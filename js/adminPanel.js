@@ -2922,8 +2922,6 @@ async function getRequest() {
 				<tr>
 					<td>${index + 1}</td>
 					<td>${item.username}</td>
-					<td>${item.email}</td>
-					<td>${item.phone ? item.phone : '----------'}</td>
 					<td>
 						<span id="reqInfo-${item._id}">
 							${item.reqInfo.length > 5 ? item.reqInfo.substring(0, 5) + "..." : item.reqInfo}
@@ -2932,12 +2930,20 @@ async function getRequest() {
 					</td>
 					
 					<td>${item.approved ? 'Approved' : 'unApproved'}</td>
+					<td>${item.reject ? 'Reject' : 'unReject'}</td>
 					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 					<td>
 						<button onclick="approvedRequest('${item._id}', this)" class="btn btn-primary" type="button">
 							Approved
 						</button>
+						<button onclick="rejectRequest('${item._id}', this)" class="btn btn-danger" type="button">
+							Reject
+						</button>
+						<button onclick="viewRequest('${item._id}')" data-bs-toggle="modal" data-bs-target="#viewApprovedModal" class="btn btn-info" type="button">
+							View
+						</button>
 					</td>
+					
 				</tr>
 			`
 	})
@@ -2957,8 +2963,7 @@ function toggleText(spanId, fullText) {
 }
 
 
-async function approvedRequest(id, btn) {
-	btn.disabled = true;
+async function approvedRequest(id) {
 	const result = await Swal.fire({
 		title: 'Are you sure you want to approved Request?',
 		text: 'You won\'t be able to revert this!',
@@ -2989,12 +2994,10 @@ async function approvedRequest(id, btn) {
 				showConfirmButton: false,
 				timerProgressBar: true
 			}).then(() => {
-				btn.disabled = false;
 				getRequest();
 			});
 
 		} else {
-			btn.disabled = false;
 			Swal.fire({
 				icon: 'error',
 				title: `Failed to delete approved request: ${data.error || res.statusText}`,
@@ -3006,6 +3009,55 @@ async function approvedRequest(id, btn) {
 		}
 	}
 }
+
+async function rejectRequest(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to reject Request?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, reject it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/rejectRequest/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Reject Request Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				getRequest();
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete reject request: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+
 
 async function countRequest() {
 	
@@ -3023,6 +3075,38 @@ async function countRequest() {
 	document.getElementById('requestCount').textContent = `No Of Count: ${count}`
 
 }
+
+async function viewRequest(id) {
+
+	const res = await fetch(`${baseUrl}/getRequestById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('view-request-id').innerHTML = `<strong>ID: </strong> <span> ${view._id} </span>`
+		document.getElementById('view-request-email').innerHTML = `<strong>Email: </strong> <span> ${view.email} </span>`
+		document.getElementById('view-request-phone').innerHTML = `<strong>Phone: </strong> <span> ${view.phone ? view.phone : '----------'} </span>`
+		document.getElementById('view-request-addInfo').innerHTML = `<strong>AddInfo: </strong> <span> ${view.addInfo} </span>`
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete request: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
 
 
 

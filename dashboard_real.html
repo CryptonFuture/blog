@@ -127,10 +127,9 @@
                   <tr>
                     <th>S.no</th>
                     <th>Username</th>
-                    <th>Email</th>
-                    <th>Phone</th>
                     <th>ReqInfo</th>
                     <th>Approved</th>
+                    <th>Reject</th>
                     <th>created At</th>
                     <th>Action</th>
                   </tr>
@@ -142,6 +141,57 @@
             </table>
           </div>
         </div>
+
+        <!-- APPROVAL MODEL -->
+
+        <div class="modal fade" id="approvedModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Approval </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">Remarks</label>
+                    <textarea class="form-control" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Approved</button>
+                <button type="button" class="btn btn-danger">Reject</button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW APPROVED MODEL -->
+
+        <div class="modal fade" id="viewApprovedModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">view approval </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <ul class="list-group list-group-flush">
+                      <li id="view-request-id" class="list-group-item"></li>
+                      <li id="view-request-email" class="list-group-item"></li>
+                      <li id="view-request-phone" class="list-group-item"></li>
+                      <li id="view-request-addInfo" class="list-group-item"></li>
+
+                  </ul>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="role" class="page">
           <h2>Role</h2>
         </div>
