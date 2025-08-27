@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	editProfile()
 	fetchLogs()
 	countLogs()
+	getRequest()
 
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
@@ -2886,4 +2887,124 @@ async function countLogs(date = "", loginTime = "", logoutTime = "") {
 	document.getElementById('logsCount').textContent = `No Of Count: ${count}`
 
 }
+
+async function getRequest() {
+	
+	const res = await fetch(`${baseUrl}/getRequest`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const request = data.data
+
+	const requestlist = document.getElementById('request-list')
+
+	requestlist.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			requestlist.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	request.forEach((item, index) => {
+		requestlist.innerHTML += `
+				<tr>
+					<td>${index + 1}</td>
+					<td>${item.username}</td>
+					<td>${item.email}</td>
+					<td>${item.phone ? item.phone : '----------'}</td>
+					<td>
+						<span id="reqInfo-${item._id}">
+							${item.reqInfo.length > 5 ? item.reqInfo.substring(0, 5) + "..." : item.reqInfo}
+						</span>
+						${item.reqInfo.length > 5 ? `<button class="btn btn-link btn-sm p-0" onclick="toggleText('reqInfo-${item._id}', '${item.reqInfo}')">Read More</button>` : ""}
+					</td>
+					
+					<td>${item.approved ? 'Approved' : 'unApproved'}</td>
+					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+					<td>
+						<button onclick="approvedRequest('${item._id}', this)" class="btn btn-primary" type="button">
+							Approved
+						</button>
+					</td>
+				</tr>
+			`
+	})
+}
+
+function toggleText(spanId, fullText) {
+  const span = document.getElementById(spanId);
+  const btn = event.target;
+
+  if (btn.textContent === "Read More") {
+    span.textContent = fullText;
+    btn.textContent = "Read Less";
+  } else {
+    span.textContent = fullText.substring(0, 5) + "...";
+    btn.textContent = "Read More";
+  }
+}
+
+
+async function approvedRequest(id, btn) {
+	btn.disabled = true;
+	const result = await Swal.fire({
+		title: 'Are you sure you want to approved Request?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, approved it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/approvedRequest/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Approved Request Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				btn.disabled = false;
+				getRequest();
+			});
+
+		} else {
+			btn.disabled = false;
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete approved request: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+
 
