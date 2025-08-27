@@ -11,6 +11,7 @@
   $('#sidebarCollapse').on('click', function () {
     $('#sidebar').toggleClass('active');
   });
+
   
 const accessToken = localStorage.getItem('token')
 
@@ -35,8 +36,11 @@ let totalTagPages = 1;
 let currentPagePage = 1;
 let totalPagePages = 1;
 
-let currentUserPage = 1;
-let totalUserPages = 1
+let currentActiveUserPage = 1;
+let totalActiveUserPages = 1
+
+let currentInActiveUserPage = 1;
+let totalInActiveUserPages = 1
 
 let currentLogsPage = 1;
 let totalLogsPages = 1
@@ -56,9 +60,14 @@ let pageFilters = {
 	pageDate: "",
 };
 
-let userFilters = {
-	userStatus: "",
-	userDate: "",
+let ActiveUserFilters = {
+	ActiveUserStatus: "",
+	ActiveUserDate: "",
+};
+
+let InActiveUserFilters = {
+	InActiveUserStatus: "",
+	InActiveUserDate: "",
 };
 
 let Logsfilters = {
@@ -86,11 +95,13 @@ document.addEventListener('DOMContentLoaded', function () {
 	fetchPost()
 	fetchTag()
 	fetchPages()
-	fetchUser()
+	fetchActiveUser()
+	fetchInActiveUser()
 	countPost()
 	countTag()
 	countPage()
-	countUser()
+	countActiveUser()
+	countInActiveUser()
 	viewProfile()
 	editProfile()
 	fetchLogs()
@@ -130,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const deleteBtnTag = document.getElementById('delete-all-btn-tag');
 
 	function updateDeleteButtonVisibilityTag() {
-      const selectedCheckboxesTag = document.querySelectorAll('.row-checkbox:checked');
+      const selectedCheckboxesTag = document.querySelectorAll('.row-checkbox-tag:checked');
       if (selectedCheckboxesTag.length > 0) {
         deleteBtnTag.classList.remove('d-none');
       } else {
@@ -139,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     selectAllTag.addEventListener('change', function () {
-      const checkboxesTag = document.querySelectorAll('.row-checkbox');
+      const checkboxesTag = document.querySelectorAll('.row-checkbox-tag');
       checkboxesTag.forEach(checkboxTag => {
         checkboxTag.checked = selectAllTag.checked;
       });
@@ -147,9 +158,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 	 document.addEventListener('change', function (e) {
-      if (e.target.classList.contains('row-checkbox')) {
-        const all = document.querySelectorAll('.row-checkbox');
-        const checked = document.querySelectorAll('.row-checkbox:checked');
+      if (e.target.classList.contains('row-checkbox-tag')) {
+        const all = document.querySelectorAll('.row-checkbox-tag');
+        const checked = document.querySelectorAll('.row-checkbox-tag:checked');
         selectAllTag.checked = all.length === checked.length;
 
 		  updateDeleteButtonVisibilityTag()
@@ -160,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const deleteBtnPage = document.getElementById('delete-all-btn-page');
 
 	function updateDeleteButtonVisibilityPage() {
-      const selectedCheckboxesPage = document.querySelectorAll('.row-checkbox:checked');
+      const selectedCheckboxesPage = document.querySelectorAll('.row-checkbox-page:checked');
       if (selectedCheckboxesPage.length > 0) {
         deleteBtnPage.classList.remove('d-none');
       } else {
@@ -169,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     selectAllTag.addEventListener('change', function () {
-      const checkboxesPage = document.querySelectorAll('.row-checkbox');
+      const checkboxesPage = document.querySelectorAll('.row-checkbox-page');
       checkboxesPage.forEach(checkboxPage => {
         checkboxPage.checked = selectAllPage.checked;
       });
@@ -177,9 +188,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 	 document.addEventListener('change', function (e) {
-      if (e.target.classList.contains('row-checkbox')) {
-        const all = document.querySelectorAll('.row-checkbox');
-        const checked = document.querySelectorAll('.row-checkbox:checked');
+      if (e.target.classList.contains('row-checkbox-page')) {
+        const all = document.querySelectorAll('.row-checkbox-page');
+        const checked = document.querySelectorAll('.row-checkbox-page:checked');
         selectAllPage.checked = all.length === checked.length;
 
 		  updateDeleteButtonVisibilityPage()
@@ -190,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const deleteBtnUser = document.getElementById('delete-all-btn-user');
 
 	function updateDeleteButtonVisibilityUser() {
-      const selectedCheckboxesUser = document.querySelectorAll('.row-checkbox:checked');
+      const selectedCheckboxesUser = document.querySelectorAll('.row-checkbox-active-user:checked');
       if (selectedCheckboxesUser.length > 0) {
         deleteBtnUser.classList.remove('d-none');
       } else {
@@ -199,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     selectAllUser.addEventListener('change', function () {
-      const checkboxesUser = document.querySelectorAll('.row-checkbox');
+      const checkboxesUser = document.querySelectorAll('.row-checkbox-active-user');
       checkboxesUser.forEach(checkboxUser => {
         checkboxUser.checked = selectAllUser.checked;
       });
@@ -207,12 +218,42 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 	 document.addEventListener('change', function (e) {
-      if (e.target.classList.contains('row-checkbox')) {
-        const all = document.querySelectorAll('.row-checkbox');
-        const checked = document.querySelectorAll('.row-checkbox:checked');
+      if (e.target.classList.contains('row-checkbox-active-user')) {
+        const all = document.querySelectorAll('.row-checkbox-active-user');
+        const checked = document.querySelectorAll('.row-checkbox-active-user:checked');
         selectAllUser.checked = all.length === checked.length;
 
 		  updateDeleteButtonVisibilityUser()
+      }
+    });
+
+	const selectAllInActiveUser = document.getElementById('select-all-inActive-user');
+	const deleteBtnInActiveUser = document.getElementById('delete-all-btn-inActive-user');
+
+	function updateInActiveDeleteButtonVisibilityUser() {
+      const selectedCheckboxesUser = document.querySelectorAll('.row-checkbox-inactive-user:checked');
+      if (selectedCheckboxesUser.length > 0) {
+        deleteBtnInActiveUser.classList.remove('d-none');
+      } else {
+        deleteBtnInActiveUser.classList.add('d-none');
+      }
+    }
+
+    selectAllInActiveUser.addEventListener('change', function () {
+      const checkboxesUser = document.querySelectorAll('.row-checkbox-inactive-user');
+      checkboxesUser.forEach(checkboxInActiveUser => {
+        checkboxInActiveUser.checked = selectAllInActiveUser.checked;
+      });
+	  updateInActiveDeleteButtonVisibilityUser()
+    });
+
+	 document.addEventListener('change', function (e) {
+      if (e.target.classList.contains('row-checkbox-inactive-user')) {
+        const all = document.querySelectorAll('.row-checkbox-inactive-user');
+        const checked = document.querySelectorAll('.row-checkbox-inactive-user:checked');
+        selectAllInActiveUser.checked = all.length === checked.length;
+
+		  updateInActiveDeleteButtonVisibilityUser()
       }
     });
 })
@@ -468,13 +509,19 @@ function PageApplyFilters() {
 	fetchPages();
 }
 
-function UserApplyFilters() {
-	userFilters.userStatus = document.getElementById('userStatusFilter').value;
-	userFilters.userDate = document.getElementById('userDate').value;
+function UserApplyActiveFilters() {
+	document.getElementById('ActiveUserStatusFilter').value = "";
+	document.getElementById('ActiveUserDate').value = "";
 
-	currentUserPage = 1;
+	ActiveUserFilters.ActiveUserStatus = "";
+	ActiveUserFilters.ActiveUserDate = "";
 
-	fetchUser();
+	fetchActiveUser();
+}
+
+function UserApplyInActiveFilters() {
+
+	fetchInActiveUser();
 }
 
 function clearFilters() {
@@ -571,27 +618,27 @@ function pageResetFilters() {
 	countPage()	
 }
 
-function userClearFilters() {
-	document.getElementById('userStatusFilter').value = "";
-	document.getElementById('userDate').value = "";
+function userActiveClearFilters() {
+	document.getElementById('ActiveUserStatusFilter').value = "";
+	document.getElementById('ActiveUserDate').value = "";
 
-	userFilters.userStatus = "";
-	userFilters.userDate = "";
+	ActiveUserFilters.ActiveUserStatus = "";
+	ActiveUserFilters.ActiveUserDate = "";
 
-	currentUserPage = 1;
+	currentActiveUserPage = 1;
 
 }
 
-function userResetFilters() {
-	document.getElementById('userStatusFilter').value = "";
-	document.getElementById('userDate').value = "";
+function userActiveResetFilters() {
+	document.getElementById('ActiveUserStatusFilter').value = "";
+	document.getElementById('ActiveUserDate').value = "";
 
-	userFilters.userStatus = "";
-	userFilters.userDate = "";
+	ActiveUserFilters.ActiveUserStatus = "";
+	ActiveUserFilters.ActiveUserDate = "";
 
-	currentUserPage = 1;
-	fetchUser();
-	countUser()	
+	currentActiveUserPage = 1;
+	fetchActiveUser();
+	countActiveUser()	
 }
 
 async function fetchPost(page = 1) {
@@ -1224,8 +1271,11 @@ async function updateUser(id) {
 			showConfirmButton: false,
 			timerProgressBar: true
 		}).then(() => {
-			fetchUser();
-			$('#UserModal').modal('hide');
+			fetchActiveUser();
+			fetchInActiveUser()
+			countActiveUser()
+			countInActiveUser()
+			$('#EditUser').modal('hide');
 		});
 	} else {
 		Swal.fire({
@@ -1289,7 +1339,7 @@ async function fetchTag(page = 1) {
 				 <tr>
 				 <td>
 					<div class="form-check">
-						<input class="form-check-input row-checkbox" type="checkbox" />
+						<input class="form-check-input row-checkbox-tag" type="checkbox" />
 					</div>
 				</td>
                 <td>${(currentTagPage - 1) * limit + index + 1}</td>
@@ -1362,21 +1412,6 @@ document.getElementById('sortTagSelect')?.addEventListener('change', () => {
 	fetchTag();
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 async function fetchPages(page = 1) {
 
 	currentPagePage = page
@@ -1428,7 +1463,7 @@ async function fetchPages(page = 1) {
 				<tr>
 				<td>
 					<div class="form-check">
-						<input class="form-check-input row-checkbox" type="checkbox" />
+						<input class="form-check-input row-checkbox-page" type="checkbox" />
 					</div>
 				</td>
                 <td>${(currentPagePage - 1) * limit + index + 1}</td>
@@ -1501,40 +1536,24 @@ document.getElementById('sortPageSelect')?.addEventListener('change', () => {
 	fetchPages();
 });
 
+async function fetchActiveUser(page = 1) {
 
+	currentActiveUserPage = page
 
+	const sortActiveValue = document.getElementById('ActiveSortUserSelect')?.value || "";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function fetchUser(page = 1) {
-
-	currentUserPage = page
-
-	const sortValue = document.getElementById('sortUserSelect')?.value || "";
-
-	const searchUserInput = document.getElementById('searchUserInput')?.value || "";
+	const searchActiveUserInput = document.getElementById('searchActiveUserInput')?.value || "";
 
 	const queryParams = new URLSearchParams({
-		search: searchUserInput,
-		sort: sortValue,
-		page: currentUserPage,
+		search: searchActiveUserInput,
+		sort: sortActiveValue,
+		page: currentActiveUserPage,
 		limit,
-		active: userFilters.userStatus,
-		date: userFilters.userDate
+		active: ActiveUserFilters.ActiveUserStatus,
+		date: ActiveUserFilters.ActiveUserDate
 	});
 
-	const res = await fetch(`${baseUrl}/getUser?${queryParams.toString()}`, {
+	const res = await fetch(`${baseUrl}/getActiveUser?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -1545,7 +1564,7 @@ async function fetchUser(page = 1) {
 
 	const user = data.data
 
-	const userlist= document.getElementById('userlist')
+	const userlist = document.getElementById('userlist')
 
 	userlist.innerHTML = '';
 
@@ -1557,7 +1576,7 @@ async function fetchUser(page = 1) {
 					</td>
 				</tr>
 			`;
-			document.getElementById('userPagination').innerHTML = '';
+			document.getElementById('ActiveUserPagination').innerHTML = '';
 			return;
 	}
 
@@ -1565,14 +1584,13 @@ async function fetchUser(page = 1) {
 	
 	userlist.innerHTML += `
 				 <tr>
-				 <td>
+				<td>
 					<div class="form-check">
-						<input class="form-check-input row-checkbox" type="checkbox" />
+						<input class="form-check-input row-checkbox-active-user" type="checkbox" />
 					</div>
 				</td>
-                <td>${(currentUserPage - 1) * limit + index + 1}</td>
-                <td>${item.firstname || item.firstname}</td>
-                <td>${item.lastname}</td>
+                <td>${(currentActiveUserPage - 1) * limit + index + 1}</td>
+                <td>${item.firstname} ${item.lastname}</td>
 				<td>${item.email}</td>
                 <td>${item.active ? 'active' : 'inactive'}</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
@@ -1582,8 +1600,10 @@ async function fetchUser(page = 1) {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a onclick="viewUser('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewModalUser"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
-                    <li><a onclick="editUser('${item._id}')" class="dropdown-item" href="#UserModal" data-bs-toggle="modal"> <i
+                    <li><a onclick="viewUser('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal"
+          					data-bs-target="#viewModalUser"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editUser('${item._id}')" class="dropdown-item" href="#" data-bs-toggle="modal"
+          					data-bs-target="#EditUser"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deleteUser('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
                   </ul>
@@ -1591,63 +1611,180 @@ async function fetchUser(page = 1) {
 				</tr>
 			`
 	})
-	totalUserPages = data.pagination.totalPages;
-	renderUserPaginationButtons(totalUserPages);
+	totalActiveUserPages = data.pagination.totalPages;
+	renderActiveUserPaginationButtons(totalActiveUserPages);
 }
 
-function renderUserPaginationButtons(total) {
-	const pagination = document.getElementById('userPagination');
+async function fetchInActiveUser(page = 1) {
+
+	currentInActiveUserPage = page
+
+	const sortInActiveValue = document.getElementById('InActiveSortUserSelect')?.value || "";
+
+
+	const searchInActiveUserInput = document.getElementById('searchInActiveUserInput')?.value || "";
+
+	const queryParams = new URLSearchParams({
+		search: searchInActiveUserInput,
+		sort: sortInActiveValue,
+		page: currentInActiveUserPage,
+		limit,
+	});
+
+	const res = await fetch(`${baseUrl}/getInActiveUser?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const InActiveUser = data.data
+
+	const InActiveUserList = document.getElementById('inActiveUserList')
+
+	InActiveUserList.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			InActiveUserList.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			document.getElementById('InActiveUserPagination').innerHTML = '';
+			return;
+	}
+
+	InActiveUser.forEach((item, index) => {
+	
+	InActiveUserList.innerHTML += `
+				 <tr>
+				<td>
+					<div class="form-check">
+						<input class="form-check-input row-checkbox-inactive-user" type="checkbox" />
+					</div>
+				</td>
+                <td>${(currentInActiveUserPage - 1) * limit + index + 1}</td>
+                <td>${item.firstname} ${item.lastname}</td>
+				<td>${item.email}</td>
+                <td>${item.active ? 'active' : 'inactive'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="viewUser('${item._id}')" data-bs-toggle="modal"
+          					data-bs-target="#viewModalUser"  class="dropdown-item view-btn" href="#"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editUser('${item._id}')" class="dropdown-item" href="#" data-bs-toggle="modal"
+          					data-bs-target="#EditUser"> <i
+                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+                    <li><a onclick="deleteUser('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                  </ul>
+                </td>
+				</tr>
+			`
+	})
+	totalInActiveUserPages = data.pagination.totalPages;
+	renderInActiveUserPaginationButtons(totalInActiveUserPages);
+	
+}
+
+function renderActiveUserPaginationButtons(total) {
+	const pagination = document.getElementById('ActiveUserPagination');
 	pagination.innerHTML = '';
 
 	const prev = document.createElement('li');
-	prev.className = `page-item ${currentUserPage === 1 ? 'disabled' : ''}`;
+	prev.className = `page-item ${currentActiveUserPage === 1 ? 'disabled' : ''}`;
 	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
 	prev.onclick = (e) => {
 		e.preventDefault();
-		if (currentUserPage > 1) fetchUser(currentUserPage - 1);
+		if (currentActiveUserPage > 1) fetchActiveUser(currentActiveUserPage - 1);
 	};
 	pagination.appendChild(prev);
 
 	for (let i = 1; i <= total; i++) {
 		const pageBtn = document.createElement('li');
-		pageBtn.className = `page-item ${i === currentUserPage ? 'active' : ''}`;
+		pageBtn.className = `page-item ${i === currentActiveUserPage ? 'active' : ''}`;
 		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
 		pageBtn.onclick = (e) => {
 			e.preventDefault();
-			fetchUser(i);
+			fetchActiveUser(i);
 		};
 		pagination.appendChild(pageBtn);
 	}
 
 	const next = document.createElement('li');
-	next.className = `page-item ${currentUserPage === total ? 'disabled' : ''}`;
+	next.className = `page-item ${currentActiveUserPage === total ? 'disabled' : ''}`;
 	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
 	next.onclick = (e) => {
 		e.preventDefault();
-		if (currentUserPage < total) fetchUser(currentUserPage + 1);
+		if (currentActiveUserPage < total) fetchActiveUser(currentActiveUserPage + 1);
 	};
 	pagination.appendChild(next);
 }
 
-document.getElementById('searchUserInput')?.addEventListener('keydown', (e) => {
+document.getElementById('searchActiveUserInput')?.addEventListener('keydown', (e) => {
 	if (e.key === 'Enter') {
-		currentUserPage = 1;
-		fetchUser();
+		currentActiveUserPage = 1;
+		fetchActiveUser();
 	}
 });
 
-document.getElementById('sortUserSelect')?.addEventListener('change', () => {
-	currentUserPage = 1;
-	fetchUser();
+document.getElementById('ActiveSortUserSelect')?.addEventListener('change', () => {
+	currentActiveUserPage = 1;
+	fetchActiveUser();
 });
 
+function renderInActiveUserPaginationButtons(total) {
+	const pagination = document.getElementById('InActiveUserPagination');
+	pagination.innerHTML = '';
 
+	const prev = document.createElement('li');
+	prev.className = `page-item ${currentInActiveUserPage === 1 ? 'disabled' : ''}`;
+	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+	prev.onclick = (e) => {
+		e.preventDefault();
+		if (currentInActiveUserPage > 1) fetchInActiveUser(currentInActiveUserPage - 1);
+	};
+	pagination.appendChild(prev);
 
+	for (let i = 1; i <= total; i++) {
+		const pageBtn = document.createElement('li');
+		pageBtn.className = `page-item ${i === currentInActiveUserPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.onclick = (e) => {
+			e.preventDefault();
+			fetchInActiveUser(i);
+		};
+		pagination.appendChild(pageBtn);
+	}
 
+	const next = document.createElement('li');
+	next.className = `page-item ${currentInActiveUserPage === total ? 'disabled' : ''}`;
+	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+	next.onclick = (e) => {
+		e.preventDefault();
+		if (currentInActiveUserPage < total) fetchInActiveUser(currentInActiveUserPage + 1);
+	};
+	pagination.appendChild(next);
+}
 
+document.getElementById('searchInActiveUserInput')?.addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') {
+		currentInActiveUserPage = 1;
+		fetchInActiveUser();
+	}
+});
 
-
-
+document.getElementById('InActiveSortUserSelect')?.addEventListener('change', () => {
+	currentInActiveUserPage = 1;
+	fetchInActiveUser();
+});
 
 async function deleteTag(id) {
 	const result = await Swal.fire({
@@ -1786,8 +1923,10 @@ async function deleteUser(id) {
 				showConfirmButton: false,
 				timerProgressBar: true
 			}).then(() => {
-				fetchUser();
-				countUser()
+				fetchActiveUser();
+				fetchInActiveUser()
+				countActiveUser()
+				countInActiveUser()
 			});
 
 		} else {
@@ -2025,8 +2164,10 @@ async function addUser() {
                 showConfirmButton: false,
                 timerProgressBar: true
             }).then(() => {
-                fetchUser(); // You'll need to implement this function
-				countUser()
+                fetchActiveUser(); // You'll need to implement this function
+				fetchInActiveUser()
+				countActiveUser()
+				countInActiveUser()
                 $('#userModal').modal('hide');
                 document.getElementById('firstName').value = "";
                 document.getElementById('lastName').value = "";
@@ -2117,13 +2258,13 @@ async function countPage(search = "", status = "", date = "") {
 
 }
 
-async function countUser(search = "", active = "", date = "") {
+async function countActiveUser(search = "", active = "", date = "") {
 	const queryParams = new URLSearchParams();
 	if (search) queryParams.append("search", search);
 	if (active) queryParams.append("active", active);
 	if (date) queryParams.append("date", date);
 
-	const res = await fetch(`${baseUrl}/countUser?${queryParams.toString()}`, {
+	const res = await fetch(`${baseUrl}/countActiveUser?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -2135,6 +2276,24 @@ async function countUser(search = "", active = "", date = "") {
 	const count = data.count
 
 	document.getElementById('userCount').textContent = `No Of Count: ${count}`
+
+}
+
+async function countInActiveUser() {
+	
+
+	const res = await fetch(`${baseUrl}/countInActiveUser`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('inActiveUserCount').textContent = `No Of Count: ${count}`
 
 }
 
@@ -2532,9 +2691,12 @@ async function deleteSelectedUser() {
 				showConfirmButton: false,
 				timerProgressBar: true
 			})
-		fetchUser(currentPage)
-		countUser()
+		fetchActiveUser(currentActiveUserPage)
+		countActiveUser()
+		fetchInActiveUser(currentInActiveUserPage)
+		countInActiveUser()
 		document.getElementById('delete-all-btn-user').classList.add('d-none');
+		document.getElementById('delete-all-btn-inActive-user').classList.add('d-none');
 		document.querySelectorAll('.row-checkbox:checked').forEach(cb => cb.checked = false);
 		const headerCheckbox = document.querySelector('#select-all-user'); // **Assumes your header checkbox has an ID of 'selectAllCheckbox'**
         if (headerCheckbox) {
