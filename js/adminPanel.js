@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	fetchLogs()
 	countLogs()
 	getRequest()
+	countRequest()
 
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
@@ -3005,6 +3006,24 @@ async function approvedRequest(id, btn) {
 		}
 	}
 }
+
+async function countRequest() {
+	
+	const res = await fetch(`${baseUrl}/countRequest`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('requestCount').textContent = `No Of Count: ${count}`
+
+}
+
 
 
 
