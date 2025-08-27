@@ -63,6 +63,7 @@
                   />
                 </div>
                  <small id="password-error" class="text-danger"></small>
+                 <small class="float-right"><a href="request_form.html">Request Form</a></small>
                  <div class="mb-3">
                     <label for="edit-post-status" class="col-form-label">Remember me:</label>
                       <div class="form-check mb-3">
@@ -199,17 +200,15 @@ async function login() {
     document.getElementById('password').value = ""
 
     Swal.fire({
-      icon: 'success',
-      title: 'Login Successful',
-      text: data.message,
-      timer: 2000,
-      showConfirmButton: false,
-      timerProgressBar: true
-    }).then(() => {
-      window.location.href = 'dashboard_real.html';
-
-    });
-
+        icon: 'success',
+        title: 'Login Successful',
+        text: data.message,
+        timer: 2000,
+        showConfirmButton: false,
+        timerProgressBar: true
+      }).then(() => {
+          window.location.href = 'dashboard_real.html';
+      });
   } else {
     Swal.fire({
       icon: 'error',
