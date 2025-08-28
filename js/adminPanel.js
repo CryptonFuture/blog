@@ -446,6 +446,7 @@ async function fetchDashboard() {
 }
 
 async function getSideBarRoutes() {
+
 	const res = await fetch(`${baseUrl}/getSideBarRoutes`, {
 		method: "GET",
 		headers: {
@@ -455,6 +456,8 @@ async function getSideBarRoutes() {
 
 	const data = await res.json()
 
+	const role = Number(localStorage.getItem('role'))
+	
 	const sideBarRoutes = data.data
 
 	const sideBarRouteslist = document.getElementById('sidebarRoutes')
@@ -462,13 +465,18 @@ async function getSideBarRoutes() {
 	sideBarRouteslist.innerHTML = '';
 
 	sideBarRoutes.forEach((item, index) => {
-		sideBarRouteslist.innerHTML += `
+		if(role === 1) {
+			sideBarRouteslist.innerHTML += `
 			<li class="active">
 				<a onclick="showPage('${item.paramName}')"  class="nav-link">
 					<i class="fas ${item.iconName2} mr-3"></i> ${item.routeName}
 				</a>
         	</li>
 			`
+		}
+			
+		
+		
 	})
 
 
