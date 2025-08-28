@@ -1615,6 +1615,7 @@ async function fetchActiveUser(page = 1) {
                 <td>${(currentActiveUserPage - 1) * limit + index + 1}</td>
                 <td>${item.firstname} ${item.lastname}</td>
 				<td>${item.email}</td>
+				<td>${item.role}</td>
                 <td>${item.active ? 'active' : 'inactive'}</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
@@ -1693,6 +1694,7 @@ async function fetchInActiveUser(page = 1) {
                 <td>${(currentInActiveUserPage - 1) * limit + index + 1}</td>
                 <td>${item.firstname} ${item.lastname}</td>
 				<td>${item.email}</td>
+				<td>${item.role}</td>
                 <td>${item.active ? 'active' : 'inactive'}</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
@@ -2943,7 +2945,7 @@ async function fetchLogs(page = 1) {
 		listlogs.innerHTML += `
 				 <tr>
 					<td>${(currentLogsPage - 1) * limit + index + 1}</td>
-					<td>${item.user_id.firstname} ${item.user_id.lastname}</td>
+					<td>${item.user_id.firstname ? item.user_id.firstname : '----------'} ${item.user_id.lastname ? item.user_id.lastname : '----------'}</td>
 					<td>${item.login_time ? new Date(item.login_time).toLocaleTimeString() : '----------'}</td>
 					<td>${item.logout_time ? new Date(item.logout_time).toLocaleTimeString() : '----------'}</td>
 					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
