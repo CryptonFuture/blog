@@ -2842,13 +2842,22 @@ async function changePassword() {
 	if (!newPassword) {
         document.getElementById('new-pass-error').textContent = 'new password is required.';
         isValid = false;
-    } 
+    } else if(newPassword.length < 10) {
+		document.getElementById('new-pass-error').textContent = 'Password must be at least 10 characters';
+        isValid = false;
+	}
 
 	if (!confirmPass) {
         document.getElementById('confirm-pass-error').textContent = 'confirm password is required.';
         isValid = false;
-    } 
-
+    } else if(confirmPass.length < 10) {
+		document.getElementById('confirm-pass-error').textContent = 'Password must be at least 10 characters';
+        isValid = false;
+	} else if (newPassword !== confirmPass) {
+        document.getElementById('confirm-pass-error').textContent = 'Password and confirm password do not match.';
+        isValid = false;
+    }  
+	
     if (!isValid) {
         return;
     }
