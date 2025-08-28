@@ -304,6 +304,7 @@ async function logout() {
 		localStorage.removeItem('rememberedEmail');
 		localStorage.removeItem('rememberedPassword');
 		localStorage.removeItem('tokenExpiry');
+		localStorage.removeItem('role');
 
 		Swal.fire({
 			icon: 'success',
@@ -457,7 +458,12 @@ async function getSideBarRoutes() {
 	const data = await res.json()
 
 	const role = Number(localStorage.getItem('role'))
+
+	// const role = Number(data.role)
+
+	// console.log(role, 'role');
 	
+
 	const sideBarRoutes = data.data
 
 	const sideBarRouteslist = document.getElementById('sidebarRoutes')
@@ -473,13 +479,8 @@ async function getSideBarRoutes() {
 				</a>
         	</li>
 			`
-		}
-			
-		
-		
+		} 
 	})
-
-
 }
 
 function applyFilters() {
@@ -772,8 +773,20 @@ document.getElementById('sortSelect')?.addEventListener('change', () => {
 });
 
 async function addPost() {
-		const title = document.getElementById('title').value
+	const title = document.getElementById('title').value
 	const description = document.getElementById('description').value
+	
+	document.getElementById('title-error').textContent = ""
+
+	let isValid = true;
+    if (!title) {
+        document.getElementById('title-error').textContent = 'title is required.';
+        isValid = false;
+    } 
+
+    if (!isValid) {
+        return;
+    }
 
 	const res = await fetch(`${baseUrl}/addPost`, {
 		method: 'POST',
@@ -2054,6 +2067,18 @@ async function addTag() {
 	const tagName = document.getElementById('tag-name').value
 	const description = document.getElementById('tag-description').value
 
+	document.getElementById('tag-name-error').textContent = ""
+
+	let isValid = true;
+    if (!tagName) {
+        document.getElementById('tag-name-error').textContent = 'tag name is required.';
+        isValid = false;
+    } 
+
+    if (!isValid) {
+        return;
+    }
+
 	const res = await fetch(`${baseUrl}/addTag`, {
 		method: 'POST',
 		headers: {
@@ -2102,6 +2127,18 @@ async function addTag() {
 async function addPage() {
 	const pageName = document.getElementById('page-name').value
 	const description = document.getElementById('page-description').value
+
+	document.getElementById('page-name-error').textContent = ""
+
+	let isValid = true;
+    if (!pageName) {
+        document.getElementById('page-name-error').textContent = 'page name is required.';
+        isValid = false;
+    } 
+
+    if (!isValid) {
+        return;
+    }
 
 	const res = await fetch(`${baseUrl}/addPages`, {
 		method: 'POST',
@@ -2152,6 +2189,53 @@ async function addUser() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const confirmPass = document.getElementById('confirmPass').value;
+
+	document.getElementById('firstname-error').textContent = ""
+  	document.getElementById('lastname-error').textContent = ""
+	document.getElementById('email-error').textContent = ""
+  	document.getElementById('password-error').textContent = ""
+	document.getElementById('confirm-password-error').textContent = ""
+
+   let isValid = true;
+    if (!firstname) {
+        document.getElementById('firstname-error').textContent = 'Firstname is required.';
+        isValid = false;
+    }
+	 if (!lastname) {
+        document.getElementById('lastname-error').textContent = 'Lastname is required.';
+        isValid = false;
+    }
+
+    if (!email) {
+        document.getElementById('email-error').textContent = 'Email is required.';
+        isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+        document.getElementById('email-error').textContent = 'Please enter a valid email address.';
+        isValid = false;
+    }
+
+    if (!password) {
+        document.getElementById('password-error').textContent = 'Password is required.';
+        isValid = false;
+    } else if (password.length < 10) {
+        document.getElementById('password-error').textContent = 'Password must be at least 10 characters';
+        isValid = false;
+    }
+
+	 if (!confirmPass) {
+        document.getElementById('confirm-password-error').textContent = 'confirm password is required.';
+        isValid = false;
+    } else if (confirmPass.length < 10) {
+        document.getElementById('confirm-password-error').textContent = 'confirm password must be at least 10 characters';
+        isValid = false;
+    } else if (password !== confirmPass) {
+		document.getElementById('confirm-password-error').textContent = 'Password and confirm password do not match.';
+		isValid = false;
+	}
+
+    if (!isValid) {
+        return;
+    }
 
     try {
         const res = await fetch(`${baseUrl}/register`, {
@@ -2744,6 +2828,30 @@ async function changePassword() {
 	const oldPassword = document.getElementById('old-pass').value
 	const newPassword = document.getElementById('new-pass').value
 	const confirmPass = document.getElementById('confirm-pass').value
+
+	document.getElementById('old-pass-error').textContent = ""
+  	document.getElementById('new-pass-error').textContent = ""
+	document.getElementById('confirm-pass-error').textContent = ""
+
+	let isValid = true;
+    if (!oldPassword) {
+        document.getElementById('old-pass-error').textContent = 'old password is required.';
+        isValid = false;
+    } 
+
+	if (!newPassword) {
+        document.getElementById('new-pass-error').textContent = 'new password is required.';
+        isValid = false;
+    } 
+
+	if (!confirmPass) {
+        document.getElementById('confirm-pass-error').textContent = 'confirm password is required.';
+        isValid = false;
+    } 
+
+    if (!isValid) {
+        return;
+    }
 
 	const res = await fetch(`${baseUrl}/changePassword/${userId}`, {
 		method: 'PUT',

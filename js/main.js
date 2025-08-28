@@ -98,8 +98,8 @@ const baseUrl = `http://localhost:8000/${prefix}`
 
 async function login() {
 
-    const email = document.getElementById('email').value
-    const password = document.getElementById('password').value
+  const email = document.getElementById('email').value
+  const password = document.getElementById('password').value
 
   const rememberMe = document.getElementById('rememberMe').checked;
 
