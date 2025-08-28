@@ -36,11 +36,90 @@
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="about.html">About</a></li>
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="post.html">Sample Post</a></li>
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Contact</a></li>
-                        <li class="nav-item"><button  type="button" id="openModal" class="py-3 btn btn-primary text-white text-uppercase">login</button></li>
+                        <li class="nav-item"><button  type="button" data-bs-toggle="modal" data-bs-target="#Modal" class="py-3 btn btn-primary text-white text-uppercase">login</button></li>
                     </ul>
                 </div>
             </div>
         </nav>
+
+        <!-- LOGIN MODEL -->
+
+         <div
+        class="modal fade"
+        id="Modal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                Login Form
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="form-submit">
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label"
+                    >Email:</label
+                  >
+                  <input
+                    id="email"
+                    type="email"
+                    class="form-control"
+                  />
+                </div>
+                <small id="email-error" class="text-danger"></small>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label"
+                    >Password:</label
+                  >
+                  <input
+                    id="password"
+                    type="password"
+                    class="form-control"
+                  />
+                </div>
+                 <small id="password-error" class="text-danger"></small>
+                 <small class="float-right"><a href="request_form.html">Request Form</a></small>
+                 <div class="mb-3">
+                   <label for="message-text" class="col-form-label"
+                    >Role:</label
+                  >
+                  <select id="role" class="form-select" aria-label="Default select example">
+                   
+                  </select>
+                 </div>
+                 <div class="mb-3">
+                    <label for="edit-post-status" class="col-form-label">Remember me:</label>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" name="publish">
+                          <label class="form-check-label" for="publishCheck">
+                          </label>
+                        </div>
+                        </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button id="submit" onclick="login()" type="button" class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
         <script src="js/jquery.min.js"></script>
         <script src="js/main.js"></script>
