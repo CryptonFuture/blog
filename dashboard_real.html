@@ -396,17 +396,19 @@
                             <label for="exampleFormControlInput1" class="form-label">Old Password</label>
                             <input type="password" class="form-control" id="old-pass"
                               placeholder="Enter old password">
+                              <span id="old-pass-error" class="text-danger"></span>
                           </div>
                           <div class="col-md-6">
                             <label for="exampleFormControlInput2" class="form-label">New Password</label>
                             <input type="password" class="form-control" id="new-pass"
                               placeholder="Enter new password">
+                               <span id="new-pass-error" class="text-danger"></span>
                           </div>
                           <div class="col-md-6">
                             <label for="exampleFormControlInput3" class="form-label">Confirm Password</label>
                             <input type="password" class="form-control" id="confirm-pass"
                               placeholder="Confirm new password">
-          
+                            <span id="confirm-pass-error" class="text-danger"></span>
                           </div>
                         </div>
                         <div class="d-flex justify-content-end mb-3">
@@ -515,6 +517,7 @@
                         <label class="form-label">Post Title</label>
                         <input id="title" type="text" class="form-control custom-border">
                       </div>
+                      <span id="title-error" class="text-danger"></span>
                       <div class="mb-3">
                         <label class="form-label">Description</label>
                         <textarea id="description" class="form-control custom-border"></textarea>
@@ -693,6 +696,7 @@
                         <label class="form-label"> Tag Name</label>
                         <input id="tag-name" type="text" class="form-control custom-border">
                       </div>
+                       <span id="tag-name-error" class="text-danger"></span>
                       <div class="mb-3">
                         <label class="form-label">Description</label>
                         <textarea id="tag-description" class="form-control custom-border"></textarea>
@@ -905,6 +909,7 @@
                     <label class="form-label"> Page</label>
                     <input  id="page-name" class="form-control custom-border">
                   </div>
+                  <span id="page-name-error" class="text-danger"></span>
                   <div class="mb-3">
                     <label class="form-label">Description</label>
                     <textarea id="page-description" class="form-control custom-border"></textarea>
@@ -956,6 +961,7 @@
                           <label class="form-label">Page Name</label>
                           <input id="edit-page-pageName" type="text" class="form-control custom-border">
                         </div>
+                         
                         <div class="mb-3">
                           <label class="form-label">Description</label>
                           <textarea id="edit-page-description" class="form-control custom-border"></textarea>
@@ -1293,25 +1299,36 @@
             <div class="col-6">
               <label class="form-label"> first name</label>
               <input id="firstName" type="text" class="form-control custom-border ">
+              <span id="firstname-error" class="text-danger"></span>
             </div>
+             
             <div class="col-6">
               <label class="form-label">last name</label>
               <input  id="lastName" class="form-control custom-border ">
+               <span id="lastname-error" class="text-danger"></span>
             </div>
+            
             <div>
               <div class="row">
                 <div class="col-6">
                   <label class="form-label"> email</label>
                   <input id="email" type="email" class="form-control custom-border ">
+                   <span id="email-error" class="text-danger"></span>
                 </div>
+               
                 <div class="col-6">
                   <label class="form-label">password</label>
                   <input id="password" type="password" class="form-control custom-border ">
+                   <span id="password-error" class="text-danger"></span>
                 </div>
+                
                 <div class="">
                   <label class="form-label"> confirm password</label>
-                  <input   id="confirmPass" type="password" class="form-control custom-border ">
+                  <input id="confirmPass" type="password" class="form-control custom-border ">
+                   <span id="confirm-password-error" class="text-danger"></span>
+                   <span id="password-match-error" class="text-danger"></span>
                 </div>
+                
               </div>
             </div>
         </form>
