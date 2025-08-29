@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	countRequest()
 	fetchRole('.add-user-role')
 	fetchRole('.edit-user-role')
+	getRole()
 	
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
@@ -3287,6 +3288,58 @@ async function fetchRole(dropdownSelector) {
 	})
 }
 
+async function getRole() {
 
+	const res = await fetch(`${baseUrl}/getSideBarRole`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const role = data.data
+
+	const listRole = document.getElementById('listRole')
+
+	listRole.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listRole.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	role.forEach((item, index) => {
+		listRole.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.routeName}</td>
+                <td>${item.paramName}</td>
+				<td>${item.role ? 'admin': 'user'}</td>
+                <td>
+                  <select class="form-select">
+				 	<option value="" disabled>select field</option> 
+					<option value="">show</option> 
+					<option value="">hide</option> 
+					<option value="">disabled</option> 
+					<option value="">enabled</option>
+					<option value="">mandatory</option>
+					<option value="">non-mandatory</option>
+					<option value="">authorization</option>
+					<option value="">un-authorization</option>
+				  </select>
+                </td>
+				</tr>
+			`
+	})
+	
+}
 
 
