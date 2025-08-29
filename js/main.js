@@ -155,6 +155,7 @@ async function login() {
     localStorage.setItem('firstname', data.user.firstname);
     localStorage.setItem('lastname', data.user.lastname);
     localStorage.setItem('role', data.user.role);
+    localStorage.setItem('is_admin', data.user.is_admin);
 
     localStorage.setItem('tokenType', data.user.tokenType);
 

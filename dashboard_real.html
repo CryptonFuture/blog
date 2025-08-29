@@ -1254,14 +1254,22 @@
                           <label class="form-label"> email</label>
                           <input id="edit-user-email" type="email" class="form-control custom-border ">
                         </div>
+
+                         <div class="col-6">
+                          <label class="form-label"> Role</label>
+                          <select id="" class="form-select edit-user-role" aria-label="Default select example">
+                            
+                          </select>
+                          <span id="role-error" class="text-danger"></span>
+                        </div>
                        
                         <div class="col-6">
                           <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" id="edit-user-active" value="option1">
                             <label class="form-check-label" for="inlineCheckbox1">Status</label>
                           </div>
-                          <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="edit-user-admin" value="option2">
+                          <div class="form-check form-check-inline admin-only">
+                            <input class="form-check-input" type="checkbox" id="edit-user-admin" value="admin">
                             <label class="form-check-label" for="inlineCheckbox2">Admin</label>
                           </div>
 
@@ -1324,11 +1332,19 @@
                    <span id="password-error" class="text-danger"></span>
                 </div>
                 
-                <div class="">
+                <div class="col-6">
                   <label class="form-label"> confirm password</label>
                   <input id="confirmPass" type="password" class="form-control custom-border ">
                    <span id="confirm-password-error" class="text-danger"></span>
                    <span id="password-match-error" class="text-danger"></span>
+                </div>
+
+                <div class="col-6">
+                  <label class="form-label"> Role</label>
+                  <select id="" class="form-select add-user-role" aria-label="Default select example">
+                    
+                  </select>
+                   <span id="role-error" class="text-danger"></span>
                 </div>
                 
               </div>
@@ -1480,6 +1496,9 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <script src="js/adminPanel.js"></script>
+<script>
+  
+</script>
 </body>
 
 </html>

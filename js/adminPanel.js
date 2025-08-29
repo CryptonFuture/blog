@@ -86,6 +86,7 @@ document.getElementById('username').textContent = fullname || "No User Found"
 document.getElementById('email').textContent = emailAddress || "No User Found"
 
 
+
 const tokenType = localStorage.getItem('tokenType')
 const access_Token = localStorage.getItem('token')
 
@@ -108,7 +109,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	countLogs()
 	getRequest()
 	countRequest()
-
+	fetchRole('.add-user-role')
+	fetchRole('.edit-user-role')
+	
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
 
@@ -260,6 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 })
 
+
 function setupAutoLogout() {
 	const expiryTime = localStorage.getItem('tokenExpiry');
 
@@ -305,6 +309,7 @@ async function logout() {
 		localStorage.removeItem('rememberedPassword');
 		localStorage.removeItem('tokenExpiry');
 		localStorage.removeItem('role');
+		localStorage.removeItem('is_admin');
 
 		Swal.fire({
 			icon: 'success',
@@ -457,21 +462,20 @@ async function getSideBarRoutes() {
 
 	const data = await res.json()
 
-	const role = Number(localStorage.getItem('role'))
-
-	// const role = Number(data.role)
-
-	// console.log(role, 'role');
+	const role = Number(localStorage.getItem('role')) || 0
 	
-
-	const sideBarRoutes = data.data
+	const sideBarRoutes = data.data || [];
 
 	const sideBarRouteslist = document.getElementById('sidebarRoutes')
 
 	sideBarRouteslist.innerHTML = '';
 
-	sideBarRoutes.forEach((item, index) => {
-		if(role === 1) {
+	const filteredRoutes = sideBarRoutes.filter(route => {
+		return route.role === role;
+	});
+
+	filteredRoutes.forEach((item, index) => {
+		
 			sideBarRouteslist.innerHTML += `
 			<li class="active">
 				<a onclick="showPage('${item.paramName}')"  class="nav-link">
@@ -479,9 +483,11 @@ async function getSideBarRoutes() {
 				</a>
         	</li>
 			`
-		} 
+		
 	})
 }
+
+
 
 function applyFilters() {
 	filters.status = document.getElementById('statusFilter').value;
@@ -981,8 +987,10 @@ async function editUser(id) {
 		document.getElementById('edit-user-firstname').value = user.firstname
 		document.getElementById('edit-user-lastname').value = user.lastname
 		document.getElementById('edit-user-email').value = user.email
+		document.querySelector('.edit-user-role').value = user.role
 		document.getElementById('edit-user-active').checked = user.active
 		document.getElementById('edit-user-admin').checked = user.is_admin
+	
 
 	} else {
 		Swal.fire({
@@ -1271,6 +1279,8 @@ async function updateUser(id) {
 	const firstname = document.getElementById('edit-user-firstname').value
 	const lastname = document.getElementById('edit-user-lastname').value
 	const email = document.getElementById('edit-user-email').value
+	const role = document.querySelector('.edit-user-role').value
+
 	const active = document.getElementById('edit-user-active').checked
 	const is_admin = document.getElementById('edit-user-admin').checked
 
@@ -1280,7 +1290,7 @@ async function updateUser(id) {
 			'Content-Type': 'application/json',
 			'Authorization': `${tokenType} ${access_Token}`
 		},
-		body: JSON.stringify({ firstname, lastname, email, active, is_admin })
+		body: JSON.stringify({ firstname, lastname, email, active, is_admin, role })
 	})
 
 	const data = await res.json()
@@ -1616,7 +1626,9 @@ async function fetchActiveUser(page = 1) {
                 <td>${item.firstname} ${item.lastname}</td>
 				<td>${item.email}</td>
 				<td>${item.role}</td>
-                <td>${item.active ? 'active' : 'inactive'}</td>
+                <td> 
+					<h6><span class="badge text-bg-success">${item.active ? 'active' : 'inactive'}</span></h6>
+				</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
                 <td>
@@ -1695,7 +1707,9 @@ async function fetchInActiveUser(page = 1) {
                 <td>${item.firstname} ${item.lastname}</td>
 				<td>${item.email}</td>
 				<td>${item.role}</td>
-                <td>${item.active ? 'active' : 'inactive'}</td>
+                <td>
+					<h6><span class="badge text-bg-danger">${item.active ? 'active' : 'inactive'}</span></h6>
+				</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
                 <td>
@@ -2191,12 +2205,14 @@ async function addUser() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const confirmPass = document.getElementById('confirmPass').value;
+    const role = document.querySelector('.edit-user-role').value;
 
 	document.getElementById('firstname-error').textContent = ""
   	document.getElementById('lastname-error').textContent = ""
 	document.getElementById('email-error').textContent = ""
   	document.getElementById('password-error').textContent = ""
 	document.getElementById('confirm-password-error').textContent = ""
+	document.getElementById('role-error').textContent = ""
 
    let isValid = true;
     if (!firstname) {
@@ -2205,6 +2221,11 @@ async function addUser() {
     }
 	 if (!lastname) {
         document.getElementById('lastname-error').textContent = 'Lastname is required.';
+        isValid = false;
+    }
+
+	 if (!role) {
+        document.getElementById('role-error').textContent = 'role is required.';
         isValid = false;
     }
 
@@ -2246,7 +2267,7 @@ async function addUser() {
                 'Content-Type': 'application/json',
                 'Authorization': `${tokenType} ${access_Token}`
             },
-            body: JSON.stringify({firstname, lastname, email, password, confirmPass})
+            body: JSON.stringify({firstname, lastname, email, password, confirmPass, role})
         });
 
         const data = await res.json();
@@ -3234,6 +3255,37 @@ async function viewRequest(id) {
 	}
 }
 
+async function fetchRole(dropdownSelector) {
+	
+	const res = await fetch(`${baseUrl}/getRole`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const userRole = data.data
+
+	const dataRoleList = document.querySelector(dropdownSelector)
+
+	dataRoleList.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			 const errorRow = `<option disabled selected>${data.error || "No record found"}</option>`;
+			  dataRoleList.innerHTML = errorRow
+			return ;
+	}
+
+  dataRoleList.innerHTML = `<option value="" disabled selected>Select Role</option>`;
+
+	userRole.forEach((item, index) => {
+		dataRoleList.innerHTML += `
+				<option value="${item.role}">${item.name}</option>
+			`
+	})
+}
 
 
 
