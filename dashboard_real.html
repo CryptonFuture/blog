@@ -115,6 +115,223 @@
         
         <div id="permission" class="page">
           <h2>Permission</h2>
+          <div class="d-flex justify-content-between align-items-center">
+            <input type="search" style="width: 100%; max-width: 200px;" class="form-control rounded" placeholder="Search" />
+              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold "
+                style="background-color: #bbdefb;  white-space: nowrap;" data-bs-toggle="modal"
+                data-bs-target="#permissionModal" data-bs-whatever="@mdo">
+          
+                Create Permission
+              </button>
+          </div>
+          <div class="table-responsive mt-3">
+            <table class="table">
+              <thead>
+                <th>S.no</th>
+                <th>Name</th>
+                <th>Route Name</th>
+                <th>Role</th>
+                <th>Permission</th>
+                <th>Description</th>
+                <th>Created At</th>
+                <th>action</th>
+              </thead>
+              <tbody id="permission-list">
+
+              </tbody>
+            </table>
+          </div>
+          <!-- ADD PERMISSION MODEL -->
+            <div class="modal fade" id="permissionModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="postModalLabel">Add Permission</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form>
+                      <div class="row">
+                        <div class="col-6">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Name</label>
+                            <select id="add-name" class="form-select">
+                             
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Route Name</label>
+                            <select id="add-route-name" class="form-select">
+                            
+                            </select>
+                          </div>
+                        </div>
+
+                         <div class="col-12">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Role</label>
+                            <select id="add-role" class="form-select">
+                            
+                            </select>
+                          </div>
+                        </div>
+                        
+                      <div class="col-12">
+                        <div class="mb-3">
+                        
+                          <label class="form-label">Description</label>
+                          <textarea id="description" class="form-control custom-border"></textarea>
+                        </div>
+                      </div>
+
+                      <div class="col-6">
+                         <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="create" id="perm-create">
+                            <label class="form-check-label" for="perm-create">Create</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="read" id="perm-read">
+                            <label class="form-check-label" for="perm-read">get</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="update" id="perm-update">
+                            <label class="form-check-label" for="perm-update">Update</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="delete" id="perm-delete">
+                            <label class="form-check-label" for="perm-delete">Delete</label>
+                          </div>
+                      </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button onclick="addPermission()" type="button" class="btn btn-primary">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- EDIT PERMISSION MODEL -->
+              <div class="modal fade" id="editPermissionModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="postModalLabel">Edit Permission</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="editPostForm">
+                      <div class="mb-3" style="display: none;">
+                          <input hidden readonly id="edit-id" type="text" class="form-control custom-border">
+                        </div>
+                      <div class="row">
+                        <div class="col-6">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Name</label>
+                            <select id="edit-name" class="form-select">
+                             
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Route Name</label>
+                            <select id="edit-route-name" class="form-select">
+                            
+                            </select>
+                          </div>
+                        </div>
+
+                         <div class="col-12">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Role</label>
+                            <select id="edit-role" class="form-select">
+                            
+                            </select>
+                          </div>
+                        </div>
+                        
+                      <div class="col-12">
+                        <div class="mb-3">
+                        
+                          <label class="form-label">Description</label>
+                          <textarea id="edit-description" class="form-control custom-border"></textarea>
+                        </div>
+                      </div>
+
+                      <div class="col-6">
+                         <div class="form-check form-check-inline">
+                            <input class="form-check-input edit-perm-checkbox" type="checkbox" value="create" id="edit-perm-create">
+                            <label class="form-check-label" for="edit-perm-create">Create</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input edit-perm-checkbox" type="checkbox" value="read" id="edit-perm-read">
+                            <label class="form-check-label" for="edit-perm-read">get</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input edit-perm-checkbox" type="checkbox" value="update" id="edit-perm-update">
+                            <label class="form-check-label" for="edit-perm-update">Update</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input edit-perm-checkbox" type="checkbox" value="delete" id="edit-perm-delete">
+                            <label class="form-check-label" for="edit-perm-delete">Delete</label>
+                          </div>
+                      </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button onclick="updatedPermission()" type="button" class="btn btn-primary"  form="editPostForm">Update</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VIEW PERMISSION MODEL -->
+              <div class="modal fade" id="viewPermissionModal" tabindex="-1" aria-labelledby="viewPostModalLabel"
+                      aria-hidden="true">
+
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="viewPostModalLabel">View Permission</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body" id="viewPost">
+                            
+                             <ul class="list-group list-group-flush">
+                                      <li id="view-permission-id" class="list-group-item"></li>
+                                      <li id="view-permission-name" class="list-group-item"></li>
+                                      <li id="view-permission-route-name" class="list-group-item"></li>
+                                      <li id="view-permission-role" class="list-group-item"></li>
+                                      <li id="view-permission-description" class="list-group-item"></li>
+                                      <li id="view-permission-createdAt" class="list-group-item"></li>
+                                      <li id="view-permission-updatedAt" class="list-group-item"></li>
+                              </ul>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+            </div>
+
         </div>
         <div id="requestform" class="page">
           <h2>Request Form</h2>

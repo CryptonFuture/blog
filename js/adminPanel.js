@@ -25,6 +25,7 @@ let selectedPostId = null;
 let selectedTagId = null
 let selectedPageId = null
 let selectedUserId = null
+let selectedPermissionId = null
 
 let currentPage = 1;
 const limit = 5;
@@ -112,7 +113,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	fetchRole('.add-user-role')
 	fetchRole('.edit-user-role')
 	getRole()
-	
+	getPermission()
+	getRoutes()
+	getEditRoutes()
+
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
 
@@ -1145,6 +1149,8 @@ function update() {
 	  updatePage(selectedPageId)
 	} else if(selectedUserId) {
 	  updateUser(selectedUserId)
+	} else if(selectedPermissionId) {
+	  updatedPermission(selectedPermissionId)
 	}
 }
 
@@ -1324,6 +1330,53 @@ async function updateUser(id) {
 
 }
 
+async function updatedPermission() {
+	const id = document.getElementById('edit-id').value;
+	const routeName = document.getElementById('edit-name').value
+	const paramName = document.getElementById('edit-route-name').value
+	const role = document.getElementById('edit-role').value
+	const description = document.getElementById('edit-description').value
+
+	const action = Array.from(document.querySelectorAll('.edit-perm-checkbox:checked'))
+		.map(cb => cb.value);
+
+	const res = await fetch(`${baseUrl}/updatePermission/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ routeName, paramName, role, description, action })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update Permission Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			getPermission();
+			$('#editPermissionModal').modal('hide');
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete permission: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
+}
+
+
 async function fetchTag(page = 1) {
 
 	currentTagPage = page
@@ -1388,7 +1441,7 @@ async function fetchTag(page = 1) {
                   </button>
                   <ul class="dropdown-menu">
                     <li><a onclick="viewTag('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewTagModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
-                    <li><a onclick="editTag('${item._id}')" class="dropdown-item" href="#TagModal" data-bs-toggle="modal"> <i
+                    <li><a onclick="editTag('${item._id}')" class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#TagModal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deleteTag('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
                   </ul>
@@ -1512,7 +1565,7 @@ async function fetchPages(page = 1) {
                   </button>
                   <ul class="dropdown-menu">
                     <li><a onclick="viewPage('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPageModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
-                    <li><a onclick="editPage('${item._id}')" class="dropdown-item" href="#PageModal" data-bs-toggle="modal"> <i
+                    <li><a onclick="editPage('${item._id}')" class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#PageModal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deletePage('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
                   </ul>
@@ -3342,4 +3395,327 @@ async function getRole() {
 	
 }
 
+async function getRoutes() {
+	
+	const res = await fetch(`${baseUrl}/getSideBarRoutes`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
 
+	const data = await res.json()
+
+	const role = data.data
+
+	const namelist = document.getElementById('add-name')
+	const routeNamelist = document.getElementById('add-route-name')
+	const rolelist = document.getElementById('add-role')
+
+	namelist.innerHTML = '';
+	routeNamelist.innerHTML = '';
+	rolelist.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			const errorRow = `<option disabled selected>${data.error || "No record found"}</option>`;
+				namelist.innerHTML = errorRow
+				routeNamelist.innerHTML = errorRow
+				rolelist.innerHTML = errorRow
+			return ;
+	}
+
+  namelist.innerHTML = `<option value="" disabled selected>Select Name</option>`;
+  routeNamelist.innerHTML = `<option value="" disabled selected>Select Route Name</option>`;
+  rolelist.innerHTML = `<option value="" disabled selected>Select Role</option>`;
+
+	const filteredRoutes = data.data.filter(item => Number(item.role) === 0);
+
+	filteredRoutes.forEach((item, index) => {
+		namelist.innerHTML += `
+				<option value="${item.routeName}">${item.routeName}</option>
+			`
+		routeNamelist.innerHTML += `
+				<option value="${item.paramName}">${item.paramName}</option>
+			`
+
+		rolelist.innerHTML += `
+				<option value="${item.role}">${item.role}</option>
+			`
+	})
+}
+
+async function getEditRoutes() {
+	
+	const res = await fetch(`${baseUrl}/getSideBarRoutes`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const role = data.data
+
+	const namelist = document.getElementById('edit-name')
+	const routeNamelist = document.getElementById('edit-route-name')
+	const rolelist = document.getElementById('edit-role')
+
+	namelist.innerHTML = '';
+	routeNamelist.innerHTML = '';
+	rolelist.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			const errorRow = `<option disabled selected>${data.error || "No record found"}</option>`;
+				namelist.innerHTML = errorRow
+				routeNamelist.innerHTML = errorRow
+				rolelist.innerHTML = errorRow
+			return ;
+	}
+
+  namelist.innerHTML = `<option value="" disabled selected>Select Name</option>`;
+  routeNamelist.innerHTML = `<option value="" disabled selected>Select Route Name</option>`;
+  rolelist.innerHTML = `<option value="" disabled selected>Select Role</option>`;
+
+const filteredRoutes = data.data.filter(item => Number(item.role) === 0);
+
+	filteredRoutes.forEach((item, index) => {
+		namelist.innerHTML += `
+				<option value="${item.routeName}">${item.routeName}</option>
+			`
+		routeNamelist.innerHTML += `
+				<option value="${item.paramName}">${item.paramName}</option>
+			`
+
+		rolelist.innerHTML += `
+				<option value="${item.role}">${item.role}</option>
+			`
+	})
+}
+
+
+
+async function getPermission() {
+	const res = await fetch(`${baseUrl}/getPermission`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const permission = data.data
+
+	const listpermission = document.getElementById('permission-list')
+
+	listpermission.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listpermission.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	permission.forEach((item, index) => {
+		listpermission.innerHTML += `
+				<tr>
+                <td>${index + 1}</td>
+                <td>${item.routeName}</td>
+                <td>${item.paramName}</td>
+				<td>${item.role}</td>
+				<td>${item.action?.join(' ')}</td>
+                <td>${item.description}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a onclick="viewPermission('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPermissionModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editPermission('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"
+                	data-bs-target="#editPermissionModal"> <i
+                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+                    <li><a onclick="deletePermission('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                  </ul>
+                </td>
+				</tr>
+			`
+	})
+}
+
+async function addPermission() {
+	const routeName = document.getElementById('add-name').value
+	const paramName = document.getElementById('add-route-name').value
+	const role = document.getElementById('add-role').value
+	const description = document.getElementById('description').value
+
+	const action = Array.from(document.querySelectorAll('.form-check-input:checked'))
+		.map(cb => cb.value);
+	
+	const res = await fetch(`${baseUrl}/addPermission`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ routeName, paramName, role, description, action })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Create Permission Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			getPermission();
+			$('#permissionModal').modal('hide');
+			document.getElementById('add-name').value = ""
+			document.getElementById('add-route-name').value = ""
+			document.getElementById('add-role').value = ""
+			document.getElementById('description').value = ""
+			document.querySelectorAll('.form-check-input').forEach(cb => cb.checked = false);
+
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete permission: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function deletePermission(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to delete this permission?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, delete it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/deletePermission/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Delete Permission Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				getPermission();
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete permission: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+async function editPermission(id) {
+	selectedPermissionId = id;
+	const res = await fetch(`${baseUrl}/editPermissionById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const permission = data.data[0]
+		document.getElementById('edit-id').value = permission._id
+		document.getElementById('edit-name').value = permission.routeName
+		document.getElementById('edit-route-name').value = permission.paramName
+		document.getElementById('edit-role').value = permission.role
+		document.getElementById('edit-description').value = permission.description
+
+		document.querySelectorAll('.edit-perm-checkbox').forEach(cb => cb.checked = false);
+
+		if (Array.isArray(permission.action)) {
+			permission.action.forEach(perm => {
+				const checkbox = document.querySelector(`.edit-perm-checkbox[value="${perm}"]`);
+				if (checkbox) checkbox.checked = true;
+			});
+		}
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete permission: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+
+async function viewPermission(id) {
+
+	const res = await fetch(`${baseUrl}/viewPermissionById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('view-permission-id').innerHTML = `<strong>ID: </strong> <span> ${view._id} </span>`
+		document.getElementById('view-permission-name').innerHTML = `<strong>Name: </strong> <span> ${view.routeName} </span>`
+		document.getElementById('view-permission-route-name').innerHTML = `<strong>RouteName: </strong> <span> ${view.paramName} </span>`
+		document.getElementById('view-permission-role').innerHTML = `<strong>Role: </strong> <span> ${view.role} </span>`
+		document.getElementById('view-permission-description').innerHTML = `<strong>Description: </strong> <span> ${view.description} </span>`
+		document.getElementById('view-permission-createdAt').innerHTML = `<strong>CreatedAt: </strong> <span> ${new Date(view.createdAt).toISOString().split('T')[0]} </span>`
+		document.getElementById('view-permission-updatedAt').innerHTML = `<strong>UpdatedAt: </strong> <span> ${new Date(view.updatedAt).toISOString().split('T')[0]} </span>`
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete post: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
