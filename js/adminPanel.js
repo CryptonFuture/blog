@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	getRoutes()
 	getEditRoutes()
 	countPermission()
+	getUserInActive()
 
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
@@ -433,10 +434,22 @@ async function fetchDashboard() {
 	})
 
 	const data = await res.json()
+	
 
 	const counts = data.count
 
-	Object.entries(counts).map(([key, item]) => {
+	const userRole = Number(localStorage.getItem('role')); //
+
+	const filteredCounts = Object.values(counts).filter(item => {
+		if (Array.isArray(item.role)) {
+			return item.role.includes(userRole);
+		}
+		return Number(item.role) === userRole;
+		});
+
+	document.getElementById('cardRow').innerHTML = '';
+
+	filteredCounts.forEach(item => {
 		const card = `
 			<div class="col-sm-3 mb-4">
 				<div class="card border-0" style="background: #f5f7fa; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
@@ -477,9 +490,13 @@ async function getSideBarRoutes() {
 	sideBarRouteslist.innerHTML = '';
 
 	const filteredRoutes = sideBarRoutes.filter(route => {
-		return route.role === role;
+		if (Array.isArray(route.role)) {
+			return route.role.includes(role);
+		}
+		return Number(route.role) === role;
 	});
 
+	
 	filteredRoutes.forEach((item, index) => {
 		
 			sideBarRouteslist.innerHTML += `
@@ -3736,4 +3753,105 @@ async function countPermission() {
 
 	document.getElementById('permCount').textContent = `No Of Count: ${count}`
 
+}
+
+async function getUserInActive() {
+    const res = await fetch(`${baseUrl}/getUserInActive`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const InActiveUser = data.data
+
+	const employeeData = document.getElementById('employeeData')
+    const employee_data = document.getElementById('employee_data')
+	const employeedata = document.getElementById('employee-Data')
+
+
+	employeeData.innerHTML = '';
+    employee_data.innerHTML = '';
+    employeedata.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+        const errorRow = `<option disabled selected>${data.error || "No inactive users found"}</option>`;
+			employeeData.innerHTML = errorRow
+            employee_data.innerHTML = errorRow
+            employeedata.innerHTML = errorRow
+			return;
+	}
+
+    
+
+    employeeData.innerHTML = `<option value="" disabled selected>Select Username</option>`;
+    employee_data.innerHTML = `<option value="" disabled selected>Select Email</option>`;
+    employeedata.innerHTML = `<option value="" disabled selected>Select Phone</option>`;
+
+	InActiveUser.forEach((item, index) => {
+    
+    const fullname = `${item.firstname} ${item.lastname}`
+
+	employeeData.innerHTML += `
+				<option value="${fullname}">${fullname}</option>
+			`;
+    employee_data.innerHTML += `
+				<option value="${item.email}">${item.email}</option>
+			`;
+
+    employeedata.innerHTML += `
+				<option value="${item._id}">${item.phone ? item.phone : '----------'}</option>
+			`
+	})
+
+	
+}
+
+
+async function requestSubmit() {
+    const username = document.getElementById('employeeData').value
+    const email = document.getElementById('employee_data').value
+    const phoneValue = document.getElementById('employee-Data').value
+    const reqInfo = document.getElementById('request-info').value
+    const addInfo = document.getElementById('add-info').value
+
+    const phone = phoneValue === "" ? null : phoneValue;
+
+    const res = await fetch(`${baseUrl}/addRequest`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ username, email, phone, reqInfo, addInfo })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Create Request Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			document.getElementById('employeeData').value = ""
+            document.getElementById('employee_data').value = ""
+            document.getElementById('employee-Data').value = ""
+            document.getElementById('request-info').value = ""
+            document.getElementById('add-info').value = ""
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete request: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
 }
