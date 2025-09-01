@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	getPermission()
 	getRoutes()
 	getEditRoutes()
+	countPermission()
 
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
@@ -443,7 +444,7 @@ async function fetchDashboard() {
 						<div class="icon-container mb-3" style="width: 60px; height: 60px; background: #e1e5eb; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
 						<i class="fas ${item.icon} fa-lg" style="color: #4a5568;"></i>
 						</div>
-						<h5 class="card-title">${item.title}</h5>
+						<h6 class="card-title">${item.title}</h6>
 						<p class="card-text display-5 mb-3" style="color: #2d3748; font-weight: 700;">${item.total}</p>
 						<div class="progress" style="height: 6px; background: #e2e8f0;">
 						<div class="progress-bar" role="progressbar" style="width: 25%; background: #4a5568;"></div>
@@ -3718,4 +3719,21 @@ async function viewPermission(id) {
 			timerProgressBar: true
 		})
 	}
+}
+
+async function countPermission() {
+	
+	const res = await fetch(`${baseUrl}/permissionCount`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('permCount').textContent = `No Of Count: ${count}`
+
 }
