@@ -3446,7 +3446,14 @@ async function getRoutes() {
   routeNamelist.innerHTML = `<option value="" disabled selected>Select Route Name</option>`;
   rolelist.innerHTML = `<option value="" disabled selected>Select Role</option>`;
 
-	const filteredRoutes = data.data.filter(item => Number(item.role) === 0);
+	// const filteredRoutes = data.data.filter(item => Number(item.role) === 0);
+
+	const filteredRoutes = data.data.filter(item => {
+		if (Array.isArray(item.role)) {
+		return item.role.includes(0);
+		}
+		return Number(item.role) === 0;
+  	});
 
 	filteredRoutes.forEach((item, index) => {
 		namelist.innerHTML += `
@@ -3495,7 +3502,7 @@ async function getEditRoutes() {
   routeNamelist.innerHTML = `<option value="" disabled selected>Select Route Name</option>`;
   rolelist.innerHTML = `<option value="" disabled selected>Select Role</option>`;
 
-const filteredRoutes = data.data.filter(item => Number(item.role) === 0);
+	const filteredRoutes = data.data.filter(item => Number(item.role) === 0);
 
 	filteredRoutes.forEach((item, index) => {
 		namelist.innerHTML += `
