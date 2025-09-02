@@ -1357,6 +1357,161 @@
         </div>
         <div id="category" class="page">
           <h2>Category</h2>
+          <div class="d-flex justify-content-between align-items-center">
+           
+            <input type="text" class="w-25 form-control" />
+            <div class="d-flex">
+               <span id="categoryCount"></span>
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold"
+              style="background-color: #bbdefb; margin-left: 8px; white-space: nowrap;" data-bs-toggle="modal" data-bs-target="#categoryModal">
+               Create Category
+            </button>
+            </div>
+            
+             
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="table mt-3">
+              <thead>
+                <th>S.no</th>
+                <th>Name</th>
+                <th>Sub Name</th>
+                <th>Description</th>
+                <th>createdAt</th>
+                <th>action</th>
+              </thead>
+              <tbody id="category-list">
+
+              </tbody>
+            </table>
+          </div>
+          <!-- ADD CATEGORY MODEL -->
+           
+          <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Category</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+               <div class="container mt-4">
+  <form id="categoryForm">
+    <!-- Category Repeater -->
+    <div class="mb-3">
+      <div id="categoryRepeater">
+        <div class="row g-3 align-items-center mb-2 category-group">
+          <div class="col-auto">
+            <label class="col-form-label">Category</label>
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control custom-border" name="category[]" placeholder="Enter category" required>
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-danger remove-category d-none">Remove</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="float-end btn btn-primary" id="addCategory">Add Category</button>
+    </div>
+
+    <!-- SubCategory Repeater -->
+    <div class="mb-3">
+      <div id="subCategoryRepeater">
+        <div class="row g-3 align-items-center mb-2 sub-category-group">
+          <div class="col-auto">
+            <label class="col-form-label">Sub Category</label>
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control custom-border" name="subCategory[]" placeholder="Enter sub category" required>
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-danger remove-sub-category d-none">Remove</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="float-end btn btn-primary" id="addSubCategory">Add Sub Category</button>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3 mt-5">
+      <label for="description" class="form-label">Description</label>
+      <textarea class="form-control custom-border" id="add-description" rows="3"></textarea>
+    </div>
+                  </form>
+                </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button onclick="addCategory()" type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EDIT CATEGORY MODEL -->
+            <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"> 
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Category</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+               <div class="container mt-4">
+  <form id="categoryForm">
+    <div class="mb-3" style="display: none;">
+                          <input hidden readonly id="edit-category-id" type="text" class="form-control custom-border">
+                        </div>
+    <div class="mb-3">
+      <div id="editCategoryRepeater">
+        <div class="row g-3 align-items-center mb-2 edit-category-group">
+          <div class="col-auto">
+            <label class="col-form-label">Category</label>
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control custom-border" name="editCategory[]" placeholder="Enter category">
+          </div>
+          <div class="col-auto">
+            <button  type="button" class="btn btn-danger edit-remove-category d-none">Remove</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="float-end btn btn-primary" id="editCategory">Add Category</button>
+    </div>
+
+    <div class="mb-3">
+      <div id="editSubCategoryRepeater">
+        <div class="row g-3 align-items-center mb-2 edit-sub-category-group">
+          <div class="col-auto">
+            <label class="col-form-label">Sub Category</label>
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control custom-border" name="editSubCategory[]" placeholder="Enter sub category" required>
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-danger edit-remove-sub-category d-none">Remove</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="float-end btn btn-primary" id="editSubCategory">Add Sub Category</button>
+    </div>
+
+    <div class="mb-3 mt-5">
+      <label for="description" class="form-label">Description</label>
+      <textarea class="form-control custom-border" id="edit-desc" rows="3"></textarea>
+    </div>
+                  </form>
+                </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button onclick="updateCategory()" type="button" class="btn btn-primary">Update</button>
+                </div>
+              </div>
+            </div>
+          </div> 
         </div>
         <div id="user" class="page">
          <div class="container-fluid">
@@ -1762,6 +1917,8 @@
   </div>
  <script src="js/jquery.min.js"></script>
   <script>
+
+
     function showPage(id) {
         var pages = document.getElementsByClassName('page')
 
@@ -1778,6 +1935,40 @@
       window.onload = function () {
         showPage('dashboard')
       }
+
+  const categoryRepeater = document.getElementById("categoryRepeater");
+  const addCategoryBtn = document.getElementById("addCategory");
+
+  const subCategoryRepeater = document.getElementById("subCategoryRepeater");
+  const addSubCategoryBtn = document.getElementById("addSubCategory");
+
+
+  addCategoryBtn.addEventListener("click", () => {
+    const first = categoryRepeater.querySelector(".category-group");
+    const clone = first.cloneNode(true);
+    clone.querySelector("input").value = "";
+    clone.querySelector(".remove-category").classList.remove("d-none");
+    categoryRepeater.appendChild(clone);
+  });
+
+  addSubCategoryBtn.addEventListener("click", () => {
+    const first = subCategoryRepeater.querySelector(".sub-category-group");
+    const clone = first.cloneNode(true);
+    clone.querySelector("input").value = "";
+    clone.querySelector(".remove-sub-category").classList.remove("d-none");
+    subCategoryRepeater.appendChild(clone);
+  });
+
+
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-category")) {
+      e.target.closest(".category-group").remove();
+    }
+    if (e.target.classList.contains("remove-sub-category")) {
+      e.target.closest(".sub-category-group").remove();
+    }
+  });
+
   </script>
  
 

@@ -13,6 +13,7 @@
   });
 
   
+  
 const accessToken = localStorage.getItem('token')
 
 if (!accessToken) {
@@ -26,6 +27,7 @@ let selectedTagId = null
 let selectedPageId = null
 let selectedUserId = null
 let selectedPermissionId = null
+let selectedCategoryId = null
 
 let currentPage = 1;
 const limit = 5;
@@ -118,6 +120,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	getEditRoutes()
 	countPermission()
 	getUserInActive()
+	fetchCategory()
+	countCategory()
 
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
@@ -1169,6 +1173,8 @@ function update() {
 	  updateUser(selectedUserId)
 	} else if(selectedPermissionId) {
 	  updatedPermission(selectedPermissionId)
+	} else if(updateCategory) {
+	  updateCategory(selectedCategoryId)
 	}
 }
 
@@ -3862,3 +3868,300 @@ async function requestSubmit() {
 		})
 	}
 }
+	async function addCategory() {
+		const categories = [...document.querySelectorAll("input[name='category[]']")].map(i => i.value);
+		const subCategories = [...document.querySelectorAll("input[name='subCategory[]']")].map(i => i.value);
+		const description = document.getElementById("add-description").value;
+
+		const res = await fetch(`${baseUrl}/addCategory`, {
+		method: "POST",
+		headers: { 
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}` 
+		},
+		body: JSON.stringify({ category: categories, subCategory: subCategories, description })
+		});
+
+		const data = await res.json();
+		console.log(data);
+
+		if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Create Post Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchCategory();
+			countCategory()
+			$('#categoryModal').modal('hide');
+	
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete category: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+	}
+  
+	async function fetchCategory() {
+
+	const res = await fetch(`${baseUrl}/getCategory`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const category = data.data
+
+	const listcategory = document.getElementById('category-list')
+
+	listcategory.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listcategory.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	category.forEach((item, index) => {
+		 const subTree = `
+			<ul class="list-unstyled ms-3">
+				${item.subCategories.map(s => `<li>📂 ${s.name}</li>`).join("")}
+			</ul>
+    	`;
+
+		listcategory.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.name}</td>
+				<td>
+				<span class="tree-toggle" style="cursor:pointer;">
+            		▶
+          		</span> ${item.name}
+				${subTree}
+				</td>
+                <td>${item.description}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editCategory('${item._id}')" class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editCategoryModal"> <i
+                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+                    <li><a onclick="deleteCategory('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                  </ul>
+                </td>
+				</tr>
+			`
+	})
+
+	  document.querySelectorAll(".tree-toggle").forEach(toggle => {
+    toggle.addEventListener("click", function () {
+      const subList = this.parentElement.querySelector("ul");
+      if (subList.classList.contains("d-none")) {
+        subList.classList.remove("d-none");
+        this.textContent = "▼"; 
+      } else {
+        subList.classList.add("d-none");
+        this.textContent = "▶"; 
+      }
+    });
+  });
+}
+
+async function countCategory() {
+	
+	const res = await fetch(`${baseUrl}/countCategory`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('categoryCount').textContent = `No Of Count: ${count}`
+
+}
+
+async function deleteCategory(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to delete this category?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, delete it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/deleteCategory/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Delete Category Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				fetchCategory();
+				countCategory()
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete category: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+async function editCategory(id) {
+	selectedCategoryId = id;
+	const res = await fetch(`${baseUrl}/getCategoryById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const category = data.data[0];
+		document.getElementById('edit-category-id').value = category._id
+		document.getElementById('edit-desc').value = category.description || '';
+
+		const categoryRepeater = document.getElementById('editCategoryRepeater');
+		categoryRepeater.innerHTML = '';
+
+		const categoryGroup = document.createElement('div');
+        categoryGroup.classList.add('row', 'g-3', 'align-items-center', 'mb-2', 'edit-category-group');
+        categoryGroup.innerHTML = `
+            <div class="col-auto">
+                <label class="col-form-label">Category</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control custom-border" name="category[]" value="${category.name || ''}" required>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-danger edit-remove-category d-none">Remove</button>
+            </div>
+        `;
+        categoryRepeater.appendChild(categoryGroup);
+
+		const subCategoryRepeater = document.getElementById('editSubCategoryRepeater');
+		subCategoryRepeater.innerHTML = '';
+
+		if (category.subCategories && category.subCategories.length > 0) {
+			category.subCategories.forEach((subCat, index) => {
+				const subCatName = typeof subCat === "object" ? subCat.name : subCat;
+
+				const subCategoryGroup = document.createElement('div');
+				subCategoryGroup.classList.add('row', 'g-3', 'align-items-center', 'mb-2', 'edit-sub-category-group');
+				subCategoryGroup.innerHTML = `
+				  <div class="col-auto">
+					<label class="col-form-label">Sub Category</label>
+				  </div>
+				  <div class="col-auto">
+					<input type="text" class="form-control custom-border" name="subCategory[]" value="${subCatName}" required>
+				  </div>
+				  <div class="col-auto">
+					<button type="button" class="btn btn-danger edit-remove-sub-category ${index === 0 ? 'd-none' : ''}">Remove</button>
+				  </div>
+				`;
+				subCategoryRepeater.appendChild(subCategoryGroup);
+			});
+		}
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete category: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function	updateCategory() {
+		const id = document.getElementById('edit-category-id').value;
+		const categories = [...document.querySelectorAll("input[name='editCategory[]']")].map(i => i.value);
+		const subCategories = [...document.querySelectorAll("input[name='editSubCategory[]']")].map(i => i.value);
+		const description = document.getElementById("edit-desc").value;
+		const res = await fetch(`${baseUrl}/updateCategory/${id}`, {
+		method: "PUT",
+		headers: { 
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}` 
+		},
+		body: JSON.stringify({ category: categories, subCategory: subCategories, description })
+		});
+
+		const data = await res.json();
+		console.log(data);
+
+		if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update Category Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchCategory();
+			$('#editCategoryModal').modal('hide');
+	
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete category: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+	}
+
+ 
