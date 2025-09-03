@@ -96,12 +96,14 @@ const access_Token = localStorage.getItem('token')
 document.addEventListener('DOMContentLoaded', function () {
 	fetchDashboard()
 	getSideBarRoutes()
-	fetchPost()
+	fetchPublishedPost()
+	fetchUnPublishedPost()
 	fetchTag()
 	fetchPages()
 	fetchActiveUser()
 	fetchInActiveUser()
-	countPost()
+	countUnPublishedPost()
+	countPublishedPost()
 	countTag()
 	countPage()
 	countActiveUser()
@@ -685,7 +687,7 @@ function userActiveResetFilters() {
 	countActiveUser()	
 }
 
-async function fetchPost(page = 1) {
+async function fetchPublishedPost(page = 1) {
 
 	currentPage = page
 	const sortValue = document.getElementById('sortSelect')?.value || "";
@@ -700,7 +702,7 @@ async function fetchPost(page = 1) {
 		date: filters.date
 	});
 
-	const res = await fetch(`${baseUrl}/getPost?${queryParams.toString()}`, {
+	const res = await fetch(`${baseUrl}/getPublishedPost?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -728,6 +730,7 @@ async function fetchPost(page = 1) {
 	}
 
 	post.forEach((item, index) => {
+		
 		listpost.innerHTML += `
 				 <tr>
 				<td>
@@ -750,6 +753,77 @@ async function fetchPost(page = 1) {
                     <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deletePost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                  </ul>
+                </td>
+				</tr>
+			`
+	})
+	totalPages = data.pagination.totalPages;
+	renderPaginationButtons(totalPages);
+}
+
+async function fetchUnPublishedPost(page = 1) {
+
+	currentPage = page
+	const sortValue = document.getElementById('sortSelect')?.value || "";
+	const searchInput = document.getElementById('searchInput')?.value || "";
+
+	const queryParams = new URLSearchParams({
+		search: searchInput,
+		sort: sortValue,
+		page: currentPage,
+		limit,
+		status: filters.status,
+		date: filters.date
+	});
+
+	const res = await fetch(`${baseUrl}/getUnPublishedPost?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const post = data.data
+
+	const listpost = document.getElementById('unPublishedPostList')
+
+	listpost.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listpost.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			document.getElementById('pagination').innerHTML = '';
+			return;
+	}
+
+	post.forEach((item, index) => {
+		
+		listpost.innerHTML += `
+				 <tr>
+				
+                <td>${(currentPage - 1) * limit + index + 1}</td>
+                <td>${item.title}</td>
+                <td>${item.description}</td>
+                <td>${item.status ? 'published' : 'unPublished'}</td>
+				<td>${item.reject ? 'reject' : 'unReject'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="approvedPost('${item._id}')" class="dropdown-item" href="#"> <i class="fas fa-check me-2 text-success"></i> Approved</a></li>
+                    <li><a onclick="rejectPost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-times me-2 text-danger"></i> Reject</a></li>
                   </ul>
                 </td>
 				</tr>
@@ -807,7 +881,7 @@ document.getElementById('sortSelect')?.addEventListener('change', () => {
 
 async function addPost() {
 	const title = document.getElementById('title').value
-	const description = document.getElementById('description').value
+	const description = document.getElementById('add-post-description').value
 	
 	document.getElementById('title-error').textContent = ""
 
@@ -841,8 +915,6 @@ async function addPost() {
 			showConfirmButton: false,
 			timerProgressBar: true
 		}).then(() => {
-			fetchPost();
-			countPost()
 			$('#postModal').modal('hide');
 			document.getElementById('title').value = ""
 			document.getElementById('description').value = ""
@@ -890,8 +962,8 @@ async function deletePost(id) {
 				showConfirmButton: false,
 				timerProgressBar: true
 			}).then(() => {
-				fetchPost();
-				countPost()
+				fetchPublishedPost();
+				countPublishedPost()
 			});
 
 		} else {
@@ -1205,7 +1277,6 @@ async function updatePost(id) {
 			showConfirmButton: false,
 			timerProgressBar: true
 		}).then(() => {
-			fetchPost();
 			$('#PostModal').modal('hide');
 		});
 	} else {
@@ -2283,14 +2354,13 @@ async function addUser() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const confirmPass = document.getElementById('confirmPass').value;
-    const role = document.querySelector('.edit-user-role').value;
+    const role = document.querySelector('.add-user-role').value;
 
 	document.getElementById('firstname-error').textContent = ""
   	document.getElementById('lastname-error').textContent = ""
 	document.getElementById('email-error').textContent = ""
   	document.getElementById('password-error').textContent = ""
 	document.getElementById('confirm-password-error').textContent = ""
-	document.getElementById('role-error').textContent = ""
 
    let isValid = true;
     if (!firstname) {
@@ -2299,11 +2369,6 @@ async function addUser() {
     }
 	 if (!lastname) {
         document.getElementById('lastname-error').textContent = 'Lastname is required.';
-        isValid = false;
-    }
-
-	 if (!role) {
-        document.getElementById('role-error').textContent = 'role is required.';
         isValid = false;
     }
 
@@ -2386,7 +2451,7 @@ async function addUser() {
     }
 }
 
-async function countPost(search = "", status = "", date = "") {
+async function countUnPublishedPost(search = "", status = "", date = "") {
 	
 	const queryParams = new URLSearchParams();
 
@@ -2394,7 +2459,7 @@ async function countPost(search = "", status = "", date = "") {
 	if (status) queryParams.append("status", status);
 	if (date) queryParams.append("date", date);
 	
-	const res = await fetch(`${baseUrl}/countPost?${queryParams.toString()}`, {
+	const res = await fetch(`${baseUrl}/countUnPublishedPost?${queryParams.toString()}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -2405,7 +2470,30 @@ async function countPost(search = "", status = "", date = "") {
 
 	const count = data.count
 
-	document.getElementById('postCount').textContent = `No Of Count: ${count}`
+	document.getElementById('unPublishedPostCount').textContent = `No Of Count: ${count}`
+
+}
+
+async function countPublishedPost(search = "", status = "", date = "") {
+	
+	const queryParams = new URLSearchParams();
+
+	if (search) queryParams.append("search", search);
+	if (status) queryParams.append("status", status);
+	if (date) queryParams.append("date", date);
+	
+	const res = await fetch(`${baseUrl}/countPublishedPost?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('PublishedPostCount').textContent = `No Of Count: ${count}`
 
 }
 
@@ -4163,5 +4251,101 @@ async function	updateCategory() {
 		})
 	}
 	}
+
+async function approvedPost(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to approved Post?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, approved it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/approvedPost/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Approved Post Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				fetchUnPublishedPost();
+				countUnPublishedPost()
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete approved post: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+async function rejectPost(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to reject Post?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, reject it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/rejectPost/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Reject Post Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				fetchUnPublishedPost();
+				countUnPublishedPost()
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete reject post: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
 
  
