@@ -112,7 +112,33 @@
       </nav>
       
       <div id="main-content">
-        
+        <div id="postapproved" class="page">
+             <h2>Post Approved</h2>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <input type="search" placeholder="search..." class="w-25 form-control">
+             <span id="unPublishedPostCount"></span>
+          </div>
+          
+         
+
+         <div class="table-responsive mt-3">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>S.no</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Reject</th>
+                <th>Created at</th>
+                <th>Update at</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="unPublishedPostList"></tbody>
+          </table>
+         </div>
+        </div>
         <div id="permission" class="page">
           <h2>Permission</h2>
           <div class="d-flex justify-content-between align-items-center">
@@ -339,6 +365,7 @@
             </div>
 
         </div>
+        
         <div id="requestform" class="page">
           <h2>Request Form</h2>
           <div class="container-fluid mt-3">
@@ -741,7 +768,7 @@
 
            <div>
            
-            <span id="postCount"></span>
+            <span id="PublishedPostCount"></span>
              <button type="button" class="btn btn-outline-orange" onclick="resetFilters()">Reset filters</button>
 
                     <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -809,7 +836,7 @@
                       <span id="title-error" class="text-danger"></span>
                       <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea id="description" class="form-control custom-border"></textarea>
+                        <textarea id="add-post-description" class="form-control custom-border"></textarea>
                       </div>
                     </form>
                   </div>
@@ -1143,7 +1170,7 @@
             </div>
         </div>
 
-
+        
 
         <div id="pages" class="page">
            <div class="container-fluid">
@@ -1788,7 +1815,6 @@
                   <select id="" class="form-select add-user-role" aria-label="Default select example">
                     
                   </select>
-                   <span id="role-error" class="text-danger"></span>
                 </div>
                 
               </div>
@@ -1912,6 +1938,7 @@
           </div>
          </div>
         </div>
+       
       </div>
     </div>
   </div>
