@@ -82,11 +82,18 @@ let Logsfilters = {
 const firstname = localStorage.getItem('firstname') || ""
 const lastname = localStorage.getItem('lastname') || ""
 const emailAddress = localStorage.getItem('email') || ""
+const image = localStorage.getItem('image')
 
 const fullname = `${firstname} ${lastname}`.trim()
 
 document.getElementById('username').textContent = fullname || "No User Found"
 document.getElementById('email').textContent = emailAddress || "No User Found"
+
+if (image && image !== "null" && image !== "undefined") {
+  userImage.style.backgroundImage = `url(${image})`;
+} else {
+  userImage.style.backgroundImage = `url('/images/logo.jpg')`;
+}
 
 
 
@@ -327,6 +334,8 @@ async function logout() {
 		localStorage.removeItem('tokenExpiry');
 		localStorage.removeItem('role');
 		localStorage.removeItem('is_admin');
+		localStorage.removeItem('image');
+
 
 		Swal.fire({
 			icon: 'success',
@@ -1780,11 +1789,20 @@ async function fetchActiveUser(page = 1) {
                 <td>${item.firstname} ${item.lastname}</td>
 				<td>${item.email}</td>
 				<td>${item.role}</td>
+				<td>
+				 <img 
+					src="${item.image}" 
+					alt="User Image" 
+					width="50" 
+					height="50" 
+					style="object-fit: cover; border-radius: 50%;" 
+					/>
+				</td>
+
                 <td> 
 					<h6><span class="badge text-bg-success">${item.active ? 'active' : 'inactive'}</span></h6>
 				</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
-				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
                 <td>
                   <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     &#8942;
@@ -1861,11 +1879,19 @@ async function fetchInActiveUser(page = 1) {
                 <td>${item.firstname} ${item.lastname}</td>
 				<td>${item.email}</td>
 				<td>${item.role}</td>
+				<td>
+				 <img 
+					src="${item.image}" 
+					alt="User Image" 
+					width="50" 
+					height="50" 
+					style="object-fit: cover; border-radius: 50%;" 
+					/>
+					</td>
                 <td>
 					<h6><span class="badge text-bg-danger">${item.active ? 'active' : 'inactive'}</span></h6>
 				</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
-				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
                 <td>
                   <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     &#8942;
@@ -2360,6 +2386,18 @@ async function addUser() {
     const password = document.getElementById('password').value;
     const confirmPass = document.getElementById('confirmPass').value;
     const role = document.querySelector('.add-user-role').value;
+	const image = document.getElementById('imageInput').files[0]; 
+
+	const formData = new FormData();
+	formData.append("firstname", firstname);
+	formData.append("lastname", lastname);
+	formData.append("email", email);
+	formData.append("password", password);
+	formData.append("confirmPass", confirmPass);
+	formData.append("role", role);
+	if (image) {
+		formData.append("image", image);
+	}
 
 	document.getElementById('firstname-error').textContent = ""
   	document.getElementById('lastname-error').textContent = ""
@@ -2412,10 +2450,9 @@ async function addUser() {
         const res = await fetch(`${baseUrl}/register`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `${tokenType} ${access_Token}`
             },
-            body: JSON.stringify({firstname, lastname, email, password, confirmPass, role})
+            body: formData
         });
 
         const data = await res.json();
@@ -4603,5 +4640,7 @@ async function rejectPost(id) {
 		}
 	}
 }
+
+
 
  

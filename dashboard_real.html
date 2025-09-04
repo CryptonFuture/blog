@@ -83,7 +83,7 @@
       </div>
       <div class="img bg-wrap text-center py-4" style="background-image: url(images/bg_1.jpg);">
         <div class="user-logo">
-          <div class="img" style="background-image: url(images/logo.jpg);"></div>
+          <div id="userImage" class="img" style="background-image: url(images/logo.jpg);"></div>
           <h3 id="username"></h3>
         </div>
       </div>
@@ -1702,9 +1702,9 @@
               <th>Full Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Image</th>
               <th>Status</th>
               <th>Created At</th>
-              <th>Updated At</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -1749,9 +1749,9 @@
               <th>Full Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Image</th>
               <th>Status</th>
               <th>Created At</th>
-              <th>Updated At</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -1883,7 +1883,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <form enctype="multipart/form-data">
           <div class="row">
             <div class="col-6">
               <label class="form-label"> first name</label>
@@ -1923,6 +1923,11 @@
                   <select id="" class="form-select add-user-role" aria-label="Default select example">
                     
                   </select>
+                </div>
+
+                <div class="col-12 mt-3">
+                  <input type="file" id="imageInput">
+                   <div class="preview" id="preview"></div>
                 </div>
                 
               </div>
@@ -2101,6 +2106,17 @@
     }
     if (e.target.classList.contains("remove-sub-category")) {
       e.target.closest(".sub-category-group").remove();
+    }
+  });
+
+    document.getElementById("imageInput").addEventListener("change", function (e) {
+    const preview = document.getElementById("preview");
+    preview.innerHTML = "";
+    const file = e.target.files[0];
+    if (file) {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      preview.appendChild(img);
     }
   });
 
