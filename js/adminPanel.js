@@ -124,7 +124,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	getUserInActive()
 	fetchCategory()
 	countCategory()
-
+	getRequested()
+	getInActiveRequest()
+	countInActiveRequest()
+	countActiveRequest()
+	
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
 
@@ -741,7 +745,8 @@ async function fetchPublishedPost(page = 1) {
                 <td>${(currentPage - 1) * limit + index + 1}</td>
                 <td>${item.title}</td>
                 <td>${item.description}</td>
-                <td>${item.status ? 'published' : 'unPublished'}</td>
+                <td><span class="badge text-bg-success">${item.status ? 'published' : 'unPublished'}</span></td>
+				<td><span class="badge text-bg-success">${item.approved ? 'approved' : 'unApporved'}<span></td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
                 <td>
@@ -812,8 +817,9 @@ async function fetchUnPublishedPost(page = 1) {
                 <td>${(currentPage - 1) * limit + index + 1}</td>
                 <td>${item.title}</td>
                 <td>${item.description}</td>
-                <td>${item.status ? 'published' : 'unPublished'}</td>
-				<td>${item.reject ? 'reject' : 'unReject'}</td>
+                <td><span class="badge text-bg-danger">${item.status ? 'published' : 'unPublished'}</span></td>
+				<td><span class="badge text-bg-danger">${item.reject ? 'reject' : 'unReject'}<span></td>
+				<td><span class="badge text-bg-danger">${item.approved ? 'approved' : 'unApporved'}<span></td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
                 <td>
@@ -1255,7 +1261,6 @@ async function updatePost(id) {
 	
 	const title = document.getElementById('edit-post-title').value
 	const description = document.getElementById('edit-post-description').value
-	const status = document.getElementById('edit-post-status').checked
 
 	const res = await fetch(`${baseUrl}/updatePost/${id}`, {
 		method: 'PUT',
@@ -1263,7 +1268,7 @@ async function updatePost(id) {
 			'Content-Type': 'application/json',
 			'Authorization': `${tokenType} ${access_Token}`
 		},
-		body: JSON.stringify({ title, description, status })
+		body: JSON.stringify({ title, description })
 	})
 
 	const data = await res.json()
@@ -3132,7 +3137,6 @@ async function fetchLogs(page = 1) {
 		listlogs.innerHTML += `
 				 <tr>
 					<td>${(currentLogsPage - 1) * limit + index + 1}</td>
-					<td>${item.user_id.firstname ? item.user_id.firstname : '----------'} ${item.user_id.lastname ? item.user_id.lastname : '----------'}</td>
 					<td>${item.login_time ? new Date(item.login_time).toLocaleTimeString() : '----------'}</td>
 					<td>${item.logout_time ? new Date(item.logout_time).toLocaleTimeString() : '----------'}</td>
 					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
@@ -3205,7 +3209,7 @@ async function countLogs(date = "", loginTime = "", logoutTime = "") {
 
 async function getRequest() {
 	
-	const res = await fetch(`${baseUrl}/getRequest`, {
+	const res = await fetch(`${baseUrl}/getActiveRequest`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -3243,14 +3247,137 @@ async function getRequest() {
 						${item.reqInfo.length > 5 ? `<button class="btn btn-link btn-sm p-0" onclick="toggleText('reqInfo-${item._id}', '${item.reqInfo}')">Read More</button>` : ""}
 					</td>
 					
-					<td>${item.approved ? 'Approved' : 'unApproved'}</td>
-					<td>${item.reject ? 'Reject' : 'unReject'}</td>
+					<td><h6><span class="badge ${item.approvedBy ? 'text-bg-success' : 'text-bg-danger'}">${item.approvedBy ? 'Approved' : 'unApproved'}</h6></span></td>
+					<td><h6><span class="badge ${item.rejectedBy ? 'text-bg-danger' : 'text-bg-warning'}">${item.rejectedBy ? 'Reject' : 'unReject'}</h6></span></td>
 					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 					<td>
-						<button onclick="approvedRequest('${item._id}', this)" class="btn btn-primary" type="button">
+						<button onclick="approvedByRequest('${item._id}', this)" class="btn btn-primary" type="button">
 							Approved
 						</button>
-						<button onclick="rejectRequest('${item._id}', this)" class="btn btn-danger" type="button">
+						<button onclick="rejectByRequest('${item._id}', this)" class="btn btn-danger" type="button">
+							Reject
+						</button>
+						<button onclick="viewRequest('${item._id}')" data-bs-toggle="modal" data-bs-target="#viewApprovedModal" class="btn btn-info" type="button">
+							View
+						</button>
+					</td>
+					
+				</tr>
+			`
+	})
+}
+
+async function getInActiveRequest() {
+	
+	const res = await fetch(`${baseUrl}/getInActiveRequest`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const request = data.data
+
+	const inActiveRequestList = document.getElementById('inActive-request-list')
+
+	inActiveRequestList.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			inActiveRequestList.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	request.forEach((item, index) => {
+		inActiveRequestList.innerHTML += `
+				<tr>
+					<td>${index + 1}</td>
+					<td>${item.username}</td>
+					<td>
+						<span id="reqInfo-${item._id}">
+							${item.reqInfo.length > 5 ? item.reqInfo.substring(0, 5) + "..." : item.reqInfo}
+						</span>
+						${item.reqInfo.length > 5 ? `<button class="btn btn-link btn-sm p-0" onclick="toggleText('reqInfo-${item._id}', '${item.reqInfo}')">Read More</button>` : ""}
+					</td>
+					
+					<td><h6><span class="badge ${item.approvedBy ? 'text-bg-success' : 'text-bg-danger'}">${item.approvedBy ? 'Approved' : 'unApproved'}</h6></span></td>
+					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+					<td>
+					${item.approvedBy 
+          			?
+						`<button class="btn btn-primary" type="button">
+							view
+						</button>
+						<button class="btn btn-danger" type="button">
+							edit
+						</button>
+						<button data-bs-toggle="modal" data-bs-target="#viewApprovedModal" class="btn btn-info" type="button">
+							delete
+						</button>
+					`
+						: ''}
+					</td>
+					
+				</tr>
+			`
+	})
+}
+
+async function getRequested() {
+	
+	const res = await fetch(`${baseUrl}/getActiveRequest`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const request = data.data
+
+	const listRequest = document.getElementById('list-request')
+
+	listRequest.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listRequest.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	request.forEach((item, index) => {
+		listRequest.innerHTML += `
+				<tr>
+					<td>${index + 1}</td>
+					<td>${item.username}</td>
+					<td>
+						<span id="reqInfo-${item._id}">
+							${item.reqInfo.length > 5 ? item.reqInfo.substring(0, 5) + "..." : item.reqInfo}
+						</span>
+						${item.reqInfo.length > 5 ? `<button class="btn btn-link btn-sm p-0" onclick="toggleText('reqInfo-${item._id}', '${item.reqInfo}')">Read More</button>` : ""}
+					</td>
+					
+					<td><h6><span class="badge text-bg-danger">${item.approvedAt ? 'Approved' : 'unApproved'}</h6></span></td>
+					<td><h6><span class="badge text-bg-danger">${item.rejectedAt ? 'Reject' : 'unReject'}</h6></span></td>
+					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+					<td>
+						<button onclick="approvedAtRequest('${item._id}', this)" class="btn btn-primary" type="button">
+							Approved
+						</button>
+						<button onclick="rejectAtRequest('${item._id}', this)" class="btn btn-danger" type="button">
 							Reject
 						</button>
 						<button onclick="viewRequest('${item._id}')" data-bs-toggle="modal" data-bs-target="#viewApprovedModal" class="btn btn-info" type="button">
@@ -3277,7 +3404,7 @@ function toggleText(spanId, fullText) {
 }
 
 
-async function approvedRequest(id) {
+async function approvedByRequest(id) {
 	const result = await Swal.fire({
 		title: 'Are you sure you want to approved Request?',
 		text: 'You won\'t be able to revert this!',
@@ -3290,7 +3417,7 @@ async function approvedRequest(id) {
 	})
 
 	if (result.isConfirmed) {
-		const res = await fetch(`${baseUrl}/approvedRequest/${id}`, {
+		const res = await fetch(`${baseUrl}/approvedByRequest/${id}`, {
 			method: 'PUT',
 			headers: {
 				'Authorization': `${tokenType} ${access_Token}`
@@ -3324,7 +3451,54 @@ async function approvedRequest(id) {
 	}
 }
 
-async function rejectRequest(id) {
+async function approvedAtRequest(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to approved Request?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, approved it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/approvedAtRequest/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Approved Request Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				getRequested();
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete approved request: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+async function rejectByRequest(id) {
 	const result = await Swal.fire({
 		title: 'Are you sure you want to reject Request?',
 		text: 'You won\'t be able to revert this!',
@@ -3337,7 +3511,7 @@ async function rejectRequest(id) {
 	})
 
 	if (result.isConfirmed) {
-		const res = await fetch(`${baseUrl}/rejectRequest/${id}`, {
+		const res = await fetch(`${baseUrl}/rejectByRequest/${id}`, {
 			method: 'PUT',
 			headers: {
 				'Authorization': `${tokenType} ${access_Token}`
@@ -3371,11 +3545,58 @@ async function rejectRequest(id) {
 	}
 }
 
+async function rejectAtRequest(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to reject Request?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, reject it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/rejectAtRequest/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Reject Request Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				getRequested();
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete reject request: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
 
 
 async function countRequest() {
 	
-	const res = await fetch(`${baseUrl}/countRequest`, {
+	const res = await fetch(`${baseUrl}/countActiveRequest`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `${tokenType} ${access_Token}`
@@ -3387,6 +3608,40 @@ async function countRequest() {
 	const count = data.count
 
 	document.getElementById('requestCount').textContent = `No Of Count: ${count}`
+
+}
+
+async function countActiveRequest() {
+	
+	const res = await fetch(`${baseUrl}/countActiveRequest`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('ActiveRequestCount').textContent = `No Of Count: ${count}`
+
+}
+
+async function countInActiveRequest() {
+	
+	const res = await fetch(`${baseUrl}/countInActiveRequest`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+	})
+
+	const data = await res.json()
+
+	const count = data.count
+
+	document.getElementById('inActiveRequestCount').textContent = `No Of Count: ${count ? count : 0}`
 
 }
 
@@ -3939,6 +4194,7 @@ async function requestSubmit() {
 			showConfirmButton: false,
 			timerProgressBar: true
 		}).then(() => {
+			$('#requestModal').modal('hide')
 			document.getElementById('employeeData').value = ""
             document.getElementById('employee_data').value = ""
             document.getElementById('employee-Data').value = ""
