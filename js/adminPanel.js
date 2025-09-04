@@ -1104,7 +1104,28 @@ async function editUser(id) {
 		document.querySelector('.edit-user-role').value = user.role
 		document.getElementById('edit-user-active').checked = user.active
 		document.getElementById('edit-user-admin').checked = user.is_admin
-	
+
+		const imagePreview = document.getElementById("edit-user-image-preview");
+		if (user.image) {
+			imagePreview.src = `${user.image.replace(/\\/g, "/")}`;
+		} else {
+			imagePreview.src = "assets/default-user.png"; 
+		}
+
+		const fileInput = document.getElementById("edit-user-image");
+		
+		fileInput.value = ""; 
+
+		fileInput.addEventListener("change", function (e) {
+			const file = e.target.files[0];
+			if (file) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					imagePreview.src = e.target.result; 
+				};
+				reader.readAsDataURL(file);
+			}
+		});
 
 	} else {
 		Swal.fire({
@@ -1400,13 +1421,25 @@ async function updateUser(id) {
 	const active = document.getElementById('edit-user-active').checked
 	const is_admin = document.getElementById('edit-user-admin').checked
 
+	const imageFile = document.getElementById('edit-user-image').files[0];
+
+	const formData = new FormData();
+	formData.append("firstname", firstname);
+	formData.append("lastname", lastname);
+	formData.append("email", email);
+	formData.append("role", role);
+	formData.append("active", active);
+	formData.append("is_admin", is_admin);
+	if (imageFile) {
+		formData.append("image", imageFile); 
+	}
+
 	const res = await fetch(`${baseUrl}/updateUser/${id}`, {
 		method: 'PUT',
 		headers: {
-			'Content-Type': 'application/json',
 			'Authorization': `${tokenType} ${access_Token}`
 		},
-		body: JSON.stringify({ firstname, lastname, email, active, is_admin, role })
+		body: formData
 	})
 
 	const data = await res.json()

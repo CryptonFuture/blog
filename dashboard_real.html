@@ -1814,7 +1814,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form id="editUserForm">
+                <form id="editUserForm" enctype="multipart/form-data">
                   <div class="row">
                     <div class="mb-3" style="display: none;">
                           <input hidden readonly id="edit-user-id" type="text" class="form-control custom-border">
@@ -1840,6 +1840,15 @@
                             
                           </select>
                           <span id="role-error" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                          <input type="file" accept="" id="edit-user-image">
+                          <div class="mt-2">
+                            <img id="edit-user-image-preview" src="assets/default-user.png" 
+                                alt="Preview" width="100" height="100" 
+                                style="object-fit: cover; border-radius: 50%;" />
+                          </div>
                         </div>
                        
                         <div class="col-6">
