@@ -756,8 +756,17 @@ async function fetchPublishedPost(page = 1) {
                 <td>${item.description}</td>
                 <td><span class="badge text-bg-success">${item.status ? 'published' : 'unPublished'}</span></td>
 				<td><span class="badge text-bg-success">${item.approved ? 'approved' : 'unApporved'}<span></td>
-                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
-				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td><span class="badge text-bg-info">${item.postStatus}<span></td>
+				<td>
+				<img 
+					src="${item.image}" 
+					alt="User Image" 
+					width="50" 
+					height="50" 
+					style="object-fit: cover; border-radius: 50%;" 
+					/>
+				</td>
+				<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
                 <td>
                   <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     &#8942;
@@ -767,7 +776,9 @@ async function fetchPublishedPost(page = 1) {
                     <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deletePost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
-                  </ul>
+							 <li><a onclick="publishedPost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-check me-2 text-success"></i> Published</a></li>
+
+					</ul>
                 </td>
 				</tr>
 			`
@@ -829,8 +840,17 @@ async function fetchUnPublishedPost(page = 1) {
                 <td><span class="badge text-bg-danger">${item.status ? 'published' : 'unPublished'}</span></td>
 				<td><span class="badge text-bg-danger">${item.reject ? 'reject' : 'unReject'}<span></td>
 				<td><span class="badge text-bg-danger">${item.approved ? 'approved' : 'unApporved'}<span></td>
-                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
-				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td><span class="badge text-bg-warning">${item.postStatus}<span></td>
+				<td>
+				<img 
+					src="${item.image}" 
+					alt="User Image" 
+					width="50" 
+					height="50" 
+					style="object-fit: cover; border-radius: 50%;" 
+					/>
+				</td>
+				<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
                 <td>
                   <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     &#8942;
@@ -897,6 +917,14 @@ document.getElementById('sortSelect')?.addEventListener('change', () => {
 async function addPost() {
 	const title = document.getElementById('title').value
 	const description = document.getElementById('add-post-description').value
+	const image = document.getElementById('PostImageInput').files[0]; 
+
+	const formData = new FormData();
+	formData.append("title", title);
+	formData.append("description", description);
+	if (image) {
+		formData.append("image", image);
+	}
 	
 	document.getElementById('title-error').textContent = ""
 
@@ -913,10 +941,9 @@ async function addPost() {
 	const res = await fetch(`${baseUrl}/addPost`, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json',
 			'Authorization': `${tokenType} ${access_Token}`
 		},
-		body: JSON.stringify({ title, description })
+		body: formData
 	})
 
 	const data = await res.json()
@@ -932,7 +959,7 @@ async function addPost() {
 		}).then(() => {
 			$('#postModal').modal('hide');
 			document.getElementById('title').value = ""
-			document.getElementById('description').value = ""
+			document.getElementById('add-post-description').value = ""
 		});
 	} else {
 		Swal.fire({
@@ -1007,10 +1034,34 @@ async function editPost(id) {
 
 	if (res.ok && data.success && data.data.length > 0) {
 		const post = data.data[0]
+		console.log(post, 'post');
+		
 		document.getElementById('edit-post-id').value = post._id
 		document.getElementById('edit-post-title').value = post.title
 		document.getElementById('edit-post-description').value = post.description
-		document.getElementById('edit-post-status').checked = post.status
+		// document.getElementById('edit-post-status').checked = post.status
+
+		const postimagePreview = document.getElementById("edit-post-image-preview");
+		if (post.image) {
+			postimagePreview.src = `${post.image.replace(/\\/g, "/")}`;
+		} else {
+			postimagePreview.src = "assets/default-user.png"; 
+		}
+
+		const fileInputPost = document.getElementById("edit-post-image");
+		
+		fileInputPost.value = ""; 
+
+		fileInputPost.addEventListener("change", function (e) {
+			const postfile = e.target.files[0];
+			if (postfile) {
+				const postReader = new FileReader();
+				postReader.onload = function (e) {
+					postimagePreview.src = e.target.result; 
+				};
+				postReader.readAsDataURL(postfile);
+			}
+		});
 
 	} else {
 		Swal.fire({
@@ -1291,14 +1342,21 @@ async function updatePost(id) {
 	
 	const title = document.getElementById('edit-post-title').value
 	const description = document.getElementById('edit-post-description').value
+	const postImageFile = document.getElementById('edit-post-image').files[0];
+
+	const formData = new FormData();
+	formData.append("title", title);
+	formData.append("description", description);
+	if (postImageFile) {
+		formData.append("image", postImageFile); 
+	}
 
 	const res = await fetch(`${baseUrl}/updatePost/${id}`, {
 		method: 'PUT',
 		headers: {
-			'Content-Type': 'application/json',
 			'Authorization': `${tokenType} ${access_Token}`
 		},
-		body: JSON.stringify({ title, description })
+		body: formData
 	})
 
 	const data = await res.json()
@@ -1312,6 +1370,7 @@ async function updatePost(id) {
 			showConfirmButton: false,
 			timerProgressBar: true
 		}).then(() => {
+			fetchPublishedPost()
 			$('#PostModal').modal('hide');
 		});
 	} else {
@@ -4617,6 +4676,54 @@ async function approvedPost(id) {
 			Swal.fire({
 				icon: 'error',
 				title: `Failed to delete approved post: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+async function publishedPost(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to published Post?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, published it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/publishedPost/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'published Post Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				fetchPublishedPost();
+				countPublishedPost()
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete published post: ${data.error || res.statusText}`,
 				text: data.error,
 				timer: 2000,
 				showConfirmButton: false,
