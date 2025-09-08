@@ -33,6 +33,9 @@ let currentPage = 1;
 const limit = 5;
 let totalPages = 1;
 
+let currentUnPublishedPage = 1;
+let totalUnPublishedPages = 1;
+
 let currentTagPage = 1;
 let totalTagPages = 1;
 
@@ -738,7 +741,7 @@ async function fetchPublishedPost(page = 1) {
 					</td>
 				</tr>
 			`;
-			document.getElementById('pagination').innerHTML = '';
+			document.getElementById('publishedPostPagination').innerHTML = '';
 			return;
 	}
 
@@ -784,7 +787,7 @@ async function fetchPublishedPost(page = 1) {
 			`
 	})
 	totalPages = data.pagination.totalPages;
-	renderPaginationButtons(totalPages);
+	renderPublishedPaginationButtons(totalPages);
 }
 
 async function fetchUnPublishedPost(page = 1) {
@@ -825,7 +828,7 @@ async function fetchUnPublishedPost(page = 1) {
 					</td>
 				</tr>
 			`;
-			document.getElementById('pagination').innerHTML = '';
+			document.getElementById('unPublishedPostPagination').innerHTML = '';
 			return;
 	}
 
@@ -865,11 +868,11 @@ async function fetchUnPublishedPost(page = 1) {
 			`
 	})
 	totalPages = data.pagination.totalPages;
-	renderPaginationButtons(totalPages);
+	renderUnPublishedPaginationButtons(totalPages);
 }
 
-function renderPaginationButtons(total) {
-	const pagination = document.getElementById('pagination');
+function renderPublishedPaginationButtons(total) {
+	const pagination = document.getElementById('publishedPostPagination');
 	pagination.innerHTML = '';
 
 	const prev = document.createElement('li');
@@ -881,15 +884,51 @@ function renderPaginationButtons(total) {
 	};
 	pagination.appendChild(prev);
 
-	for (let i = 1; i <= total; i++) {
+	function createPageButton(page) {
 		const pageBtn = document.createElement('li');
-		pageBtn.className = `page-item ${i === currentPage ? 'active' : ''}`;
-		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.className = `page-item ${page === currentPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
 		pageBtn.onclick = (e) => {
 			e.preventDefault();
-			fetchPost(i);
+			fetchPublishedPost(page);
 		};
 		pagination.appendChild(pageBtn);
+	}
+
+	let maxVisible = 5; 
+	let startPage = Math.max(1, currentPage - 2);
+	let endPage = Math.min(total, currentPage + 2);
+
+	if (endPage - startPage < maxVisible - 1) {
+		if (startPage === 1) {
+			endPage = Math.min(total, startPage + maxVisible - 1);
+		} else if (endPage === total) {
+			startPage = Math.max(1, endPage - maxVisible + 1);
+		}
+	}
+
+	if (startPage > 1) {
+		createPageButton(1);
+		if (startPage > 2) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+	}
+
+	for (let i = startPage; i <= endPage; i++) {
+		createPageButton(i);
+	}
+
+	if (endPage < total) {
+		if (endPage < total - 1) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+		createPageButton(total);
 	}
 
 	const next = document.createElement('li');
@@ -897,9 +936,81 @@ function renderPaginationButtons(total) {
 	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
 	next.onclick = (e) => {
 		e.preventDefault();
-		if (currentPage < total) fetchPost(currentPage + 1);
+		if (currentPage < total) fetchPublishedPost(currentPage + 1);
 	};
 	pagination.appendChild(next);
+
+}
+
+function renderUnPublishedPaginationButtons(total) {
+	const pagination = document.getElementById('unPublishedPostPagination');
+	pagination.innerHTML = '';
+
+	const prev = document.createElement('li');
+	prev.className = `page-item ${currentUnPublishedPage === 1 ? 'disabled' : ''}`;
+	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+	prev.onclick = (e) => {
+		e.preventDefault();
+		if (currentUnPublishedPage > 1) fetchUnPublishedPost(currentUnPublishedPage - 1);
+	};
+	pagination.appendChild(prev);
+
+	function createPageButton(page) {
+		const pageBtn = document.createElement('li');
+		pageBtn.className = `page-item ${page === currentUnPublishedPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
+		pageBtn.onclick = (e) => {
+			e.preventDefault();
+			fetchUnPublishedPost(page);
+		};
+		pagination.appendChild(pageBtn);
+	}
+
+	let maxVisible = 5; 
+	let startPage = Math.max(1, currentPage - 2);
+	let endPage = Math.min(total, currentPage + 2);
+
+	if (endPage - startPage < maxVisible - 1) {
+		if (startPage === 1) {
+			endPage = Math.min(total, startPage + maxVisible - 1);
+		} else if (endPage === total) {
+			startPage = Math.max(1, endPage - maxVisible + 1);
+		}
+	}
+
+	if (startPage > 1) {
+		createPageButton(1);
+		if (startPage > 2) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+	}
+
+	for (let i = startPage; i <= endPage; i++) {
+		createPageButton(i);
+	}
+
+	if (endPage < total) {
+		if (endPage < total - 1) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+		createPageButton(total);
+	}
+
+	const next = document.createElement('li');
+	next.className = `page-item ${currentUnPublishedPage === total ? 'disabled' : ''}`;
+	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+	next.onclick = (e) => {
+		e.preventDefault();
+		if (currentUnPublishedPage < total) fetchUnPublishedPost(currentUnPublishedPage + 1);
+	};
+	pagination.appendChild(next);
+
 }
 
 document.getElementById('searchInput')?.addEventListener('keydown', (e) => {
@@ -1667,15 +1778,51 @@ function renderTagPaginationButtons(total) {
 	};
 	pagination.appendChild(prev);
 
-	for (let i = 1; i <= total; i++) {
+	function createPageButton(page) {
 		const pageBtn = document.createElement('li');
-		pageBtn.className = `page-item ${i === currentTagPage ? 'active' : ''}`;
-		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.className = `page-item ${page === currentTagPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
 		pageBtn.onclick = (e) => {
 			e.preventDefault();
-			fetchTag(i);
+			fetchTag(page);
 		};
 		pagination.appendChild(pageBtn);
+	}
+
+	let maxVisible = 5; 
+	let startPage = Math.max(1, currentTagPage - 2);
+	let endPage = Math.min(total, currentTagPage + 2);
+
+	if (endPage - startPage < maxVisible - 1) {
+		if (startPage === 1) {
+			endPage = Math.min(total, startPage + maxVisible - 1);
+		} else if (endPage === total) {
+			startPage = Math.max(1, endPage - maxVisible + 1);
+		}
+	}
+
+	if (startPage > 1) {
+		createPageButton(1);
+		if (startPage > 2) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+	}
+
+	for (let i = startPage; i <= endPage; i++) {
+		createPageButton(i);
+	}
+
+	if (endPage < total) {
+		if (endPage < total - 1) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+		createPageButton(total);
 	}
 
 	const next = document.createElement('li');
@@ -1686,6 +1833,7 @@ function renderTagPaginationButtons(total) {
 		if (currentTagPage < total) fetchTag(currentTagPage + 1);
 	};
 	pagination.appendChild(next);
+
 }
 
 document.getElementById('searchTagInput')?.addEventListener('keydown', (e) => {
@@ -1757,9 +1905,9 @@ async function fetchPages(page = 1) {
                 <td>${(currentPagePage - 1) * limit + index + 1}</td>
                 <td>${item.pageName || item.pageName}</td>
                 <td>${item.description}</td>
+				<td>${item.pageUrl}</td>
                 <td>${item.status ? 'active' : 'inactive'}</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
-				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
                 <td>
                   <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     &#8942;
@@ -1778,6 +1926,8 @@ async function fetchPages(page = 1) {
 	renderPagePaginationButtons(totalPagePages);
 }
 
+
+
 function renderPagePaginationButtons(total) {
 	const pagination = document.getElementById('pagePagination');
 	pagination.innerHTML = '';
@@ -1791,15 +1941,51 @@ function renderPagePaginationButtons(total) {
 	};
 	pagination.appendChild(prev);
 
-	for (let i = 1; i <= total; i++) {
+	function createPageButton(page) {
 		const pageBtn = document.createElement('li');
-		pageBtn.className = `page-item ${i === currentPagePage ? 'active' : ''}`;
-		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.className = `page-item ${page === currentPagePage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
 		pageBtn.onclick = (e) => {
 			e.preventDefault();
-			fetchPages(i);
+			fetchPages(page);
 		};
 		pagination.appendChild(pageBtn);
+	}
+
+	let maxVisible = 5; 
+	let startPage = Math.max(1, currentPagePage - 2);
+	let endPage = Math.min(total, currentPagePage + 2);
+
+	if (endPage - startPage < maxVisible - 1) {
+		if (startPage === 1) {
+			endPage = Math.min(total, startPage + maxVisible - 1);
+		} else if (endPage === total) {
+			startPage = Math.max(1, endPage - maxVisible + 1);
+		}
+	}
+
+	if (startPage > 1) {
+		createPageButton(1);
+		if (startPage > 2) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+	}
+
+	for (let i = startPage; i <= endPage; i++) {
+		createPageButton(i);
+	}
+
+	if (endPage < total) {
+		if (endPage < total - 1) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+		createPageButton(total);
 	}
 
 	const next = document.createElement('li');
@@ -1810,6 +1996,7 @@ function renderPagePaginationButtons(total) {
 		if (currentPagePage < total) fetchPages(currentPagePage + 1);
 	};
 	pagination.appendChild(next);
+
 }
 
 document.getElementById('searchPageInput')?.addEventListener('keydown', (e) => {
@@ -2018,15 +2205,51 @@ function renderActiveUserPaginationButtons(total) {
 	};
 	pagination.appendChild(prev);
 
-	for (let i = 1; i <= total; i++) {
+	function createPageButton(page) {
 		const pageBtn = document.createElement('li');
-		pageBtn.className = `page-item ${i === currentActiveUserPage ? 'active' : ''}`;
-		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.className = `page-item ${page === currentActiveUserPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
 		pageBtn.onclick = (e) => {
 			e.preventDefault();
-			fetchActiveUser(i);
+			fetchActiveUser(page);
 		};
 		pagination.appendChild(pageBtn);
+	}
+
+	let maxVisible = 5; 
+	let startPage = Math.max(1, currentActiveUserPage - 2);
+	let endPage = Math.min(total, currentActiveUserPage + 2);
+
+	if (endPage - startPage < maxVisible - 1) {
+		if (startPage === 1) {
+			endPage = Math.min(total, startPage + maxVisible - 1);
+		} else if (endPage === total) {
+			startPage = Math.max(1, endPage - maxVisible + 1);
+		}
+	}
+
+	if (startPage > 1) {
+		createPageButton(1);
+		if (startPage > 2) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+	}
+
+	for (let i = startPage; i <= endPage; i++) {
+		createPageButton(i);
+	}
+
+	if (endPage < total) {
+		if (endPage < total - 1) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+		createPageButton(total);
 	}
 
 	const next = document.createElement('li');
@@ -2037,6 +2260,7 @@ function renderActiveUserPaginationButtons(total) {
 		if (currentActiveUserPage < total) fetchActiveUser(currentActiveUserPage + 1);
 	};
 	pagination.appendChild(next);
+
 }
 
 document.getElementById('searchActiveUserInput')?.addEventListener('keydown', (e) => {
@@ -2064,15 +2288,51 @@ function renderInActiveUserPaginationButtons(total) {
 	};
 	pagination.appendChild(prev);
 
-	for (let i = 1; i <= total; i++) {
+	function createPageButton(page) {
 		const pageBtn = document.createElement('li');
-		pageBtn.className = `page-item ${i === currentInActiveUserPage ? 'active' : ''}`;
-		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.className = `page-item ${page === currentInActiveUserPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
 		pageBtn.onclick = (e) => {
 			e.preventDefault();
-			fetchInActiveUser(i);
+			fetchInActiveUser(page);
 		};
 		pagination.appendChild(pageBtn);
+	}
+
+	let maxVisible = 5; 
+	let startPage = Math.max(1, currentLogsPage - 2);
+	let endPage = Math.min(total, currentLogsPage + 2);
+
+	if (endPage - startPage < maxVisible - 1) {
+		if (startPage === 1) {
+			endPage = Math.min(total, startPage + maxVisible - 1);
+		} else if (endPage === total) {
+			startPage = Math.max(1, endPage - maxVisible + 1);
+		}
+	}
+
+	if (startPage > 1) {
+		createPageButton(1);
+		if (startPage > 2) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+	}
+
+	for (let i = startPage; i <= endPage; i++) {
+		createPageButton(i);
+	}
+
+	if (endPage < total) {
+		if (endPage < total - 1) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+		createPageButton(total);
 	}
 
 	const next = document.createElement('li');
@@ -2083,6 +2343,7 @@ function renderInActiveUserPaginationButtons(total) {
 		if (currentInActiveUserPage < total) fetchInActiveUser(currentInActiveUserPage + 1);
 	};
 	pagination.appendChild(next);
+
 }
 
 document.getElementById('searchInActiveUserInput')?.addEventListener('keydown', (e) => {
@@ -2414,13 +2675,20 @@ async function addTag() {
 
 async function addPage() {
 	const pageName = document.getElementById('page-name').value
+	const pageUrl = document.getElementById('page-url').value
 	const description = document.getElementById('page-description').value
 
 	document.getElementById('page-name-error').textContent = ""
+	document.getElementById('page-url-error').textContent = ""
 
 	let isValid = true;
     if (!pageName) {
         document.getElementById('page-name-error').textContent = 'page name is required.';
+        isValid = false;
+    } 
+
+	 if (!pageUrl) {
+        document.getElementById('page-url-error').textContent = 'page url is required.';
         isValid = false;
     } 
 
@@ -2434,7 +2702,7 @@ async function addPage() {
 			'Content-Type': 'application/json',
 			'Authorization': `${tokenType} ${access_Token}`
 		},
-		body: JSON.stringify({ pageName, description })
+		body: JSON.stringify({ pageName, description, pageUrl })
 		
 	})
 
@@ -2453,6 +2721,7 @@ async function addPage() {
 			countPage()
 			$('#pageModal').modal('hide');
 			document.getElementById('page-name').value = ""
+			document.getElementById('page-url').value = ""
 			document.getElementById('page-description').value = ""
 		});
 	} else {
@@ -3292,15 +3561,51 @@ function renderLogsPaginationButtons(total) {
 	};
 	pagination.appendChild(prev);
 
-	for (let i = 1; i <= total; i++) {
+	function createPageButton(page) {
 		const pageBtn = document.createElement('li');
-		pageBtn.className = `page-item ${i === currentLogsPage ? 'active' : ''}`;
-		pageBtn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+		pageBtn.className = `page-item ${page === currentLogsPage ? 'active' : ''}`;
+		pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
 		pageBtn.onclick = (e) => {
 			e.preventDefault();
-			fetchLogs(i);
+			fetchLogs(page);
 		};
 		pagination.appendChild(pageBtn);
+	}
+
+	let maxVisible = 5; 
+	let startPage = Math.max(1, currentLogsPage - 2);
+	let endPage = Math.min(total, currentLogsPage + 2);
+
+	if (endPage - startPage < maxVisible - 1) {
+		if (startPage === 1) {
+			endPage = Math.min(total, startPage + maxVisible - 1);
+		} else if (endPage === total) {
+			startPage = Math.max(1, endPage - maxVisible + 1);
+		}
+	}
+
+	if (startPage > 1) {
+		createPageButton(1);
+		if (startPage > 2) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+	}
+
+	for (let i = startPage; i <= endPage; i++) {
+		createPageButton(i);
+	}
+
+	if (endPage < total) {
+		if (endPage < total - 1) {
+			const dots = document.createElement('li');
+			dots.className = 'page-item disabled';
+			dots.innerHTML = `<a class="page-link">...</a>`;
+			pagination.appendChild(dots);
+		}
+		createPageButton(total);
 	}
 
 	const next = document.createElement('li');
@@ -3312,6 +3617,7 @@ function renderLogsPaginationButtons(total) {
 	};
 	pagination.appendChild(next);
 }
+
 
 async function countLogs(date = "", loginTime = "", logoutTime = "") {
 

@@ -167,6 +167,9 @@
             </thead>
             <tbody id="unPublishedPostList"></tbody>
           </table>
+             <nav>
+                  <ul  id="unPublishedPostPagination" class="pagination justify-content-center mt-3"></ul>
+                </nav>
          </div>
         </div>
         <div id="permission" class="page">
@@ -681,7 +684,7 @@
               <thead class="bg-light">
                   <tr>
                     <th>#ID</th>
-                    <th>Username</th>
+                    <!-- <th>Username</th> -->
                     <th>login time</th>
                     <th>logout time</th>
                     <th>created At</th>
@@ -1074,7 +1077,7 @@
                   Delete Selected
            </button>
           <nav>
-                  <ul  id="pagination" class="pagination justify-content-center mt-3"></ul>
+                  <ul  id="publishedPostPagination" class="pagination justify-content-center mt-3"></ul>
                 </nav>
               </div>
             </div>
@@ -1351,6 +1354,11 @@
                   </div>
                   <span id="page-name-error" class="text-danger"></span>
                   <div class="mb-3">
+                    <label class="form-label">Page Url</label>
+                    <input id="page-url" class="form-control custom-border">
+                  </div>
+                   <span id="page-url-error" class="text-danger"></span>
+                  <div class="mb-3">
                     <label class="form-label">Description</label>
                     <textarea id="page-description" class="form-control custom-border"></textarea>
                   </div>
@@ -1378,9 +1386,9 @@
               <th>S.No</th>
               <th>Pages</th>
               <th>Description</th>
+              <th>Page Url</th>
               <th>Status</th>
               <th>Created at</th>
-              <th>Update at</th>
               <th>Action</th>
             </tr>
           </thead>

@@ -79,6 +79,23 @@
   --bs-highlight-bg: #fff3cd;
 }
 
+.hover-card-text:hover {
+  color: #0085A1 !important;
+  cursor: pointer;
+}
+
+.custom-card {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 1px 1px 25px 1px lightgray;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 4px 4px 30px 5px rgba(0, 0, 0, 0.2);
+}
+
 *,
 *::before,
 *::after {
