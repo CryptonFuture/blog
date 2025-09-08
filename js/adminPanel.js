@@ -1231,6 +1231,7 @@ async function editPage(id) {
 		const page = data.data[0]
 		document.getElementById('edit-page-id').value = page._id
 		document.getElementById('edit-page-pageName').value = page.pageName
+		document.getElementById('edit-page-url').value = page.pageUrl
 		document.getElementById('edit-page-description').value = page.description
 		document.getElementById('edit-page-status').checked = page.status
 
@@ -1543,6 +1544,7 @@ async function updatePage(id) {
 	
 	const pageName = document.getElementById('edit-page-pageName').value
 	const description = document.getElementById('edit-page-description').value
+	const pageUrl = document.getElementById('edit-page-url').value
 	const status = document.getElementById('edit-page-status').checked
 
 	const res = await fetch(`${baseUrl}/updatePages/${id}`, {
@@ -1551,7 +1553,7 @@ async function updatePage(id) {
 			'Content-Type': 'application/json',
 			'Authorization': `${tokenType} ${access_Token}`
 		},
-		body: JSON.stringify({ pageName, description, status })
+		body: JSON.stringify({ pageName, description, pageUrl, status })
 	})
 
 	const data = await res.json()
