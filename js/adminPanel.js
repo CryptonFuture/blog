@@ -756,7 +756,12 @@ async function fetchPublishedPost(page = 1) {
 				</td>
                 <td>${(currentPage - 1) * limit + index + 1}</td>
                 <td>${item.title}</td>
-                <td>${item.description}</td>
+                <td>
+					<span id="description-${item._id}">
+						${item.description.length > 5 ? item.description.substring(0, 5) + "..." : item.description}
+					</span>
+					${item.description.length > 5 ? `<button class="btn btn-link btn-sm p-0" onclick="toggleText('description-${item._id}', '${item.description}')">Read More</button>` : ""}
+				</td>
                 <td><span class="badge text-bg-success">${item.status ? 'published' : 'unPublished'}</span></td>
 				<td><span class="badge text-bg-success">${item.approved ? 'approved' : 'unApporved'}<span></td>
                 <td><span class="badge text-bg-info">${item.postStatus}<span></td>
@@ -4161,6 +4166,7 @@ async function getRole() {
 	const listRole = document.getElementById('listRole')
 
 	listRole.innerHTML = '';
+	
 
 	if (!data.success || !data.data || data.data.length === 0) {
 			listRole.innerHTML = `
@@ -4173,26 +4179,28 @@ async function getRole() {
 			return;
 	}
 
+	
+
 	role.forEach((item, index) => {
 		listRole.innerHTML += `
-				 <tr>
-                <td>${index + 1}</td>
-                <td>${item.routeName}</td>
-                <td>${item.paramName}</td>
-				<td>${item.role ? 'admin': 'user'}</td>
-                <td>
-                  <select class="form-select">
-				 	<option value="" disabled>select field</option> 
-					<option value="">show</option> 
-					<option value="">hide</option> 
-					<option value="">disabled</option> 
-					<option value="">enabled</option>
-					<option value="">mandatory</option>
-					<option value="">non-mandatory</option>
-					<option value="">authorization</option>
-					<option value="">un-authorization</option>
-				  </select>
-                </td>
+				<tr>
+					<td>${index + 1}</td>
+					<td>${item.routeName}</td>
+					<td>${item.paramName}</td>
+					<td>${Array.isArray(item.role) ? item.role.join(" ") : item.role}</td>
+					<td>
+						<select class="form-select">
+							<option value="" disabled>select field</option> 
+							<option value="">show</option> 
+							<option value="">hide</option> 
+							<option value="">disabled</option> 
+							<option value="">enabled</option>
+							<option value="">mandatory</option>
+							<option value="">non-mandatory</option>
+							<option value="">authorization</option>
+							<option value="">un-authorization</option>
+						</select>
+					</td>
 				</tr>
 			`
 	})
