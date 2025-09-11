@@ -45,7 +45,7 @@
 }
 
 .btn-outline-orange {
-      border:  1px solid var(--blue) !important;
+      border:  1px solid #0f6674 !important;
 
 }
 
@@ -8195,10 +8195,31 @@ h1, h2, h3, h4, h5,
 .wrapper {
   width: 100%; }
 
+  .btn-bg-color {
+    background: #0c5460 !important;
+    color: white !important;
+  }
+
+  .button-bg-color {
+     background: #0f6674 !important;
+    color: white !important;
+  }
+
+  .button-bg-color:hover {
+      background: #0f6674;
+    color: white;
+  }
+
+  .btn-bg-color:hover {
+    color: white !important;
+    background-color: #0c5460;
+  } 
+
+
 #sidebar {
   min-width: 300px;
   max-width: 300px;
-  background: #32373d;
+  background: #0c5460;
   color: #fff;
   -webkit-transition: all 0.3s;
   -o-transition: all 0.3s;

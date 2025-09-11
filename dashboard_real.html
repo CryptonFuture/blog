@@ -878,7 +878,7 @@
               <div style="display: flex;">
                   <input id="searchInput"  oninput="applyFilters()" type="search" class="form-control rounded" placeholder="Search"
                 style="width: 100%; max-width: 250px; border: 1px solid #ced4da; box-shadow: none;" />
-                   <select style="margin-left: 10px;" class="form-select" id="sortSelect" onchange="fetchPost()">
+                   <select style="margin-left: 10px;" class="form-select" id="sortSelect" onchange="fetchPublishedPost()">
                       <option value="">Sort By</option>
                       <option value="title:asc">Title (A-Z)</option>
                       <option value="title:desc">Title (Z-A)</option>
@@ -892,12 +892,12 @@
             <span id="PublishedPostCount"></span>
              <button type="button" class="btn btn-outline-orange" onclick="resetFilters()">Reset filters</button>
 
-                    <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <button class="btn button-bg-color" data-bs-toggle="modal" data-bs-target="#filterModal">
                       Advanced Filter
                     </button>
             
-              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold "
-                style="background-color: #bbdefb;  white-space: nowrap;" data-bs-toggle="modal"
+              <button type="button" class="btn-bg-color btn"
+                data-bs-toggle="modal"
                 data-bs-target="#postModal" data-bs-whatever="@mdo">
           
                 Create Post
@@ -931,9 +931,9 @@
                           </form>
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          <button type="button" class="btn button-bg-color" data-bs-dismiss="modal">Cancel</button>
                             <button type="button" class="btn btn-outline-orange" onclick="clearFilters()">clear filter</button>
-                          <button type="button" class="btn btn-dark" onclick="applyFilters()" data-bs-dismiss="modal">Apply
+                          <button type="button" class="btn btn-bg-color" onclick="applyFilters()" data-bs-dismiss="modal">Apply
                             Filters</button>
                         </div>
                       </div>
@@ -967,8 +967,8 @@
                     </form>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button onclick="addPost()" type="button" class="btn btn-primary">Save Post</button>
+                    <button type="button" class="btn button-bg-color" data-bs-dismiss="modal">Close</button>
+                    <button onclick="addPost()" type="button" class="btn btn-bg-color">Save Post</button>
                   </div>
                 </div>
               </div>
@@ -985,7 +985,7 @@
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="select-all" />
                 </div>
-                </th>
+                </th> 
                 <th>S.No</th>
                 <th>Title</th>
                 <th>Description</th>
