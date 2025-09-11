@@ -540,7 +540,7 @@ function applyFilters() {
 
 	currentPage = 1;
 
-	fetchPost();
+	fetchPublishedPost();
 }
 
 function LogsApplyFilters() {
@@ -605,8 +605,8 @@ function resetFilters() {
 	filters.date = "";
 
 	currentPage = 1;
-	fetchPost();
-	countPost()	
+	fetchPublishedPost();
+	countPublishedPost()	
 }
 
 function LogsResetFilters() {
@@ -762,8 +762,8 @@ async function fetchPublishedPost(page = 1) {
 					</span>
 					${item.description.length > 5 ? `<button class="btn btn-link btn-sm p-0" onclick="toggleText('description-${item._id}', '${item.description}')">Read More</button>` : ""}
 				</td>
-                <td><span class="badge text-bg-success">${item.status ? 'published' : 'unPublished'}</span></td>
-				<td><span class="badge text-bg-success">${item.approved ? 'approved' : 'unApporved'}<span></td>
+                <td><span class="badge btn-bg-color ">${item.status ? 'published' : 'unPublished'}</span></td>
+				<td><span class="badge button-bg-color">${item.approved ? 'approved' : 'unApporved'}<span></td>
                 <td><span class="badge text-bg-info">${item.postStatus}<span></td>
 				<td>
 				<img 
@@ -885,7 +885,7 @@ function renderPublishedPaginationButtons(total) {
 	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
 	prev.onclick = (e) => {
 		e.preventDefault();
-		if (currentPage > 1) fetchPost(currentPage - 1);
+		if (currentPage > 1) fetchPublishedPost(currentPage - 1);
 	};
 	pagination.appendChild(prev);
 
@@ -3010,7 +3010,7 @@ function getSearchParamsAndCount() {
    const status = document.getElementById('statusFilter')?.value || "";
   const date = document.getElementById('date')?.value || "";
 
-  countPost(search, status, date);
+  countPublishedPost(search, status, date);
 }
 
 document.getElementById('searchInput').addEventListener('input', getSearchParamsAndCount);
@@ -3120,8 +3120,8 @@ async function deleteSelectedPosts() {
 				showConfirmButton: false,
 				timerProgressBar: true
 			})
-		fetchPost(currentPage)
-		countPost()
+		fetchPublishedPost(currentPage)
+		countPublishedPost()
 		document.getElementById('delete-all-btn').classList.add('d-none');
 		document.querySelectorAll('.row-checkbox:checked').forEach(cb => cb.checked = false);
 		const headerCheckbox = document.querySelector('#select-all'); // **Assumes your header checkbox has an ID of 'selectAllCheckbox'**
