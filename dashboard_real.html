@@ -112,6 +112,56 @@
       </nav>
       
       <div id="main-content">
+        <div id="config" class="page">
+          <h2>Logs Configuration</h2>
+          <div class="d-flex flex-row justify-content-between">
+            <select id="module-list" style="width: 100%; max-width: 300px;" class="form-select" aria-label="Default select example">
+             
+
+            </select>
+            <input type="search" style="width: 100%; max-width: 200px;" class="form-control rounded" placeholder="Search" />
+          
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0 bg-white" style="margin-top: 10px;">
+              <thead class="bg-light">
+                <tr>
+                  <th>S.no</th>
+                  <th>Labal</th>
+                  <th>Field Name</th>
+                  <th>Data Type</th>
+                  <th>Tracking Enabled</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="log-config-list">
+                
+              </tbody>
+            </table>
+          </div>
+          </div>  
+        <div id="contactus" class="page">
+          <h2>Contact Us</h2>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0 bg-white" style="margin-top: 10px;">
+              <thead class="bg-light">
+                  <tr>
+                    <th>S.no</th>
+                    <th>name</th>
+                    <th>email</th>
+                    <th>phone</th>
+                    <th>subject</th>
+                    <th>created At</th>
+                    <th>Action</th>
+                  </tr>
+              </thead>
+              <tbody id="list-contact">
+                
+              </tbody>
+             
+            </table>
+          </div>
+        </div>
         <div id="requestapproved" class="page">
         
           <h2>Request Approved</h2>
@@ -586,8 +636,29 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Approved</button>
-                <button type="button" class="btn btn-danger">Reject</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
+         <!-- REJECT MODEL -->
+
+        <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Reject </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">Reason</label>
+                    <textarea class="form-control" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger">Reject</button>
               </div>
             </div>
           </div>
@@ -685,7 +756,7 @@
               <thead class="bg-light">
                   <tr>
                     <th>#ID</th>
-                    <!-- <th>Username</th> -->
+                    <th>Username</th>
                     <th>login time</th>
                     <th>logout time</th>
                     <th>created At</th>
@@ -709,20 +780,22 @@
           <div class="container ">
             <div class="profile-container">
                   <!-- Cover Photo -->
-                  <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=350" 
-                      class="cover-photo" 
-                      alt="Cover Photo">
+                 
+
+                      <div id="view-profile-cover-image"></div>
                   
                   <!-- Profile Picture - Now properly positioned -->
-                  <img src="https://randomuser.me/api/portraits/men/32.jpg" 
-                      class="profile-picture" 
-                      alt="Profile Picture">
+                  <!-- <img src="https://randomuser.me/api/portraits/men/32.jpg" 
+                      class="profile-picture" id="view-profile-image"
+                      alt="Profile Picture"> -->
+
+                  <div id="view-profile-image"></div>
                   
                   <!-- Empty space to ensure profile picture isn't cut -->
                   <div class="content-space"></div>
             </div>
              <div class="row justify-content-center">
-            <div class="col-md-25">
+              <div class="col-md-25">
                 <div class="" >
                    <h5 id="notFound"></h5>
                     <div class="" id="profile">
@@ -746,7 +819,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
           </div>
         </div>
         <div id="settings" class="page">
@@ -755,16 +828,17 @@
             <div class="profile-container">
               <!-- Cover Photo -->
               <img
-                src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=350"
+                id="edit-profile-cover"
                 class="cover-photo" alt="Cover Photo">
           
               <!-- Profile Picture - Now properly positioned -->
-              <img src="https://randomuser.me/api/portraits/men/32.jpg" class="profile-picture" alt="Profile Picture">
+              <img id="edit-profile-avatar" class="profile-picture" alt="Profile Picture">
           
               <!-- Empty space to ensure profile picture isn't cut -->
               <div class="content-space"></div>
             </div>
-          
+
+              
           
             <!-- Profile Information - Aapke Diye Requirements Ke Hisab Se -->
           
@@ -2177,9 +2251,9 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <script src="js/adminPanel.js"></script>
-<script>
-  
-</script>
+  <script>
+    
+  </script>
 </body>
 
 </html>
