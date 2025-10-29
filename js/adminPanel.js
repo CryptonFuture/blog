@@ -104,6 +104,7 @@ const tokenType = localStorage.getItem('tokenType')
 const access_Token = localStorage.getItem('token')
 
 document.addEventListener('DOMContentLoaded', function () {
+	fetchLogsConfig()
 	fetchDashboard()
 	getSideBarRoutes()
 	fetchPublishedPost()
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	fetchLogs()
 	countLogs()
 	getRequest()
+	getModule()
 	countRequest()
 	fetchRole('.add-user-role')
 	fetchRole('.edit-user-role')
@@ -138,6 +140,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	getInActiveRequest()
 	countInActiveRequest()
 	countActiveRequest()
+	fetchContactUs()
+	loadHistory();
+	
 	
 	const selectAll = document.getElementById('select-all');
 	const deleteBtn = document.getElementById('delete-all-btn');
@@ -392,6 +397,12 @@ async function viewProfile() {
 		document.getElementById('view-profile-email').innerHTML = ` <span> ${view.email ? view.email : '----------'} </span>`
 		document.getElementById('view-profile-phone').innerHTML = ` <span> ${view.phone ? view.phone : '----------'} </span>`
 		document.getElementById('view-profile-address').innerHTML = ` <span> ${view.address ? view.address : '----------'} </span>`
+		document.getElementById('view-profile-cover-image').innerHTML = `<img src="${view.image ? view.image : '----------'}" 
+                      class="cover-photo"  
+                      alt="Cover Photo">`
+		document.getElementById('view-profile-image').innerHTML = ` <img src="${view.image ? view.image : '----------'}" 
+                      class="profile-picture" 
+                      alt="Profile Picture">`
 		document.getElementById('delete-button').innerHTML = ` <button onclick="deleteUserProfile()" class="btn btn-danger mt-3">
                             <i class="bi bi-trash-fill me-2"></i>
                             Delete Account
@@ -429,6 +440,13 @@ async function editProfile() {
 		document.getElementById('edit-profile-email').value = view.email
 		document.getElementById('edit-profile-phone').value = view.phone
 		document.getElementById('edit-profile-address').value = view.address
+		if (view.image) {
+			document.getElementById('edit-profile-cover').src = view.image
+		}
+
+		if (view.image) {
+			document.getElementById('edit-profile-avatar').src = view.image
+		}
 
 	
 	} else {
@@ -784,7 +802,8 @@ async function fetchPublishedPost(page = 1) {
                     <li><a onclick="editPost('${item._id}')" class="dropdown-item" href="#PostModal" data-bs-toggle="modal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
                     <li><a onclick="deletePost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
-							 <li><a onclick="publishedPost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-check me-2 text-success"></i> Published</a></li>
+					<li><a onclick="publishedPost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-check me-2 text-success"></i> Published</a></li>
+					<li><a class="dropdown-item" href="#"><i class="fa fa-history me-2 text-info"></i> View Logs</a></li>
 
 					</ul>
                 </td>
@@ -3497,132 +3516,153 @@ async function changePassword() {
 }
 
 async function fetchLogs(page = 1) {
+    currentLogsPage = page;
 
-	currentLogsPage = page
+    const listlogs = document.getElementById('logs-list');
+    const pagination = document.getElementById('logsPagination');
 
-	const queryParams = new URLSearchParams({
-		page: currentLogsPage,
-		limit,
-		date: Logsfilters.date,
-		loginTime: Logsfilters.loginTime,
-		logoutTime: Logsfilters.logoutTime
-	});
+    // 👇 Circle loader dikhado
+    listlogs.innerHTML = `
+        <tr>
+            <td colspan="7" class="text-center">
+                <div class="spinner"></div>
+            </td>
+        </tr>
+    `;
 
-	const res = await fetch(`${baseUrl}/getLogs?${queryParams.toString()}`, {
-		method: 'GET',
-		headers: {
-			'Authorization': `${tokenType} ${access_Token}`
-		}
-	})
+    const queryParams = new URLSearchParams({
+        page: currentLogsPage,
+        limit,
+        date: Logsfilters.date,
+        loginTime: Logsfilters.loginTime,
+        logoutTime: Logsfilters.logoutTime
+    });
 
-	const data = await res.json()
+    try {
+        const res = await fetch(`${baseUrl}/getLogs?${queryParams.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `${tokenType} ${access_Token}`
+            }
+        });
 
-	const logs = data.data
+        const data = await res.json();
+        const logs = data.data;
 
-	const listlogs = document.getElementById('logs-list')
+        setTimeout(() => {
+            listlogs.innerHTML = '';
 
-	listlogs.innerHTML = '';
+            if (!data.success || !logs || logs.length === 0) {
+                listlogs.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-danger fw-bold">
+                            ${data.error || "No logs found"}
+                        </td>
+                    </tr>
+                `;
+                pagination.innerHTML = '';
+                return;
+            }
 
-	if (!data.success || !data.data || data.data.length === 0) {
-			listlogs.innerHTML = `
-				<tr>
-					<td colspan="7" class="text-center text-danger fw-bold">
-						${data.error }
+            logs.forEach((item, index) => {
+                listlogs.innerHTML += `
+                    <tr>
+                        <td>${(currentLogsPage - 1) * limit + index + 1}</td>
+                        <td>${item.user_id && item.user_id.firstname ? item.user_id.firstname : '----------'}</td>
+                        <td>${item.login_time ? new Date(item.login_time).toLocaleTimeString() : '----------'}</td>
+                        <td>${item.logout_time ? new Date(item.logout_time).toLocaleTimeString() : '----------'}</td>
+                        <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+                        <td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                    </tr>
+                `;
+            });
 
-					</td>
-				</tr>
-			`;
-			document.getElementById('logsPagination').innerHTML = '';
-			return;
-	}
+            totalLogsPages = data.pagination.totalPages;
+            renderLogsPaginationButtons(totalLogsPages);
 
-	
-
-	logs.forEach((item, index) => {
-		listlogs.innerHTML += `
-				 <tr>
-					<td>${(currentLogsPage - 1) * limit + index + 1}</td>
-					<td>${item.login_time ? new Date(item.login_time).toLocaleTimeString() : '----------'}</td>
-					<td>${item.logout_time ? new Date(item.logout_time).toLocaleTimeString() : '----------'}</td>
-					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
-					<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
-				</tr>
-			`
-	})
-
-	totalLogsPages = data.pagination.totalPages;
-	renderLogsPaginationButtons(totalLogsPages);
-		
+        }, 800);
+    } catch (err) {
+        listlogs.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center text-danger fw-bold">
+                    Error loading logs
+                </td>
+            </tr>
+        `;
+        console.error(err);
+    }
 }
 
+
+
 function renderLogsPaginationButtons(total) {
-	const pagination = document.getElementById('logsPagination');
-	pagination.innerHTML = '';
+    const pagination = document.getElementById('logsPagination');
+    pagination.innerHTML = '';
 
-	const prev = document.createElement('li');
-	prev.className = `page-item ${currentLogsPage === 1 ? 'disabled' : ''}`;
-	prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
-	prev.onclick = (e) => {
-		e.preventDefault();
-		if (currentLogsPage > 1) fetchLogs(currentLogsPage - 1);
-	};
-	pagination.appendChild(prev);
+    const prev = document.createElement('li');
+    prev.className = `page-item ${currentLogsPage === 1 ? 'disabled' : ''}`;
+    prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+    prev.onclick = (e) => {
+        e.preventDefault();
+        if (currentLogsPage > 1) fetchLogs(currentLogsPage - 1);
+    };
+    pagination.appendChild(prev);
 
-	function createPageButton(page) {
-		const pageBtn = document.createElement('li');
-		pageBtn.className = `page-item ${page === currentLogsPage ? 'active' : ''}`;
-		pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
-		pageBtn.onclick = (e) => {
-			e.preventDefault();
-			fetchLogs(page);
-		};
-		pagination.appendChild(pageBtn);
-	}
+    function createPageButton(page) {
+        const pageBtn = document.createElement('li');
+        pageBtn.className = `page-item ${page === currentLogsPage ? 'active' : ''}`;
+        pageBtn.innerHTML = `<a class="page-link" href="#">${page}</a>`;
+        pageBtn.onclick = (e) => {
+            e.preventDefault();
+            fetchLogs(page);
+        };
+        pagination.appendChild(pageBtn);
+    }
 
-	let maxVisible = 5; 
-	let startPage = Math.max(1, currentLogsPage - 2);
-	let endPage = Math.min(total, currentLogsPage + 2);
+    let maxVisible = 5;
+    let startPage = Math.max(1, currentLogsPage - 2);
+    let endPage = Math.min(total, currentLogsPage + 2);
 
-	if (endPage - startPage < maxVisible - 1) {
-		if (startPage === 1) {
-			endPage = Math.min(total, startPage + maxVisible - 1);
-		} else if (endPage === total) {
-			startPage = Math.max(1, endPage - maxVisible + 1);
-		}
-	}
+    if (endPage - startPage < maxVisible - 1) {
+        if (startPage === 1) {
+            endPage = Math.min(total, startPage + maxVisible - 1);
+        } else if (endPage === total) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+    }
 
-	if (startPage > 1) {
-		createPageButton(1);
-		if (startPage > 2) {
-			const dots = document.createElement('li');
-			dots.className = 'page-item disabled';
-			dots.innerHTML = `<a class="page-link">...</a>`;
-			pagination.appendChild(dots);
-		}
-	}
+    if (startPage > 1) {
+        createPageButton(1);
+        if (startPage > 2) {
+            const dots = document.createElement('li');
+            dots.className = 'page-item disabled';
+            dots.innerHTML = `<a class="page-link">...</a>`;
+            pagination.appendChild(dots);
+        }
+    }
 
-	for (let i = startPage; i <= endPage; i++) {
-		createPageButton(i);
-	}
+    for (let i = startPage; i <= endPage; i++) {
+        createPageButton(i);
+    }
 
-	if (endPage < total) {
-		if (endPage < total - 1) {
-			const dots = document.createElement('li');
-			dots.className = 'page-item disabled';
-			dots.innerHTML = `<a class="page-link">...</a>`;
-			pagination.appendChild(dots);
-		}
-		createPageButton(total);
-	}
+    if (endPage < total) {
+        if (endPage < total - 1) {
+            const dots = document.createElement('li');
+            dots.className = 'page-item disabled';
+            dots.innerHTML = `<a class="page-link">...</a>`;
+            pagination.appendChild(dots);
+        }
+        createPageButton(total);
+    }
 
-	const next = document.createElement('li');
-	next.className = `page-item ${currentLogsPage === total ? 'disabled' : ''}`;
-	next.innerHTML = `<a class="page-link" href="#">Next</a>`;
-	next.onclick = (e) => {
-		e.preventDefault();
-		if (currentLogsPage < total) fetchLogs(currentLogsPage + 1);
-	};
-	pagination.appendChild(next);
+    const next = document.createElement('li');
+    next.className = `page-item ${currentLogsPage === total ? 'disabled' : ''}`;
+    next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+    next.onclick = (e) => {
+        e.preventDefault();
+        if (currentLogsPage < total) fetchLogs(currentLogsPage + 1);
+    };
+    pagination.appendChild(next);
 }
 
 
@@ -3693,10 +3733,10 @@ async function getRequest() {
 					<td><h6><span class="badge ${item.rejectedBy ? 'text-bg-danger' : 'text-bg-warning'}">${item.rejectedBy ? 'Reject' : 'unReject'}</h6></span></td>
 					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 					<td>
-						<button onclick="approvedByRequest('${item._id}', this)" class="btn btn-primary" type="button">
+						<button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#approvedModal">
 							Approved
 						</button>
-						<button onclick="rejectByRequest('${item._id}', this)" class="btn btn-danger" type="button">
+						<button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#rejectModal">
 							Reject
 						</button>
 						<button onclick="viewRequest('${item._id}')" data-bs-toggle="modal" data-bs-target="#viewApprovedModal" class="btn btn-info" type="button">
@@ -3708,6 +3748,8 @@ async function getRequest() {
 			`
 	})
 }
+
+// approvedModal
 
 async function getInActiveRequest() {
 	
@@ -5098,5 +5140,288 @@ async function rejectPost(id) {
 }
 
 
+async function fetchContactUs() {
+
+	const res = await fetch(`${baseUrl}/getContactUs`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const contact = data.data
+
+	const listcontact = document.getElementById('list-contact')
+
+	listcontact.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listcontact.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	contact.forEach((item, index) => {
+		
+		listcontact.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.name}</td>
+                <td>${item.email}</td>
+				<td>${item.contact_no}</td>
+                <td>${item.subject}</td>
+				<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+                <td>
+                  <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    &#8942;
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item view-btn" href="#"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a class="dropdown-item" href="#PostModal"> <i
+                          class="fas fa-edit me-2 text-info"></i> Edit</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+					</ul>
+                </td>
+				</tr>
+			`
+	})
+}
+
+async function fetchLogsConfig() {
+	const modulelist = document.getElementById('module-list')
+	const listLogConfig = document.getElementById('log-config-list')
+
+	listLogConfig.innerHTML = `
+    <tr>
+      <td colspan="7" class="text-center text-muted fw-bold">
+        No record found
+      </td>
+    </tr>
+  `;
+
+	 const selectedModuleType = modulelist ? modulelist.value : '';
+
+	if (!selectedModuleType) {
+		console.warn('⚠️ No moduleType selected');
+		return;
+	}
+
+	const queryParams = new URLSearchParams({
+		moduleType: selectedModuleType
+	});
+
+	const res = await fetch(`${baseUrl}/getLogsConfig?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const logConfig = data.data
+
+	console.log(logConfig, 'logConfig');
+	
+	listLogConfig.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listLogConfig.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	logConfig.forEach((item, index) => {
+		listLogConfig.innerHTML += `
+				 <tr id="row-${item._id}">
+                <td>${index + 1}</td>
+                <td>${item.label}</td>
+                <td>${item.field_name}</td>
+				<td>${item.data_type}</td>
+                <td>
+					<h6>
+						<span class="badge ${item.tracking_enabled ? 'text-bg-success' : 'text-bg-danger'}">
+							${item.tracking_enabled ? 'enabled' : 'disabled'}
+						</span>
+					</h6>
+				</td>
+				<td>
+					<button class="btn border-0 edit-btn" data-id="${item._id}">
+						<i class="fa-solid fa-pencil text-info"></i>
+					</button>
+
+				</td>
+                
+				</tr>
+			`
+	})
+
+	attachEditEventListeners();
+}
+
+function attachEditEventListeners() {
+  document.querySelectorAll('.edit-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const id = e.currentTarget.getAttribute('data-id');
+      openInlineEditForm(id);
+    });
+  });
+}
+
+function openInlineEditForm(id) {
+  const row = document.getElementById(`row-${id}`);
+  const originalHTML = row.innerHTML;
+
+  const label = row.children[1].innerText;
+  const fieldName = row.children[2].innerText;
+  const dataType = row.children[3].innerText;
+  const isEnabled = row.querySelector('.badge').classList.contains('text-bg-success'); // true if enabled
+
+  row.innerHTML = `
+    <td colspan="6">
+      <form id="edit-form-${id}" class="p-2 bg-light border rounded">
+        <div class="row g-2 align-items-center">
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="label" value="${label}" placeholder="Label">
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="field_name" value="${fieldName}" placeholder="Field Name" readonly>
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="data_type" value="${dataType}" placeholder="Data Type" readonly>
+          </div>
+
+          <!-- ✅ Toggle Switch -->
+          <div class="col-md-2 d-flex align-items-center">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="tracking_enabled" id="switch-${id}" ${isEnabled ? 'checked' : ''}>
+              <label class="form-check-label" for="switch-${id}">${isEnabled ? 'enabled' : 'disabled'}</label>
+            </div>
+          </div>
+
+        <div class="col-md-3 d-flex gap-2 justify-content-end">
+			<button type="button" class="btn text-success border-0 btn-sm save-btn">
+				<i class="fas fa-check me-1"></i> 
+			</button>
+			<button type="button" class="btn text-danger border-0 btn-sm cancel-btn">
+				<i class="fas fa-times me-1"></i> 
+			</button>
+		</div>
+        </div>
+      </form>
+    </td>
+  `;
+
+  const toggleSwitch = row.querySelector(`#switch-${id}`);
+  const toggleLabel = row.querySelector(`label[for="switch-${id}"]`);
+  toggleSwitch.addEventListener('change', () => {
+    toggleLabel.textContent = toggleSwitch.checked ? 'Enabled' : 'Disabled';
+  });
+
+  const saveBtn = row.querySelector('.save-btn');
+  const cancelBtn = row.querySelector('.cancel-btn');
+
+  saveBtn.addEventListener('click', async () => {
+    const form = document.getElementById(`edit-form-${id}`);
+    const formData = {
+      label: form.label.value,
+      field_name: form.field_name.value,
+      data_type: form.data_type.value,
+      tracking_enabled: form.tracking_enabled.checked
+    };
+
+    console.log('Updated Data:', formData);
+
+
+	const res = await fetch(`${baseUrl}/updateLogs/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`,
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(formData)
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update Logs Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			  fetchLogsConfig(); 
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete logs: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
+
+  
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    row.innerHTML = originalHTML;
+    const restoredEditBtn = row.querySelector('.edit-btn');
+    restoredEditBtn.addEventListener('click', (e) => {
+      const newId = e.currentTarget.getAttribute('data-id');
+      openInlineEditForm(newId);
+    });
+  });
+}
 
  
+async function getModule() {
+	
+	const res = await fetch(`${baseUrl}/getModule`, {
+		method: 'GET'
+	})
+
+	const data = await res.json()
+
+	const module = data.data
+
+	const modulelist = document.getElementById('module-list')
+
+	modulelist.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			 const errorRow = `<option disabled selected>${data.error || "No record found"}</option>`;
+			  modulelist.innerHTML = errorRow
+			return ;
+	}
+
+  modulelist.innerHTML = `<option value="" disabled selected>Select Module</option>`;
+
+	module.forEach((item, index) => {
+		modulelist.innerHTML += `
+				<option value="${item.moduleType}">${item.moduleName}</option>
+			`
+	})
+
+	 modulelist.addEventListener('change', fetchLogsConfig);
+}
+
+

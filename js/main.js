@@ -95,6 +95,24 @@ async function getRole() {
 const prefix = 'api/v1'
 const baseUrl = `http://localhost:8000/${prefix}`
 
+async function googleAuthLogin() {
+   const token = localStorage.getItem("token");
+    if (token) {
+      window.location.href = "/dashboard_real.html";
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const newToken = params.get("token");
+    if (newToken) {
+      localStorage.setItem("token", newToken);
+      window.location.href = "/dashboard_real.html";
+    }
+
+   window.location.href = 'http://localhost:8000/auth/google'
+
+  
+}
+
 
 async function login() {
 
