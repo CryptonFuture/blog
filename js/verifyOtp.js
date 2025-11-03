@@ -101,7 +101,13 @@ async function resendOtp() {
     const timerDisplay = document.getElementById("timer");
 
     if (!email) {
-      alert("Please enter your email first!");
+         Swal.fire({
+			icon: 'success',
+			title: 'Please enter your email first!',
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
       return;
     }
 
@@ -118,16 +124,32 @@ async function resendOtp() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "Error resending OTP.");
-        resendBtn.disabled = false;
-        return;
-      }
-
-      alert(data.message);
-      resendBtn.style.display = "none";
-      resendBtn.disabled = false;
-
-      startOtpTimer(data.expiresAt);
+        Swal.fire({
+			icon: 'success',
+			title: 'resend otp Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			document.getElementById('email-address').value = ""
+            resendBtn.disabled = false;
+            return;
+		});
+        
+      } else {
+        Swal.fire({
+			icon: 'success',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+            resendBtn.style.display = "none";
+            resendBtn.disabled = false;
+            startOtpTimer(data.expiresAt);
+		});
+      }    
     } catch (error) {
       console.error(error);
       alert("Server error. Please try again.");
