@@ -28,6 +28,8 @@ let selectedPageId = null
 let selectedUserId = null
 let selectedPermissionId = null
 let selectedCategoryId = null
+let selectedModuleType = ''; 
+let selectedTagModuleType = ''; 
 
 let currentPage = 1;
 const limit = 5;
@@ -110,7 +112,13 @@ document.addEventListener('DOMContentLoaded', function () {
 	fetchPublishedPost()
 	fetchUnPublishedPost()
 	fetchTag()
+	viewPost()
+	fetchAllUser()
+	fetchAllTag()
+	viewAllPost()
+	fetchTrackingLogs()
 	fetchPages()
+	fetchAllPage()
 	fetchActiveUser()
 	fetchInActiveUser()
 	countUnPublishedPost()
@@ -5365,7 +5373,7 @@ function openInlineEditForm(id) {
 			showConfirmButton: false,
 			timerProgressBar: true
 		}).then(() => {
-			  fetchLogsConfig(); 
+			fetchLogsConfig(); 
 		});
 	} else {
 		Swal.fire({
@@ -5424,4 +5432,265 @@ async function getModule() {
 	 modulelist.addEventListener('change', fetchLogsConfig);
 }
 
+async function viewAllPost() {
 
+	const res = await fetch(`${baseUrl}/getAllPost`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const viewPost = data.data
+
+	const postList = document.getElementById('view-post')
+
+	postList.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			postList.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error }
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	viewPost.forEach((item, index) => {
+
+		postList.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.title}</td>
+                <td>${item.description}</td>
+                <td>${item.status ? 'active' : 'inactive'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+                <td>
+				
+				</tr>
+			`
+	})
+}
+
+async function fetchTrackingLogs(moduleType) {
+
+	if (!moduleType) {
+			if (document.getElementById('view-post')) {
+				moduleType = 'p';
+			} else if (document.getElementById('view-tag')) {
+				moduleType = 't';
+			} else if (document.getElementById('view-page')) {
+				moduleType = 'pg';
+			} else if (document.getElementById('view-user')) {
+				moduleType = 'u';
+			} else {
+				moduleType = selectedModuleType || 'p'; 
+			}
+		}
+
+
+	const queryParams = new URLSearchParams({
+		moduleType: moduleType || selectedModuleType
+	});
+
+	const res = await fetch(`${baseUrl}/getTrackingEnabledLogs?${queryParams.toString()}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const trackingLog = data.data
+
+	const postTable = document.getElementById('tracking-logs-list');
+	const tagTable = document.getElementById('tracking-logs-tag-list');
+	const pageTable = document.getElementById('tracking-logs-page-list');
+	const userTable = document.getElementById('tracking-logs-user-list');
+
+	if (postTable) postTable.innerHTML = '';
+	if (tagTable) tagTable.innerHTML = '';
+	if (pageTable) pageTable.innerHTML = '';
+	if (userTable) userTable.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			const noDataHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error || 'No records found'}
+					</td>
+				</tr>
+			`;
+			if (moduleType === 'p' && postTable) postTable.innerHTML = noDataHTML;
+			if (moduleType === 't' && tagTable) tagTable.innerHTML = noDataHTML;
+			if (moduleType === 'pg' && pageTable) pageTable.innerHTML = noDataHTML;
+			if (moduleType === 'u' && userTable) userTable.innerHTML = noDataHTML;
+
+			return;
+		}
+
+	const rowsHTML = trackingLog.map((item, index) => `
+			<tr>
+				<td>${index + 1}</td>
+				<td>${item.label}</td>
+				<td>${item.field_name}</td>
+				<td>${item.data_type}</td>
+				<td>
+					<h6>
+						<span class="badge ${item.tracking_enabled ? 'text-bg-success' : 'text-bg-danger'}">
+							${item.tracking_enabled ? 'enabled' : 'disabled'}
+						</span>
+					</h6>
+				</td>
+			</tr>
+		`).join('');
+
+		if (moduleType === 'p' && postTable) postTable.innerHTML = rowsHTML;
+		if (moduleType === 't' && tagTable) tagTable.innerHTML = rowsHTML;
+		if (moduleType === 'pg' && pageTable) pageTable.innerHTML = rowsHTML;
+		if (moduleType === 'u' && userTable) userTable.innerHTML = rowsHTML;
+
+
+}
+
+async function fetchAllTag() {
+
+	const res = await fetch(`${baseUrl}/getTag`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const viewTag = data.data
+
+	const listViewtag = document.getElementById('view-tag')
+
+	listViewtag.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listViewtag.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error}
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	viewTag.forEach((item, index) => {
+		selectedModuleType = item.moduleType
+		listViewtag.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.tagName}</td>
+                <td>${item.description}</td>
+                <td>${item.status ? 'active' : 'inactive'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+              
+               
+				</tr>
+			`
+	})
+}
+
+
+async function fetchAllPage() {
+
+	const res = await fetch(`${baseUrl}/getPages`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const viewPage = data.data
+
+	const listViewPage = document.getElementById('view-page')
+
+	listViewPage.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listViewPage.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error}
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	viewPage.forEach((item, index) => {
+		selectedModuleType = item.moduleType
+		listViewPage.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.pageName}</td>
+                <td>${item.pageUrl}</td>
+				<td>${item.description}</td>
+                <td>${item.status ? 'active' : 'inactive'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+               
+				</tr>
+			`
+	})
+}
+
+async function fetchAllUser() {
+
+	const res = await fetch(`${baseUrl}/getAllUser`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	const viewUser = data.data
+
+	const listViewUser = document.getElementById('view-user')
+
+	listViewUser.innerHTML = '';
+
+	if (!data.success || !data.data || data.data.length === 0) {
+			listViewUser.innerHTML = `
+				<tr>
+					<td colspan="7" class="text-center text-danger fw-bold">
+						${data.error}
+					</td>
+				</tr>
+			`;
+			return;
+	}
+
+	viewUser.forEach((item, index) => {
+		selectedModuleType = item.moduleType
+		listViewUser.innerHTML += `
+				 <tr>
+                <td>${index + 1}</td>
+                <td>${item.firstname}</td>
+                <td>${item.lastname}</td>
+				<td>${item.email}</td>
+                <td>${item.active ? 'active' : 'inactive'}</td>
+                <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
+				<td>${new Date(item.updatedAt).toISOString().split('T')[0]}</td>
+               
+				</tr>
+			`
+	})
+}

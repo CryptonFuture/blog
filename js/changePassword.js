@@ -1,40 +1,39 @@
 const prefix = 'api/v1'
 const baseUrl = `http://localhost:8000/${prefix}`
 
-async function forgotPassword() {
-    const email = document.getElementById('email-address').value
 
-    const res = await fetch(`${baseUrl}/send`, {
+async function resetPassword() {
+    const email = document.getElementById('email-address').value
+    const password = document.getElementById('reset-password').value
+    const confirmPass = document.getElementById('reset-confirm-password').value
+
+    const res = await fetch(`${baseUrl}/resetPass`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ email })
+		body: JSON.stringify({ email, password, confirmPass })
 	})
 
 	const data = await res.json()
-	
-
-	console.log(data.expiresAt, 'data');
-	
 
 	if (res.ok) {
 		Swal.fire({
 			icon: 'success',
-			title: 'forgot Password Successfully',
+			title: 'reset password Successfully',
 			text: data.message,
 			timer: 2000,
 			showConfirmButton: false,
 			timerProgressBar: true
 		}).then(() => {
 			document.getElementById('email-address').value = ""
-			window.location.href = 'verifyOtp.html'
-			localStorage.setItem("otpExpiresAt", data.expiresAt);
+            document.getElementById('reset-password').value = ""
+            document.getElementById('reset-confirm-password').value = ""
 		});
 	} else {
 		Swal.fire({
 			icon: 'error',
-			title: `Failed to delete request: ${data.error}`,
+			title: `Failed to delete otp: ${data.error}`,
 			text: data.error,
 			timer: 2000,
 			showConfirmButton: false,
