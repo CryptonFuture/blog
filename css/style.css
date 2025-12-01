@@ -8324,6 +8324,8 @@ h1, h2, h3, h4, h5,
         content: "\f054";
         left: 2px; }
 
+       
+
 .bg-wrap {
   width: 100%;
   position: relative;
@@ -8445,3 +8447,14 @@ body{background:#f3f4f6;display:flex;align-items:center;justify-content:center;m
   border: 1px solid royalblue;
   border-radius: 50px;
 }
+
+ label { display:block; margin-top:10px; }
+    input, textarea { width:100%; padding:8px; margin-top:4px; }
+    button { margin-top:10px; padding:10px 16px; }
+    .qr { margin-top:20px; }
+    img.qrimg { width: 220px; height: 220px; border:1px solid #ccc; }
+
+     #reader { width: 400px; }
+    .controls { margin-top: 10px; }
+    input, textarea { width:100%; padding:8px; margin-top:4px; }
+    button { padding:8px 12px; margin-right:6px; }

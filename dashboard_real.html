@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
   <style>
     .navbar {
       padding: 0.5rem 1rem;
@@ -112,6 +113,10 @@
       </nav>
       
       <div id="main-content">
+        <div id="qrCodePost" class="page">
+          <h2>QrCodePost</h2>
+          
+        </div>
         <div id="viewuser" class="page">
           <h2>View User</h2>
           <div class="d-flex flex-row justify-content-between">
@@ -399,6 +404,103 @@
             </table>
           </div>
         </div>
+
+        <!-- EDIT CONTACT US -->
+
+          <div class="modal fade" id="editContactUsModal" tabindex="-1" aria-labelledby="editContactUsModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editContactUsModalLabel">Edit Contact Us</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="editContactUsForm">
+                      <div class="mb-3" style="display: none;">
+                          <input hidden readonly id="edit-contact-us-id" type="text" class="form-control custom-border">
+                        </div>
+                      <div class="row">
+                        <div class="col-6">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Name</label>
+                            <input readonly placeholder="name" type="text" class="form-control custom-border" id="edit-contact-us-name">
+                           
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Email Address</label>
+                            <input readonly placeholder="email" type="email" class="form-control custom-border" id="edit-contact-us-email">
+                           
+                          </div>
+                        </div>
+
+                         <div class="col-12">
+                          <div class="mb-3">
+                          
+                            <label class="form-label">Phone</label>
+                            <input readonly placeholder="phone" type="text" class="form-control custom-border" id="edit-contact-us-phone">
+
+                          </div>
+                        </div>
+                        
+                      <div class="col-12">
+                        <div class="mb-3">
+                        
+                          <label class="form-label">Subject</label>
+                          <textarea id="edit-contact-us-subject" class="form-control custom-border"></textarea>
+                        </div>
+                      </div>
+
+                      
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button onclick="updateContactUs()" type="button" class="btn btn-primary"  form="editContactUsForm">Update</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VIEW CONTACT US -->
+
+             <div class="modal fade" id="viewContactUsModel" tabindex="-1" aria-labelledby="viewPostModalLabel"
+                      aria-hidden="true">
+
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="viewContactUsModelLabel">View Permission</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body" id="viewContactUs">
+                            
+                             <ul class="list-group list-group-flush">
+                                      <li id="view-contact-us-id" class="list-group-item"></li>
+                                      <li id="view-contact-us-name" class="list-group-item"></li>
+                                      <li id="view-contact-us-email" class="list-group-item"></li>
+                                      <li id="view-contact-us-phone" class="list-group-item"></li>
+                                      <li id="view-contact-us-subject" class="list-group-item"></li>
+                                      <li id="view-contact-us-createdAt" class="list-group-item"></li>
+                                      <li id="view-contact-us-updatedAt" class="list-group-item"></li>
+                              </ul>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+            </div>
+        
         <div id="requestapproved" class="page">
         
           <h2>Request Approved</h2>
@@ -459,6 +561,38 @@
                 </nav>
          </div>
         </div>
+
+        <!-- VIEW UNPUBLISHED POST -->
+
+      <div class="modal fade" id="viewUnPublishedModal" tabindex="-1" aria-labelledby="viewUnPublishedModalLabel"
+                      aria-hidden="true">
+
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="viewUnPublishedModalLabel">View Post Approved</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body" id="viewUnPublishedPost">
+                            
+                             <ul class="list-group list-group-flush">
+                                <li id="edit-un-published-post-id" class="list-group-item"></li>
+                                <li id="edit-un-published-post-title" class="list-group-item"></li>
+                                <li id="edit-un-published-post-description" class="list-group-item"></li>
+                              </ul>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+            </div>
+
         <div id="permission" class="page">
           <h2>Permission</h2>
           <div class="d-flex justify-content-between align-items-center">
@@ -527,7 +661,7 @@
                           <div class="mb-3">
                           
                             <label class="form-label">Role</label>
-                            <select id="add-role" class="form-select">
+                            <select id="add-role" class="form-select" multiple size="4">
                             
                             </select>
                           </div>
@@ -866,13 +1000,17 @@
               </div>
               <div class="modal-body">
                 <div class="mb-3">
+                 
+                    <textarea hidden id="approved-request-id" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">Remarks</label>
-                    <textarea class="form-control" rows="3"></textarea>
+                    <textarea id="remarks" class="form-control" rows="3"></textarea>
                 </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Approved</button>
+                <button onclick="approvedBy()" type="button" class="btn btn-primary">Approved</button>
               </div>
             </div>
           </div>
@@ -889,13 +1027,17 @@
               </div>
               <div class="modal-body">
                 <div class="mb-3">
+                 
+                    <textarea hidden id="reject-request-id" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">Reason</label>
-                    <textarea class="form-control" rows="3"></textarea>
+                    <textarea id="reason" class="form-control" rows="3"></textarea>
                 </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger">Reject</button>
+                <button onclick="rejectedBy()" type="button" class="btn btn-danger">Reject</button>
               </div>
             </div>
           </div>
@@ -2045,6 +2187,7 @@
               <th>Role</th>
               <th>Image</th>
               <th>Status</th>
+              <th>Is_Login</th>
               <th>Created At</th>
               <th>Action</th>
             </tr>
@@ -2092,6 +2235,7 @@
               <th>Role</th>
               <th>Image</th>
               <th>Status</th>
+              <th>Is_Login</th>
               <th>Created At</th>
               <th>Action</th>
             </tr>
@@ -2487,9 +2631,89 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-<script src="js/adminPanel.js"></script>
+  <script src="js/adminPanel.js"></script>
+
   <script>
-    
+    function extractIdFromScannedText(text) {
+  // We encoded full URL like http://host/open-item/<id>
+  // Parse last path segment as id
+  try {
+    const url = new URL(text);
+    const parts = url.pathname.split('/').filter(Boolean);
+    return parts[parts.length - 1]; // last segment
+  } catch (e) {
+    // If text is just an id, return as is
+    return text;
+  }
+}
+
+async function fetchItemAndShow(id) {
+  const res = await fetch(API + '/items/' + id);
+  const data = await res.json();
+  if (!data.success) {
+    alert('Item not found');
+    return;
+  }
+  const item = data.item;
+  document.getElementById('itemId').innerText = item._id;
+  document.getElementById('itemTitle').value = item.title || '';
+  document.getElementById('itemDesc').value = item.description || '';
+  document.getElementById('itemArea').style.display = 'block';
+  document.getElementById('msg').innerText = '';
+  // attach update/delete handlers
+  document.getElementById('updateBtn').onclick = async () => {
+    const title = document.getElementById('itemTitle').value;
+    const description = document.getElementById('itemDesc').value;
+    const r = await fetch(API + '/items/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, description })
+    });
+    const d = await r.json();
+    if (d.success) document.getElementById('msg').innerText = 'Updated ✅';
+    else document.getElementById('msg').innerText = 'Update failed';
+  };
+  document.getElementById('deleteBtn').onclick = async () => {
+    if (!confirm('Delete this item?')) return;
+    const r = await fetch(API + '/items/' + id, { method: 'DELETE' });
+    const d = await r.json();
+    if (d.success) {
+      document.getElementById('msg').innerText = 'Deleted ✅';
+      document.getElementById('itemArea').style.display = 'none';
+    } else document.getElementById('msg').innerText = 'Delete failed';
+  };
+}
+
+// Initialize HTML5 QR code scanner
+const html5QrCode = new Html5Qrcode("reader");
+const qrConfig = { fps: 10, qrbox: 250 };
+
+function onScanSuccess(decodedText, decodedResult) {
+  // Stop scanning to avoid multiple scans
+  html5QrCode.stop().then(() => {
+    const id = extractIdFromScannedText(decodedText);
+    fetchItemAndShow(id);
+  }).catch(err => {
+    console.error('Stop failed', err);
+  });
+}
+
+function onScanFailure(error) {
+  // ignore or console.log
+}
+
+Html5Qrcode.getCameras().then(devices => {
+  if (devices && devices.length) {
+    const cameraId = devices[0].id;
+    html5QrCode.start(cameraId, qrConfig, onScanSuccess, onScanFailure)
+      .catch(err => console.error('start error', err));
+  } else {
+    alert('No camera found. You can still paste a QR encoded value manually.');
+  }
+}).catch(err => {
+  console.error(err);
+});
+
   </script>
 </body>
 

@@ -28,6 +28,9 @@ let selectedPageId = null
 let selectedUserId = null
 let selectedPermissionId = null
 let selectedCategoryId = null
+let selectedContactUsId = null
+let selectedRequestId = null;
+let selectedRejectedtId = null
 let selectedModuleType = ''; 
 let selectedTagModuleType = ''; 
 
@@ -112,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	fetchPublishedPost()
 	fetchUnPublishedPost()
 	fetchTag()
-	viewPost()
+	// viewPost()
 	fetchAllUser()
 	fetchAllTag()
 	viewAllPost()
@@ -891,7 +894,7 @@ async function fetchUnPublishedPost(page = 1) {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewPostModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editUnPublishedPost('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewUnPublishedModal"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
                     <li><a onclick="approvedPost('${item._id}')" class="dropdown-item" href="#"> <i class="fas fa-check me-2 text-success"></i> Approved</a></li>
                     <li><a onclick="rejectPost('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-times me-2 text-danger"></i> Reject</a></li>
                   </ul>
@@ -1218,6 +1221,36 @@ async function editPost(id) {
 	}
 }
 
+async function editUnPublishedPost(id) {
+	selectedPostId = id;
+	const res = await fetch(`${baseUrl}/editUnPublishedPostById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const unPublishedPost = data.data[0]
+		
+		document.getElementById('edit-un-published-post-id').value = unPublishedPost._id
+		document.getElementById('edit-un-published-post-title').value = unPublishedPost.title
+		document.getElementById('edit-un-published-post-description').value = unPublishedPost.description
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete UnPublished Post: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
 async function editTag(id) {
 	selectedTagId = id;
 	const res = await fetch(`${baseUrl}/editTagById/${id}`, {
@@ -1240,6 +1273,37 @@ async function editTag(id) {
 		Swal.fire({
 			icon: 'error',
 			title: `Failed to delete tag: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function editContactUs(id) {
+	selectedContactUsId = id;
+	const res = await fetch(`${baseUrl}/getContactUsById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const contact = data.data[0]
+		document.getElementById('edit-contact-us-id').value = contact._id
+		document.getElementById('edit-contact-us-name').value = contact.name
+		document.getElementById('edit-contact-us-email').value = contact.email
+		document.getElementById('edit-contact-us-phone').value = contact.contact_no
+		document.getElementById('edit-contact-us-subject').value = contact.subject
+
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete contact us: ${data.error || res.statusText}`,
 			text: data.error,
 			timer: 2000,
 			showConfirmButton: false,
@@ -1399,6 +1463,39 @@ async function viewTag(id) {
 	}
 }
 
+async function viewContactUs(id) {
+
+	const res = await fetch(`${baseUrl}/viewContactUsById/${id}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `${tokenType} ${access_Token}`
+		}
+	})
+
+	const data = await res.json()
+
+	if (res.ok && data.success && data.data.length > 0) {
+		const view = data.data[0]
+
+		document.getElementById('view-contact-us-id').innerHTML = `<strong>ID: </strong> <span> ${view._id} </span>`
+		document.getElementById('view-contact-us-name').innerHTML = `<strong>Tag Name: </strong> <span> ${view.name} </span>`
+		document.getElementById('view-contact-us-email').innerHTML = `<strong>Description: </strong> <span> ${view.email} </span>`
+		document.getElementById('view-contact-us-phone').innerHTML = `<strong>Status: </strong> <span> ${view.contact_no} </span>`
+		document.getElementById('view-contact-us-subject').innerHTML = `<strong>Status: </strong> <span> ${view.subject} </span>`
+		document.getElementById('view-contact-us-createdAt').innerHTML = `<strong>CreatedAt: </strong> <span> ${new Date(view.createdAt).toISOString().split('T')[0]} </span>`
+		document.getElementById('view-contact-us-updatedAt').innerHTML = `<strong>UpdatedAt: </strong> <span> ${new Date(view.updatedAt).toISOString().split('T')[0]} </span>`
+	} else {
+ 		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete contact us: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
 async function viewPage(id) {
 
 	const res = await fetch(`${baseUrl}/viewPagesById/${id}`, {
@@ -1478,7 +1575,51 @@ function update() {
 	  updatedPermission(selectedPermissionId)
 	} else if(updateCategory) {
 	  updateCategory(selectedCategoryId)
+	} else if(selectedContactUsId) {
+	  updateContactUs(selectedContactUsId)
 	}
+}
+
+async function updateContactUs() {
+	const id = document.getElementById('edit-contact-us-id').value
+	const name = document.getElementById('edit-contact-us-name').value
+	const email = document.getElementById('edit-contact-us-email').value
+	const contact_no = document.getElementById('edit-contact-us-phone').value
+	const subject = document.getElementById('edit-contact-us-subject').value
+
+	const res = await fetch(`${baseUrl}/updateContactUs/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+				},
+		body: JSON.stringify({ name, email, contact_no, subject })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Update Contact Us Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			fetchContactUs()
+			$('#editContactUsModal').modal('hide');
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete Contact Us: ${data.error || res.statusText}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+
 }
 
 
@@ -2115,6 +2256,9 @@ async function fetchActiveUser(page = 1) {
                 <td> 
 					<h6><span class="badge text-bg-success">${item.active ? 'active' : 'inactive'}</span></h6>
 				</td>
+				<td> 
+					<h6><span class="badge text-bg-info">${item.is_login ? 'is_logged_in' : 'is_logged_Out'}</span></h6>
+				</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
                 <td>
                   <button class="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -2203,6 +2347,9 @@ async function fetchInActiveUser(page = 1) {
 					</td>
                 <td>
 					<h6><span class="badge text-bg-danger">${item.active ? 'active' : 'inactive'}</span></h6>
+				</td>
+				<td> 
+					<h6><span class="badge text-bg-warning">${item.is_login ? 'is_logged_in' : 'is_logged_Out'}</span></h6>
 				</td>
                 <td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
                 <td>
@@ -3741,10 +3888,10 @@ async function getRequest() {
 					<td><h6><span class="badge ${item.rejectedBy ? 'text-bg-danger' : 'text-bg-warning'}">${item.rejectedBy ? 'Reject' : 'unReject'}</h6></span></td>
 					<td>${new Date(item.createdAt).toISOString().split('T')[0]}</td>
 					<td>
-						<button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#approvedModal">
+						<button onclick="openApprovedModal('${item._id}')" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#approvedModal">
 							Approved
 						</button>
-						<button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#rejectModal">
+						<button onclick="openRejectedModal('${item._id}')" class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#rejectModal">
 							Reject
 						</button>
 						<button onclick="viewRequest('${item._id}')" data-bs-toggle="modal" data-bs-target="#viewApprovedModal" class="btn btn-info" type="button">
@@ -4229,15 +4376,32 @@ async function getRole() {
 			return;
 	}
 
+	const roleBasedRoutes = data.data.filter(item => 
+      item.role && (Array.isArray(item.role) ? item.role.length > 0 : item.role !== null && item.role !== undefined)
+    );
+
+    if (roleBasedRoutes.length === 0) {
+      listRole.innerHTML = `
+        <tr>
+          <td colspan="7" class="text-center text-warning fw-bold">
+            No role-based routes found
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
 	
 
-	role.forEach((item, index) => {
+	roleBasedRoutes.forEach((item, index) => {
+		const roles = Array.isArray(item.role) ? item.role.join(" ") : item.role;
+
 		listRole.innerHTML += `
 				<tr>
 					<td>${index + 1}</td>
 					<td>${item.routeName}</td>
 					<td>${item.paramName}</td>
-					<td>${Array.isArray(item.role) ? item.role.join(" ") : item.role}</td>
+					<td>${roles || "-"}</td>
 					<td>
 						<select class="form-select">
 							<option value="" disabled>select field</option> 
@@ -4290,14 +4454,14 @@ async function getRoutes() {
   routeNamelist.innerHTML = `<option value="" disabled selected>Select Route Name</option>`;
   rolelist.innerHTML = `<option value="" disabled selected>Select Role</option>`;
 
-	// const filteredRoutes = data.data.filter(item => Number(item.role) === 0);
-
 	const filteredRoutes = data.data.filter(item => {
 		if (Array.isArray(item.role)) {
 		return item.role.includes(0);
 		}
 		return Number(item.role) === 0;
   	});
+
+	 const uniqueRoles = new Set();
 
 	filteredRoutes.forEach((item, index) => {
 		namelist.innerHTML += `
@@ -4307,10 +4471,18 @@ async function getRoutes() {
 				<option value="${item.paramName}">${item.paramName}</option>
 			`
 
-		rolelist.innerHTML += `
-				<option value="${item.role}">${item.role}</option>
-			`
+		if (Array.isArray(item.role)) {
+			item.role.forEach(r => uniqueRoles.add(r));
+		} else {
+			uniqueRoles.add(item.role);
+		}
+
+	
 	})
+
+	uniqueRoles.forEach(role => {
+		rolelist.innerHTML += `<option value="${role}">${role}</option>`;
+	});
 }
 
 async function getEditRoutes() {
@@ -4324,7 +4496,7 @@ async function getEditRoutes() {
 
 	const data = await res.json()
 
-	const role = data.data
+	// const role = data.data
 
 	const namelist = document.getElementById('edit-name')
 	const routeNamelist = document.getElementById('edit-route-name')
@@ -4421,8 +4593,10 @@ async function getPermission() {
 async function addPermission() {
 	const routeName = document.getElementById('add-name').value
 	const paramName = document.getElementById('add-route-name').value
-	const role = document.getElementById('add-role').value
-	const description = document.getElementById('description').value
+ 	const description = document.getElementById('description').value
+
+	const role = Array.from(document.getElementById('add-role').selectedOptions)
+		.map(opt => Number(opt.value));
 
 	const action = Array.from(document.querySelectorAll('.form-check-input:checked'))
 		.map(cb => cb.value);
@@ -4451,7 +4625,7 @@ async function addPermission() {
 			$('#permissionModal').modal('hide');
 			document.getElementById('add-name').value = ""
 			document.getElementById('add-route-name').value = ""
-			document.getElementById('add-role').value = ""
+			document.getElementById('add-role').selectedIndex = -1;
 			document.getElementById('description').value = ""
 			document.querySelectorAll('.form-check-input').forEach(cb => cb.checked = false);
 
@@ -4722,7 +4896,6 @@ async function requestSubmit() {
 		});
 
 		const data = await res.json();
-		console.log(data);
 
 		if (res.ok) {
 		Swal.fire({
@@ -5159,7 +5332,7 @@ async function fetchContactUs() {
 
 	const data = await res.json()
 
-	const contact = data.data
+	const contact = data.data	
 
 	const listcontact = document.getElementById('list-contact')
 
@@ -5191,16 +5364,65 @@ async function fetchContactUs() {
                     &#8942;
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item view-btn" href="#"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
-                    <li><a class="dropdown-item" href="#PostModal"> <i
+                    <li><a onclick="viewContactUs('${item._id}')" class="dropdown-item view-btn" href="#" data-bs-toggle="modal" data-bs-target="#viewContactUsModel"> <i class="fas fa-eye me-2 text-warning"></i> View</a></li>
+                    <li><a onclick="editContactUs('${item._id}')" class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editContactUsModal"> <i
                           class="fas fa-edit me-2 text-info"></i> Edit</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
+                    <li><a onclick="deleteContactUs('${item._id}')" class="dropdown-item" href="#"><i class="fas fa-trash-alt me-2 text-danger"></i> Delete</a></li>
 					</ul>
                 </td>
 				</tr>
 			`
 	})
 }
+
+async function deleteContactUs(id) {
+	const result = await Swal.fire({
+		title: 'Are you sure you want to delete this contact us?',
+		text: 'You won\'t be able to revert this!',
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#3085d6',
+		confirmButtonText: 'Yes, delete it!',
+		cancelButtonText: 'Cancel'
+	})
+
+	if (result.isConfirmed) {
+		const res = await fetch(`${baseUrl}/deleteContactUs/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Authorization': `${tokenType} ${access_Token}`
+			}
+		})
+
+		const data = await res.json()
+
+		if (res.ok) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Delete Successfully',
+				text: data.message,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			}).then(() => {
+				fetchContactUs();
+			});
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: `Failed to delete post: ${data.error || res.statusText}`,
+				text: data.error,
+				timer: 2000,
+				showConfirmButton: false,
+				timerProgressBar: true
+			})
+		}
+	}
+}
+
+
 
 async function fetchLogsConfig() {
 	const modulelist = document.getElementById('module-list')
@@ -5694,3 +5916,100 @@ async function fetchAllUser() {
 			`
 	})
 }
+
+function openApprovedModal(id) {
+    selectedRequestId = id;
+    console.log("Selected ID:", selectedRequestId);
+
+    document.getElementById("approved-request-id").value = id;
+}
+
+function openRejectedModal(id) {
+    selectedRejectedtId = id;
+    console.log("Selected ID:", selectedRejectedtId);
+
+    document.getElementById("reject-request-id").value = id;
+}
+
+
+async function approvedBy() {
+	 const id = selectedRequestId;
+	const remarks = document.getElementById('remarks').value
+
+	const res = await fetch(`${baseUrl}/approvedBy/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ remarks })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Approved Request Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			$('#approvedModal').modal('hide');
+			getRequest()
+			document.getElementById('remarks').value = ""
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete approved by: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+async function rejectedBy() {
+	 const id = selectedRejectedtId;
+	const reason = document.getElementById('reason').value
+
+	const res = await fetch(`${baseUrl}/rejectBy/${id}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `${tokenType} ${access_Token}`
+		},
+		body: JSON.stringify({ reason })
+	})
+
+	const data = await res.json()
+
+	if (res.ok) {
+		Swal.fire({
+			icon: 'success',
+			title: 'Rejected Request Successfully',
+			text: data.message,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		}).then(() => {
+			$('#rejectModal').modal('hide');
+			getRequest()
+			document.getElementById('reason').value = ""
+		});
+	} else {
+		Swal.fire({
+			icon: 'error',
+			title: `Failed to delete rejected by: ${data.error}`,
+			text: data.error,
+			timer: 2000,
+			showConfirmButton: false,
+			timerProgressBar: true
+		})
+	}
+}
+
+
